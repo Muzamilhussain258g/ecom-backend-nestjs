@@ -213,8 +213,8 @@ export type ProductColorWhereInput = {
   color?: Prisma.StringFilter<"ProductColor"> | string
   colorHex?: Prisma.StringFilter<"ProductColor"> | string
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
-  variants?: Prisma.VariantListRelationFilter
   images?: Prisma.ProductImageListRelationFilter
+  variants?: Prisma.VariantListRelationFilter
 }
 
 export type ProductColorOrderByWithRelationInput = {
@@ -223,8 +223,8 @@ export type ProductColorOrderByWithRelationInput = {
   color?: Prisma.SortOrder
   colorHex?: Prisma.SortOrder
   product?: Prisma.ProductOrderByWithRelationInput
-  variants?: Prisma.VariantOrderByRelationAggregateInput
   images?: Prisma.ProductImageOrderByRelationAggregateInput
+  variants?: Prisma.VariantOrderByRelationAggregateInput
 }
 
 export type ProductColorWhereUniqueInput = Prisma.AtLeast<{
@@ -236,8 +236,8 @@ export type ProductColorWhereUniqueInput = Prisma.AtLeast<{
   color?: Prisma.StringFilter<"ProductColor"> | string
   colorHex?: Prisma.StringFilter<"ProductColor"> | string
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
-  variants?: Prisma.VariantListRelationFilter
   images?: Prisma.ProductImageListRelationFilter
+  variants?: Prisma.VariantListRelationFilter
 }, "id">
 
 export type ProductColorOrderByWithAggregationInput = {
@@ -266,8 +266,8 @@ export type ProductColorCreateInput = {
   color: string
   colorHex: string
   product: Prisma.ProductCreateNestedOneWithoutColorsInput
-  variants?: Prisma.VariantCreateNestedManyWithoutProductColorInput
   images?: Prisma.ProductImageCreateNestedManyWithoutProductColorInput
+  variants?: Prisma.VariantCreateNestedManyWithoutProductColorInput
 }
 
 export type ProductColorUncheckedCreateInput = {
@@ -275,16 +275,16 @@ export type ProductColorUncheckedCreateInput = {
   productId: number
   color: string
   colorHex: string
-  variants?: Prisma.VariantUncheckedCreateNestedManyWithoutProductColorInput
   images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutProductColorInput
+  variants?: Prisma.VariantUncheckedCreateNestedManyWithoutProductColorInput
 }
 
 export type ProductColorUpdateInput = {
   color?: Prisma.StringFieldUpdateOperationsInput | string
   colorHex?: Prisma.StringFieldUpdateOperationsInput | string
   product?: Prisma.ProductUpdateOneRequiredWithoutColorsNestedInput
-  variants?: Prisma.VariantUpdateManyWithoutProductColorNestedInput
   images?: Prisma.ProductImageUpdateManyWithoutProductColorNestedInput
+  variants?: Prisma.VariantUpdateManyWithoutProductColorNestedInput
 }
 
 export type ProductColorUncheckedUpdateInput = {
@@ -292,8 +292,8 @@ export type ProductColorUncheckedUpdateInput = {
   productId?: Prisma.IntFieldUpdateOperationsInput | number
   color?: Prisma.StringFieldUpdateOperationsInput | string
   colorHex?: Prisma.StringFieldUpdateOperationsInput | string
-  variants?: Prisma.VariantUncheckedUpdateManyWithoutProductColorNestedInput
   images?: Prisma.ProductImageUncheckedUpdateManyWithoutProductColorNestedInput
+  variants?: Prisma.VariantUncheckedUpdateManyWithoutProductColorNestedInput
 }
 
 export type ProductColorCreateManyInput = {
@@ -434,16 +434,16 @@ export type ProductColorUpdateOneRequiredWithoutImagesNestedInput = {
 export type ProductColorCreateWithoutProductInput = {
   color: string
   colorHex: string
-  variants?: Prisma.VariantCreateNestedManyWithoutProductColorInput
   images?: Prisma.ProductImageCreateNestedManyWithoutProductColorInput
+  variants?: Prisma.VariantCreateNestedManyWithoutProductColorInput
 }
 
 export type ProductColorUncheckedCreateWithoutProductInput = {
   id?: number
   color: string
   colorHex: string
-  variants?: Prisma.VariantUncheckedCreateNestedManyWithoutProductColorInput
   images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutProductColorInput
+  variants?: Prisma.VariantUncheckedCreateNestedManyWithoutProductColorInput
 }
 
 export type ProductColorCreateOrConnectWithoutProductInput = {
@@ -583,16 +583,16 @@ export type ProductColorCreateManyProductInput = {
 export type ProductColorUpdateWithoutProductInput = {
   color?: Prisma.StringFieldUpdateOperationsInput | string
   colorHex?: Prisma.StringFieldUpdateOperationsInput | string
-  variants?: Prisma.VariantUpdateManyWithoutProductColorNestedInput
   images?: Prisma.ProductImageUpdateManyWithoutProductColorNestedInput
+  variants?: Prisma.VariantUpdateManyWithoutProductColorNestedInput
 }
 
 export type ProductColorUncheckedUpdateWithoutProductInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   color?: Prisma.StringFieldUpdateOperationsInput | string
   colorHex?: Prisma.StringFieldUpdateOperationsInput | string
-  variants?: Prisma.VariantUncheckedUpdateManyWithoutProductColorNestedInput
   images?: Prisma.ProductImageUncheckedUpdateManyWithoutProductColorNestedInput
+  variants?: Prisma.VariantUncheckedUpdateManyWithoutProductColorNestedInput
 }
 
 export type ProductColorUncheckedUpdateManyWithoutProductInput = {
@@ -607,13 +607,13 @@ export type ProductColorUncheckedUpdateManyWithoutProductInput = {
  */
 
 export type ProductColorCountOutputType = {
-  variants: number
   images: number
+  variants: number
 }
 
 export type ProductColorCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  variants?: boolean | ProductColorCountOutputTypeCountVariantsArgs
   images?: boolean | ProductColorCountOutputTypeCountImagesArgs
+  variants?: boolean | ProductColorCountOutputTypeCountVariantsArgs
 }
 
 /**
@@ -629,15 +629,15 @@ export type ProductColorCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types
 /**
  * ProductColorCountOutputType without action
  */
-export type ProductColorCountOutputTypeCountVariantsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.VariantWhereInput
+export type ProductColorCountOutputTypeCountImagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProductImageWhereInput
 }
 
 /**
  * ProductColorCountOutputType without action
  */
-export type ProductColorCountOutputTypeCountImagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ProductImageWhereInput
+export type ProductColorCountOutputTypeCountVariantsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.VariantWhereInput
 }
 
 
@@ -647,8 +647,8 @@ export type ProductColorSelect<ExtArgs extends runtime.Types.Extensions.Internal
   color?: boolean
   colorHex?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
-  variants?: boolean | Prisma.ProductColor$variantsArgs<ExtArgs>
   images?: boolean | Prisma.ProductColor$imagesArgs<ExtArgs>
+  variants?: boolean | Prisma.ProductColor$variantsArgs<ExtArgs>
   _count?: boolean | Prisma.ProductColorCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["productColor"]>
 
@@ -678,8 +678,8 @@ export type ProductColorSelectScalar = {
 export type ProductColorOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productId" | "color" | "colorHex", ExtArgs["result"]["productColor"]>
 export type ProductColorInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
-  variants?: boolean | Prisma.ProductColor$variantsArgs<ExtArgs>
   images?: boolean | Prisma.ProductColor$imagesArgs<ExtArgs>
+  variants?: boolean | Prisma.ProductColor$variantsArgs<ExtArgs>
   _count?: boolean | Prisma.ProductColorCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProductColorIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -693,8 +693,8 @@ export type $ProductColorPayload<ExtArgs extends runtime.Types.Extensions.Intern
   name: "ProductColor"
   objects: {
     product: Prisma.$ProductPayload<ExtArgs>
-    variants: Prisma.$VariantPayload<ExtArgs>[]
     images: Prisma.$ProductImagePayload<ExtArgs>[]
+    variants: Prisma.$VariantPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1096,8 +1096,8 @@ readonly fields: ProductColorFieldRefs;
 export interface Prisma__ProductColorClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   product<T extends Prisma.ProductDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductDefaultArgs<ExtArgs>>): Prisma.Prisma__ProductClient<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  variants<T extends Prisma.ProductColor$variantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductColor$variantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VariantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   images<T extends Prisma.ProductColor$imagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductColor$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  variants<T extends Prisma.ProductColor$variantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductColor$variantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VariantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1532,30 +1532,6 @@ export type ProductColorDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
 }
 
 /**
- * ProductColor.variants
- */
-export type ProductColor$variantsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Variant
-   */
-  select?: Prisma.VariantSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Variant
-   */
-  omit?: Prisma.VariantOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.VariantInclude<ExtArgs> | null
-  where?: Prisma.VariantWhereInput
-  orderBy?: Prisma.VariantOrderByWithRelationInput | Prisma.VariantOrderByWithRelationInput[]
-  cursor?: Prisma.VariantWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.VariantScalarFieldEnum | Prisma.VariantScalarFieldEnum[]
-}
-
-/**
  * ProductColor.images
  */
 export type ProductColor$imagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1577,6 +1553,30 @@ export type ProductColor$imagesArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.ProductImageScalarFieldEnum | Prisma.ProductImageScalarFieldEnum[]
+}
+
+/**
+ * ProductColor.variants
+ */
+export type ProductColor$variantsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Variant
+   */
+  select?: Prisma.VariantSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Variant
+   */
+  omit?: Prisma.VariantOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.VariantInclude<ExtArgs> | null
+  where?: Prisma.VariantWhereInput
+  orderBy?: Prisma.VariantOrderByWithRelationInput | Prisma.VariantOrderByWithRelationInput[]
+  cursor?: Prisma.VariantWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.VariantScalarFieldEnum | Prisma.VariantScalarFieldEnum[]
 }
 
 /**

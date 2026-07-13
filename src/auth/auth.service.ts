@@ -8,7 +8,7 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class AuthService {
     constructor(private readonly prisma: PrismaService) { }
-    
+
     async createUser(dto: RegisterUserDto) {
         try {
             const hashedPassword = await bcrypt.hash(dto.password, 10);
@@ -24,10 +24,7 @@ export class AuthService {
             // TODO: Generate Access Token
             // TODO: Generate Refresh Token
 
-            return {
-                message: 'User registered successfully',
-                user,
-            };
+            return user
         } catch (error) {
             if (
                 error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -39,7 +36,7 @@ export class AuthService {
             throw error;
         }
     }
-    
+
     async loginUser(dto: LoginUserDto) {
 
     }

@@ -244,8 +244,8 @@ export type PaymentMethodWhereInput = {
   cardBrand?: Prisma.StringNullableFilter<"PaymentMethod"> | string | null
   isDefault?: Prisma.BoolFilter<"PaymentMethod"> | boolean
   createdAt?: Prisma.DateTimeFilter<"PaymentMethod"> | Date | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   payments?: Prisma.PaymentListRelationFilter
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type PaymentMethodOrderByWithRelationInput = {
@@ -257,8 +257,8 @@ export type PaymentMethodOrderByWithRelationInput = {
   cardBrand?: Prisma.SortOrderInput | Prisma.SortOrder
   isDefault?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  user?: Prisma.UserOrderByWithRelationInput
   payments?: Prisma.PaymentOrderByRelationAggregateInput
+  user?: Prisma.UserOrderByWithRelationInput
 }
 
 export type PaymentMethodWhereUniqueInput = Prisma.AtLeast<{
@@ -273,8 +273,8 @@ export type PaymentMethodWhereUniqueInput = Prisma.AtLeast<{
   cardBrand?: Prisma.StringNullableFilter<"PaymentMethod"> | string | null
   isDefault?: Prisma.BoolFilter<"PaymentMethod"> | boolean
   createdAt?: Prisma.DateTimeFilter<"PaymentMethod"> | Date | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   payments?: Prisma.PaymentListRelationFilter
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id">
 
 export type PaymentMethodOrderByWithAggregationInput = {
@@ -314,8 +314,8 @@ export type PaymentMethodCreateInput = {
   cardBrand?: string | null
   isDefault: boolean
   createdAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutPaymentMethodsInput
   payments?: Prisma.PaymentCreateNestedManyWithoutPaymentMethodInput
+  user: Prisma.UserCreateNestedOneWithoutPaymentMethodsInput
 }
 
 export type PaymentMethodUncheckedCreateInput = {
@@ -337,8 +337,8 @@ export type PaymentMethodUpdateInput = {
   cardBrand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutPaymentMethodsNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutPaymentMethodNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutPaymentMethodsNestedInput
 }
 
 export type PaymentMethodUncheckedUpdateInput = {
@@ -712,8 +712,8 @@ export type PaymentMethodSelect<ExtArgs extends runtime.Types.Extensions.Interna
   cardBrand?: boolean
   isDefault?: boolean
   createdAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   payments?: boolean | Prisma.PaymentMethod$paymentsArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   _count?: boolean | Prisma.PaymentMethodCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["paymentMethod"]>
 
@@ -754,8 +754,8 @@ export type PaymentMethodSelectScalar = {
 
 export type PaymentMethodOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "type" | "provider" | "cardLast4" | "cardBrand" | "isDefault" | "createdAt", ExtArgs["result"]["paymentMethod"]>
 export type PaymentMethodInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   payments?: boolean | Prisma.PaymentMethod$paymentsArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   _count?: boolean | Prisma.PaymentMethodCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PaymentMethodIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -768,8 +768,8 @@ export type PaymentMethodIncludeUpdateManyAndReturn<ExtArgs extends runtime.Type
 export type $PaymentMethodPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "PaymentMethod"
   objects: {
-    user: Prisma.$UserPayload<ExtArgs>
     payments: Prisma.$PaymentPayload<ExtArgs>[]
+    user: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1174,8 +1174,8 @@ readonly fields: PaymentMethodFieldRefs;
  */
 export interface Prisma__PaymentMethodClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   payments<T extends Prisma.PaymentMethod$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PaymentMethod$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
