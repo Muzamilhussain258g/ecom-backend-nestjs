@@ -4,8 +4,9 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
+  moduleFormat = "cjs"
 }
 
 datasource db {
@@ -72,6 +73,7 @@ enum AddressType {
 
 model User {
   id        Int      @id @default(autoincrement())
+  name      String
   email     String   @unique
   password  String
   role      UserRole @default(customer)
@@ -94,20 +96,20 @@ model Category {
 }
 
 model Product {
-  id            Int            @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   name          String
   description   String
   categoryId    Int
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  productStatus Boolean        @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  productStatus Boolean  @default(true)
   basePrice     Decimal
 
-  category      Category       @relation(fields: [categoryId], references: [id])
-  colors        ProductColor[]
-  variants      Variant[]
-  reviews       Review[]
-  wishlistedBy  WishList[]
+  category     Category       @relation(fields: [categoryId], references: [id])
+  colors       ProductColor[]
+  variants     Variant[]
+  reviews      Review[]
+  wishlistedBy WishList[]
 }
 
 model Review {
