@@ -25,6 +25,7 @@ export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T
     return next.handle().pipe(map((data: T) => {
       return {
         success: statusCode >= 200 && statusCode < 300,
+        method: request.method,
         statusCode,
         message,
         path: request.originalUrl,
