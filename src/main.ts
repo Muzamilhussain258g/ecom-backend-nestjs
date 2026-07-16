@@ -12,7 +12,7 @@ async function bootstrap() {
       transform: true, // if we dont give this property transform doesnot run in dto
     }),
   );
-  
+
   // to configure interceptors in all routes
   app.useGlobalInterceptors(new TransformInterceptor(new Reflector))
   app.setGlobalPrefix('api/v1'); // to set prefix for all routes
