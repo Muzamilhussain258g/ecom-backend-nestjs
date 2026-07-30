@@ -5,6 +5,7 @@ import { PrismaService } from 'prisma/prisma.service';
 import { Prisma } from 'generated/prisma/client';
 import * as bcrypt from 'bcrypt';
 import { TokenService } from './services/token.service';
+import { RefreshAccessTokenDto } from './dtos/refreshAccessToken.dto';
 
 @Injectable()
 export class AuthService {
@@ -64,12 +65,30 @@ export class AuthService {
             role: user.role
         })
 
-        
+        const refreshTokenHash = await bcrypt.hash(refreshToken, 10)
+
+        await this.prisma.refreshToken.create({
+            data: {
+                refreshTokenHash,
+                userId: user.id,
+                expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+            }
+        })
 
         const { password, ...loggedInUser } = user;
         return {
             loggedInUser,
-            accessToken
+            accessToken,
+            refreshToken
         };
+
+    }
+
+    async refreshTheAccessToken(dto: RefreshAccessTokenDto) {
+        
+    }
+
+    async logoutUser() {
+
     }
 }

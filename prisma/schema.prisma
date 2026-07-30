@@ -22,28 +22,51 @@ model User {
   paymentMethods PaymentMethod[]
   reviews        Review[]
   wishlist       WishList[]
+  refreshTokens  RefreshToken[]
+}
+
+model RefreshToken {
+  id               Int      @id @default(autoincrement())
+  userId           Int
+  expiresAt        DateTime
+  isRevoked        Boolean  @default(false)
+  refreshTokenHash String   @unique
+  refreshTokenId          String   @unique // <-- NAYA FIELD (jti)
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Category {
-  id           Int       @id @default(autoincrement())
-  categoryName String    @unique
-  products     Product[]
+  id           Int    @id @default(autoincrement())
+  categoryName String
+  slug         String
+  parentId     Int?
+
+  parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+  children Category[] @relation("CategoryHierarchy")
+
+  products Product[]
+
+  @@unique([parentId, categoryName])
+  @@unique([parentId, slug])
 }
 
 model Product {
-  id            Int            @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   name          String
   description   String
   categoryId    Int
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
   basePrice     Decimal
-  productStatus Boolean        @default(true)
-  category      Category       @relation(fields: [categoryId], references: [id])
-  colors        ProductColor[]
-  reviews       Review[]
-  variants      Variant[]
-  wishlistedBy  WishList[]
+  productStatus Boolean  @default(true)
+
+  category     Category       @relation(fields: [categoryId], references: [id])
+  colors       ProductColor[]
+  reviews      Review[]
+  wishlistedBy WishList[]
 }
 
 model Review {
@@ -73,11 +96,9 @@ model Variant {
   stock          Int
   sku            String       @unique
   price          Decimal
-  productId      Int
   cartItems      CartItem[]
   orderItems     OrderItem[]
   productColor   ProductColor @relation(fields: [productColorId], references: [id])
-  product        Product      @relation(fields: [productId], references: [id])
 }
 
 model ProductImage {

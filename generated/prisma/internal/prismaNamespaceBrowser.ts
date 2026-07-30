@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  RefreshToken: 'RefreshToken',
   Category: 'Category',
   Product: 'Product',
   Review: 'Review',
@@ -97,9 +98,24 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const RefreshTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  expiresAt: 'expiresAt',
+  isRevoked: 'isRevoked',
+  refreshTokenHash: 'refreshTokenHash',
+  refreshTokenId: 'refreshTokenId',
+  createdAt: 'createdAt'
+} as const
+
+export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
+
+
 export const CategoryScalarFieldEnum = {
   id: 'id',
-  categoryName: 'categoryName'
+  categoryName: 'categoryName',
+  slug: 'slug',
+  parentId: 'parentId'
 } as const
 
 export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
@@ -146,8 +162,7 @@ export const VariantScalarFieldEnum = {
   size: 'size',
   stock: 'stock',
   sku: 'sku',
-  price: 'price',
-  productId: 'productId'
+  price: 'price'
 } as const
 
 export type VariantScalarFieldEnum = (typeof VariantScalarFieldEnum)[keyof typeof VariantScalarFieldEnum]
