@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
+import {JwtService} from '@nestjs/jwt';
 
 interface GenerateAccessAndRefreshTokens {
     userId: number,
     email: string,
     role: string
 }
+
+interface GenerateAccessToken extends GenerateAccessAndRefreshTokens { }
 
 export interface Tokens {
     accessToken: string;
@@ -44,5 +46,18 @@ export class TokenService {
             accessToken,
             refreshToken
         }
+    }
+    async onlyGenerateAccessToken({ userId, email, role }: GenerateAccessToken) {
+        const payload = { sub: userId, email, role }
+
+        const accessToken = await this.jwtService.signAsync({
+            ...payload,
+            tokenType: 'access',
+        }, {
+            secret: this.config.getOrThrow<string>("JWT_ACCESS_TOKEN_SECRET"),
+            expiresIn: '15m',
+        })
+
+        return { accessToken }
     }
 }
