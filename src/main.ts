@@ -14,10 +14,10 @@ async function bootstrap() {
   );
 
   // to configure interceptors in all routes
-  app.useGlobalInterceptors(new TransformInterceptor(new Reflector))
+  app.useGlobalInterceptors(new TransformInterceptor(new Reflector()));
   app.setGlobalPrefix('api/v1'); // to set prefix for all routes
   app.useGlobalFilters(new HttpExceptionFilter()); // to set global filters for all routes
 
   await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap();
+void bootstrap();

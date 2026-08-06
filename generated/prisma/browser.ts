@@ -33,6 +33,11 @@ export type RefreshToken = Prisma.RefreshTokenModel
  */
 export type Category = Prisma.CategoryModel
 /**
+ * Model ProductCategory
+ * 
+ */
+export type ProductCategory = Prisma.ProductCategoryModel
+/**
  * Model Product
  * 
  */
@@ -43,15 +48,35 @@ export type Product = Prisma.ProductModel
  */
 export type Review = Prisma.ReviewModel
 /**
- * Model ProductColor
+ * Model VariantType
  * 
  */
-export type ProductColor = Prisma.ProductColorModel
+export type VariantType = Prisma.VariantTypeModel
+/**
+ * Model VariantValue
+ * 
+ */
+export type VariantValue = Prisma.VariantValueModel
+/**
+ * Model ProductVariantType
+ * 
+ */
+export type ProductVariantType = Prisma.ProductVariantTypeModel
+/**
+ * Model ProductVariantValue
+ * 
+ */
+export type ProductVariantValue = Prisma.ProductVariantValueModel
 /**
  * Model Variant
  * 
  */
 export type Variant = Prisma.VariantModel
+/**
+ * Model VariantCombinationValue
+ * 
+ */
+export type VariantCombinationValue = Prisma.VariantCombinationValueModel
 /**
  * Model ProductImage
  * 

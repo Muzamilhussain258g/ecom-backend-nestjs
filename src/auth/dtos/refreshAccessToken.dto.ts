@@ -1,9 +1,9 @@
-import { IsString } from "class-validator";
+import { IsString } from 'class-validator';
 
 export class RefreshAccessTokenDto {
-    @IsString()
-    refreshToken!: string;
+  @IsString()
+  refreshToken!: string;
 
-    @IsString()
-    refreshTokenId!: string;
+  @IsString()
+  refreshTokenId!: string;
 }

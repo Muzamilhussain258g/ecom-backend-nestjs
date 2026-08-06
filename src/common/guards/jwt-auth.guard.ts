@@ -1,11 +1,89 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
+import { UserRole } from 'generated/prisma/enums';
+import { PrismaService } from 'prisma/prisma.service';
+
+interface AccessTokenPayload {
+  sub: number;
+  email: string;
+  role: string;
+  tokenType: 'access';
+}
+
+interface AuthenticatedRequest extends Request {
+  user?: {
+    id: number;
+    email: string;
+    name: string;
+    role: UserRole;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+}
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+    private readonly prisma: PrismaService,
+  ) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
+    const authHeader = request.headers.authorization;
+
+    if (!authHeader) {
+      throw new UnauthorizedException('Authorization token is required');
+    }
+    const [type, token] = authHeader.split(' ');
+
+    if (type !== 'Bearer' || !token) {
+      throw new UnauthorizedException('Invalid authorization header format');
+    }
+
+    let payload: AccessTokenPayload;
+    try {
+      payload = await this.jwtService.verifyAsync<AccessTokenPayload>(token, {
+        secret: this.configService.getOrThrow<string>(
+          'JWT_ACCESS_TOKEN_SECRET',
+        ),
+      });
+    } catch {
+      throw new UnauthorizedException('Invalid or expired token');
+    }
+
+    if (payload.tokenType !== 'access') {
+      throw new UnauthorizedException('An access token is required');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: payload.sub,
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    request.user = user;
+
     return true;
   }
 }

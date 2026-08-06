@@ -54,10 +54,15 @@ export const ModelName = {
   User: 'User',
   RefreshToken: 'RefreshToken',
   Category: 'Category',
+  ProductCategory: 'ProductCategory',
   Product: 'Product',
   Review: 'Review',
-  ProductColor: 'ProductColor',
+  VariantType: 'VariantType',
+  VariantValue: 'VariantValue',
+  ProductVariantType: 'ProductVariantType',
+  ProductVariantValue: 'ProductVariantValue',
   Variant: 'Variant',
+  VariantCombinationValue: 'VariantCombinationValue',
   ProductImage: 'ProductImage',
   WishList: 'WishList',
   Cart: 'Cart',
@@ -121,15 +126,25 @@ export const CategoryScalarFieldEnum = {
 export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
 
 
+export const ProductCategoryScalarFieldEnum = {
+  id: 'id',
+  categoryId: 'categoryId',
+  productId: 'productId',
+  isPrimary: 'isPrimary'
+} as const
+
+export type ProductCategoryScalarFieldEnum = (typeof ProductCategoryScalarFieldEnum)[keyof typeof ProductCategoryScalarFieldEnum]
+
+
 export const ProductScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
-  categoryId: 'categoryId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   basePrice: 'basePrice',
-  productStatus: 'productStatus'
+  productStatus: 'productStatus',
+  hasVariants: 'hasVariants'
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
@@ -146,31 +161,72 @@ export const ReviewScalarFieldEnum = {
 export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
 
 
-export const ProductColorScalarFieldEnum = {
+export const VariantTypeScalarFieldEnum = {
   id: 'id',
-  productId: 'productId',
-  color: 'color',
-  colorHex: 'colorHex'
+  name: 'name',
+  slug: 'slug',
+  sortOrder: 'sortOrder'
 } as const
 
-export type ProductColorScalarFieldEnum = (typeof ProductColorScalarFieldEnum)[keyof typeof ProductColorScalarFieldEnum]
+export type VariantTypeScalarFieldEnum = (typeof VariantTypeScalarFieldEnum)[keyof typeof VariantTypeScalarFieldEnum]
+
+
+export const VariantValueScalarFieldEnum = {
+  id: 'id',
+  variantTypeId: 'variantTypeId',
+  value: 'value',
+  code: 'code',
+  metadata: 'metadata',
+  sortOrder: 'sortOrder'
+} as const
+
+export type VariantValueScalarFieldEnum = (typeof VariantValueScalarFieldEnum)[keyof typeof VariantValueScalarFieldEnum]
+
+
+export const ProductVariantTypeScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  variantTypeId: 'variantTypeId'
+} as const
+
+export type ProductVariantTypeScalarFieldEnum = (typeof ProductVariantTypeScalarFieldEnum)[keyof typeof ProductVariantTypeScalarFieldEnum]
+
+
+export const ProductVariantValueScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  variantValueId: 'variantValueId'
+} as const
+
+export type ProductVariantValueScalarFieldEnum = (typeof ProductVariantValueScalarFieldEnum)[keyof typeof ProductVariantValueScalarFieldEnum]
 
 
 export const VariantScalarFieldEnum = {
   id: 'id',
-  productColorId: 'productColorId',
-  size: 'size',
+  productId: 'productId',
+  combinationKey: 'combinationKey',
   stock: 'stock',
   sku: 'sku',
-  price: 'price'
+  price: 'price',
+  isActive: 'isActive'
 } as const
 
 export type VariantScalarFieldEnum = (typeof VariantScalarFieldEnum)[keyof typeof VariantScalarFieldEnum]
 
 
+export const VariantCombinationValueScalarFieldEnum = {
+  id: 'id',
+  variantId: 'variantId',
+  variantValueId: 'variantValueId'
+} as const
+
+export type VariantCombinationValueScalarFieldEnum = (typeof VariantCombinationValueScalarFieldEnum)[keyof typeof VariantCombinationValueScalarFieldEnum]
+
+
 export const ProductImageScalarFieldEnum = {
   id: 'id',
-  productColorId: 'productColorId',
+  productId: 'productId',
+  variantValueId: 'variantValueId',
   productImageUrl: 'productImageUrl',
   imageId: 'imageId',
   isPrimary: 'isPrimary'
@@ -293,6 +349,14 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -307,4 +371,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

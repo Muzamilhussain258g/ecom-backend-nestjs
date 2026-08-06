@@ -1,4 +1,10 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 
 interface ErrorResponse {
@@ -10,6 +16,19 @@ interface ErrorResponse {
   method: string;
 }
 
+function hasErrorMessage(
+  value: object,
+): value is { message: string | string[] } {
+  if (!('message' in value)) return false;
+
+  const { message } = value;
+  return (
+    typeof message === 'string' ||
+    (Array.isArray(message) &&
+      message.every((item): item is string => typeof item === 'string'))
+  );
+}
+
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
@@ -17,18 +36,22 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    const statusCode = exception instanceof HttpException
-      ? exception.getStatus()
-      : HttpStatus.INTERNAL_SERVER_ERROR;
+    const statusCode =
+      exception instanceof HttpException
+        ? exception.getStatus()
+        : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const exceptionResponse = exception instanceof HttpException
-      ? exception.getResponse()
-      : 'Internal server error';
+    const exceptionResponse =
+      exception instanceof HttpException
+        ? exception.getResponse()
+        : 'Internal server error';
 
-    const message = typeof exceptionResponse === 'string'
-      ? exceptionResponse
-      : (exceptionResponse as any).message || 'Internal server error';
-
+    const message =
+      typeof exceptionResponse === 'string'
+        ? exceptionResponse
+        : hasErrorMessage(exceptionResponse)
+          ? exceptionResponse.message
+          : 'Internal server error';
 
     const errorResponse: ErrorResponse = {
       success: false,

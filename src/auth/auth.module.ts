@@ -6,11 +6,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { TokenService } from './services/token.service';
 
 @Module({
-  imports: [
-    PrismaModule,
-    JwtModule.register({})
-  ],
+  imports: [PrismaModule, JwtModule.register({})],
   controllers: [AuthController],
-  providers: [AuthService, TokenService]
+  providers: [AuthService, TokenService],
 })
-export class AuthModule { }
+export class AuthModule {}
