@@ -28,6 +28,39 @@ export class VariantService {
     });
   }
 
+  findAllValues() {
+    return this.prisma.variantValue.findMany({
+      orderBy: [
+        { variantType: { sortOrder: 'asc' } },
+        { sortOrder: 'asc' },
+        { id: 'asc' },
+      ],
+      include: { variantType: true },
+    });
+  }
+
+  async findValuesByType(variantTypeId: number) {
+    await this.ensureTypeExists(variantTypeId);
+
+    return this.prisma.variantValue.findMany({
+      where: { variantTypeId },
+      orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
+      include: { variantType: true },
+    });
+  }
+
+  async removeValuesByType(variantTypeId: number) {
+    await this.ensureTypeExists(variantTypeId);
+
+    try {
+      return await this.prisma.variantValue.deleteMany({
+        where: { variantTypeId },
+      });
+    } catch (error) {
+      this.handleWriteError(error, 'One or more variant values are in use');
+    }
+  }
+
   async createType(dto: CreateVariantTypeDto) {
     const slug = this.createSlug(dto.name);
 
@@ -67,7 +100,13 @@ export class VariantService {
     await this.ensureTypeExists(id);
 
     try {
-      return await this.prisma.variantType.delete({ where: { id } });
+      return await this.prisma.$transaction(async (transaction) => {
+        await transaction.variantValue.deleteMany({
+          where: { variantTypeId: id },
+        });
+
+        return transaction.variantType.delete({ where: { id } });
+      });
     } catch (error) {
       this.handleWriteError(error, 'Variant type is currently in use');
     }

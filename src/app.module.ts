@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
 import { VariantModule } from './variant/variant.module';
+import { WishlistModule } from './wishlist/wishlist.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { VariantModule } from './variant/variant.module';
     CategoryModule,
     ProductModule,
     VariantModule,
+    WishlistModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),

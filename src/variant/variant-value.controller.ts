@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   ParseIntPipe,
   Patch,
@@ -16,12 +17,18 @@ import { UpdateVariantValueDto } from './dto/update-variant-value.dto';
 import { VariantService } from './variant.service';
 
 @Controller('variant-values')
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Role(UserRole.seller)
 export class VariantValueController {
   constructor(private readonly variantService: VariantService) {}
 
+  @Get()
+  @ResponseMessage('Variant values fetched successfully')
+  findAll() {
+    return this.variantService.findAllValues();
+  }
+
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Role(UserRole.seller)
   @ResponseMessage('Variant value updated successfully')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -31,6 +38,8 @@ export class VariantValueController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Role(UserRole.seller)
   @ResponseMessage('Variant value deleted successfully')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.variantService.removeValue(id);

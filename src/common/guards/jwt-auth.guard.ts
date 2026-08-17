@@ -7,8 +7,8 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { UserRole } from 'generated/prisma/enums';
 import { PrismaService } from 'prisma/prisma.service';
+import { AuthenticatedUser } from '../interfaces/authenticated-user.interface';
 
 interface AccessTokenPayload {
   sub: number;
@@ -18,14 +18,7 @@ interface AccessTokenPayload {
 }
 
 interface AuthenticatedRequest extends Request {
-  user?: {
-    id: number;
-    email: string;
-    name: string;
-    role: UserRole;
-    createdAt: Date;
-    updatedAt: Date;
-  };
+  user?: AuthenticatedUser;
 }
 
 @Injectable()

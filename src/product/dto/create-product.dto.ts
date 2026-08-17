@@ -39,6 +39,21 @@ export class ProductVariantSelectionDto {
   variantValueIds!: number[];
 }
 
+export class ProductVariantQuantityDto {
+  @IsArray()
+  @ArrayMinSize(1)
+  @ArrayUnique()
+  @Type(() => Number)
+  @IsInt({ each: true })
+  @Min(1, { each: true })
+  variantValueIds!: number[];
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  quantity!: number;
+}
+
 export class CreateProductDto {
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim() : value,
@@ -83,4 +98,11 @@ export class CreateProductDto {
   @ValidateNested({ each: true })
   @Type(() => ProductVariantSelectionDto)
   variantSelections?: ProductVariantSelectionDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => ProductVariantQuantityDto)
+  variantQuantities?: ProductVariantQuantityDto[];
 }

@@ -82,7 +82,12 @@ describe('ProductController', () => {
   });
 
   it('delegates a single-product query to the product service', async () => {
-    const product = { id: 7, name: 'Infinix Note 40 Pro', colors: [] };
+    const product = {
+      id: 7,
+      name: 'Infinix Note 40 Pro',
+      slug: 'infinix-note-40-pro',
+      colors: [],
+    };
     const productService = {
       findOne: jest.fn().mockResolvedValue(product),
     };
@@ -90,8 +95,10 @@ describe('ProductController', () => {
       productService as unknown as ProductService,
     );
 
-    await expect(controller.findOne(7)).resolves.toBe(product);
-    expect(productService.findOne).toHaveBeenCalledWith(7);
+    await expect(controller.findOne('infinix-note-40-pro')).resolves.toBe(
+      product,
+    );
+    expect(productService.findOne).toHaveBeenCalledWith('infinix-note-40-pro');
   });
 
   it('delegates product updates to the product service', async () => {

@@ -1,10 +1,24 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterUserDto } from './dtos/registerUser.dto';
 import { LoginUserDto } from './dtos/loginUser.dto';
 import { LogoutUserDto } from './dtos/logoutUser.dto';
 import { RefreshAccessTokenDto } from './dtos/refreshAccessToken.dto';
 import { ResponseMessage } from '@/common/decorators/response-message.decorator';
+import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import type { AuthenticatedUser } from '@/common/interfaces/authenticated-user.interface';
+import { UpdateProfileDto } from './dtos/updateProfile.dto';
+import { UpdatePasswordDto } from './dtos/updatePassword.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -33,5 +47,35 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   refreshToken(@Body() dto: RefreshAccessTokenDto) {
     return this.authService.refreshTheAccessToken(dto);
+  }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ResponseMessage('Profile fetched successfully')
+  getMe(@CurrentUser() user: AuthenticatedUser) {
+    return user;
+  }
+
+  @Patch('profile')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ResponseMessage('Profile updated successfully')
+  updateProfile(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: UpdateProfileDto,
+  ) {
+    return this.authService.updateProfile(user.id, dto);
+  }
+
+  @Patch('password')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ResponseMessage('Password updated successfully')
+  updatePassword(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: UpdatePasswordDto,
+  ) {
+    return this.authService.updatePassword(user.id, dto);
   }
 }

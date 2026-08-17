@@ -69,6 +69,7 @@ model ProductCategory {
 model Product {
   id            Int      @id @default(autoincrement())
   name          String
+  slug          String   @unique
   description   String
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -83,6 +84,7 @@ model Product {
   variantValues     ProductVariantValue[]
   variants          Variant[]
   images            ProductImage[]
+  media             ProductMedia[]
 }
 
 model Review {
@@ -123,6 +125,7 @@ model VariantValue {
   @@unique([variantTypeId, code])
   @@index([variantTypeId])
 }
+
 // this is for assigninng the variant types to the products eg: product1 has color, size, material, etc
 model ProductVariantType {
   id            Int         @id @default(autoincrement())
@@ -137,11 +140,11 @@ model ProductVariantType {
 
 // this is for assigning the value to the product variant types eg: product1 has color=blue,red, size=small,large, material=cotton,polyester, etc 
 model ProductVariantValue {
-  id             Int          @id @default(autoincrement())
+  id             Int            @id @default(autoincrement())
   productId      Int
   variantValueId Int
-  product        Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
-  variantValue   VariantValue @relation(fields: [variantValueId], references: [id], onDelete: Restrict)
+  product        Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variantValue   VariantValue   @relation(fields: [variantValueId], references: [id], onDelete: Restrict)
 
   @@unique([productId, variantValueId])
   @@index([variantValueId])
@@ -188,6 +191,36 @@ model ProductImage {
 
   @@index([productId])
   @@index([variantValueId])
+}
+
+model Media {
+  id               Int      @id @default(autoincrement())
+  providerPublicId String   @unique
+  url              String
+  format           String?
+  bytes            Int?
+  width            Int?
+  height           Int?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  products ProductMedia[]
+}
+
+model ProductMedia {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  mediaId   Int
+  isPrimary Boolean @default(false)
+  position  Int     @default(0)
+  altText   String?
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  media   Media   @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+
+  @@unique([productId, mediaId])
+  @@index([productId, position])
+  @@index([mediaId])
 }
 
 model WishList {

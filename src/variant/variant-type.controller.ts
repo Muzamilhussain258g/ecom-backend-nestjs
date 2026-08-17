@@ -53,7 +53,7 @@ export class VariantTypeController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Role(UserRole.admin)
+  @Role(UserRole.seller)
   @ResponseMessage('Variant type deleted successfully')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.variantService.removeType(id);
@@ -62,12 +62,26 @@ export class VariantTypeController {
   @Post(':id/values')
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Role(UserRole.admin)
+  @Role(UserRole.seller)
   @ResponseMessage('Variant value created successfully')
   createValue(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: CreateVariantValueDto,
   ) {
     return this.variantService.createValue(id, dto);
+  }
+
+  @Get(':id/values')
+  @ResponseMessage('Variant values fetched successfully')
+  findValues(@Param('id', ParseIntPipe) id: number) {
+    return this.variantService.findValuesByType(id);
+  }
+
+  @Delete(':id/values')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Role(UserRole.seller)
+  @ResponseMessage('Variant values deleted successfully')
+  removeValues(@Param('id', ParseIntPipe) id: number) {
+    return this.variantService.removeValuesByType(id);
   }
 }

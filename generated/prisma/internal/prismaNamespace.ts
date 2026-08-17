@@ -397,6 +397,8 @@ export const ModelName = {
   Variant: 'Variant',
   VariantCombinationValue: 'VariantCombinationValue',
   ProductImage: 'ProductImage',
+  Media: 'Media',
+  ProductMedia: 'ProductMedia',
   WishList: 'WishList',
   Cart: 'Cart',
   CartItem: 'CartItem',
@@ -420,7 +422,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "refreshToken" | "category" | "productCategory" | "product" | "review" | "variantType" | "variantValue" | "productVariantType" | "productVariantValue" | "variant" | "variantCombinationValue" | "productImage" | "wishList" | "cart" | "cartItem" | "order" | "orderItem" | "paymentMethod" | "payment" | "address"
+    modelProps: "user" | "refreshToken" | "category" | "productCategory" | "product" | "review" | "variantType" | "variantValue" | "productVariantType" | "productVariantValue" | "variant" | "variantCombinationValue" | "productImage" | "media" | "productMedia" | "wishList" | "cart" | "cartItem" | "order" | "orderItem" | "paymentMethod" | "payment" | "address"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1386,6 +1388,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Media: {
+      payload: Prisma.$MediaPayload<ExtArgs>
+      fields: Prisma.MediaFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MediaFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MediaFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPayload>
+        }
+        findFirst: {
+          args: Prisma.MediaFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MediaFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPayload>
+        }
+        findMany: {
+          args: Prisma.MediaFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPayload>[]
+        }
+        create: {
+          args: Prisma.MediaCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPayload>
+        }
+        createMany: {
+          args: Prisma.MediaCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MediaCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPayload>[]
+        }
+        delete: {
+          args: Prisma.MediaDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPayload>
+        }
+        update: {
+          args: Prisma.MediaUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPayload>
+        }
+        deleteMany: {
+          args: Prisma.MediaDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MediaUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MediaUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPayload>[]
+        }
+        upsert: {
+          args: Prisma.MediaUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPayload>
+        }
+        aggregate: {
+          args: Prisma.MediaAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMedia>
+        }
+        groupBy: {
+          args: Prisma.MediaGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MediaGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MediaCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MediaCountAggregateOutputType> | number
+        }
+      }
+    }
+    ProductMedia: {
+      payload: Prisma.$ProductMediaPayload<ExtArgs>
+      fields: Prisma.ProductMediaFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProductMediaFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductMediaPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProductMediaFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductMediaPayload>
+        }
+        findFirst: {
+          args: Prisma.ProductMediaFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductMediaPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProductMediaFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductMediaPayload>
+        }
+        findMany: {
+          args: Prisma.ProductMediaFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductMediaPayload>[]
+        }
+        create: {
+          args: Prisma.ProductMediaCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductMediaPayload>
+        }
+        createMany: {
+          args: Prisma.ProductMediaCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProductMediaCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductMediaPayload>[]
+        }
+        delete: {
+          args: Prisma.ProductMediaDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductMediaPayload>
+        }
+        update: {
+          args: Prisma.ProductMediaUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductMediaPayload>
+        }
+        deleteMany: {
+          args: Prisma.ProductMediaDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProductMediaUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProductMediaUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductMediaPayload>[]
+        }
+        upsert: {
+          args: Prisma.ProductMediaUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductMediaPayload>
+        }
+        aggregate: {
+          args: Prisma.ProductMediaAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProductMedia>
+        }
+        groupBy: {
+          args: Prisma.ProductMediaGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductMediaGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProductMediaCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductMediaCountAggregateOutputType> | number
+        }
+      }
+    }
     WishList: {
       payload: Prisma.$WishListPayload<ExtArgs>
       fields: Prisma.WishListFieldRefs
@@ -2066,6 +2216,7 @@ export type ProductCategoryScalarFieldEnum = (typeof ProductCategoryScalarFieldE
 export const ProductScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  slug: 'slug',
   description: 'description',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -2160,6 +2311,33 @@ export const ProductImageScalarFieldEnum = {
 } as const
 
 export type ProductImageScalarFieldEnum = (typeof ProductImageScalarFieldEnum)[keyof typeof ProductImageScalarFieldEnum]
+
+
+export const MediaScalarFieldEnum = {
+  id: 'id',
+  providerPublicId: 'providerPublicId',
+  url: 'url',
+  format: 'format',
+  bytes: 'bytes',
+  width: 'width',
+  height: 'height',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MediaScalarFieldEnum = (typeof MediaScalarFieldEnum)[keyof typeof MediaScalarFieldEnum]
+
+
+export const ProductMediaScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  mediaId: 'mediaId',
+  isPrimary: 'isPrimary',
+  position: 'position',
+  altText: 'altText'
+} as const
+
+export type ProductMediaScalarFieldEnum = (typeof ProductMediaScalarFieldEnum)[keyof typeof ProductMediaScalarFieldEnum]
 
 
 export const WishListScalarFieldEnum = {
@@ -2626,6 +2804,8 @@ export type GlobalOmitConfig = {
   variant?: Prisma.VariantOmit
   variantCombinationValue?: Prisma.VariantCombinationValueOmit
   productImage?: Prisma.ProductImageOmit
+  media?: Prisma.MediaOmit
+  productMedia?: Prisma.ProductMediaOmit
   wishList?: Prisma.WishListOmit
   cart?: Prisma.CartOmit
   cartItem?: Prisma.CartItemOmit

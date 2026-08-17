@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   UnauthorizedException,
@@ -12,6 +13,8 @@ import { TokenService } from './services/token.service';
 import { RefreshAccessTokenDto } from './dtos/refreshAccessToken.dto';
 import { randomUUID } from 'node:crypto';
 import { LogoutUserDto } from './dtos/logoutUser.dto';
+import { UpdateProfileDto } from './dtos/updateProfile.dto';
+import { UpdatePasswordDto } from './dtos/updatePassword.dto';
 
 @Injectable()
 export class AuthService {
@@ -178,5 +181,96 @@ export class AuthService {
     });
 
     return;
+  }
+
+  async updateProfile(userId: number, dto: UpdateProfileDto) {
+    try {
+      return await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          ...(dto.name !== undefined && { name: dto.name }),
+          ...(dto.email !== undefined && { email: dto.email }),
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException('Email already exists');
+      }
+
+      throw error;
+    }
+  }
+
+  async updatePassword(userId: number, dto: UpdatePasswordDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    const isCurrentPasswordValid = await bcrypt.compare(
+      dto.currentPassword,
+      user.password,
+    );
+
+    if (!isCurrentPasswordValid) {
+      throw new UnauthorizedException('Current password is incorrect');
+    }
+
+    if (dto.currentPassword === dto.newPassword) {
+      throw new BadRequestException(
+        'New password must be different from current password',
+      );
+    }
+
+    const [hashedPassword, tokens] = await Promise.all([
+      bcrypt.hash(dto.newPassword, 10),
+      this.tokenService.generateAccessAndRefreshToken({
+        userId: user.id,
+        email: user.email,
+        role: user.role,
+      }),
+    ]);
+    const refreshTokenHash = await bcrypt.hash(tokens.refreshToken, 10);
+    const refreshTokenId = randomUUID();
+
+    await this.prisma.$transaction(async (transaction) => {
+      await transaction.user.update({
+        where: { id: user.id },
+        data: { password: hashedPassword },
+      });
+
+      await transaction.refreshToken.deleteMany({
+        where: { userId: user.id },
+      });
+
+      await transaction.refreshToken.create({
+        data: {
+          refreshTokenHash,
+          refreshTokenId,
+          userId: user.id,
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        },
+      });
+    });
+
+    return {
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      refreshTokenId,
+    };
   }
 }

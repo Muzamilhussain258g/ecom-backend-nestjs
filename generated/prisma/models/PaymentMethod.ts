@@ -492,10 +492,6 @@ export type EnumPaymentProviderFieldUpdateOperationsInput = {
   set?: $Enums.PaymentProvider
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
 export type PaymentMethodCreateNestedOneWithoutPaymentsInput = {
   create?: Prisma.XOR<Prisma.PaymentMethodCreateWithoutPaymentsInput, Prisma.PaymentMethodUncheckedCreateWithoutPaymentsInput>
   connectOrCreate?: Prisma.PaymentMethodCreateOrConnectWithoutPaymentsInput

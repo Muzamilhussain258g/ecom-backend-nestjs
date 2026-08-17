@@ -37,4 +37,32 @@ describe('CreateProductDto', () => {
 
     expect(await validate(dto)).not.toHaveLength(0);
   });
+
+  it('accepts non-negative quantities for exact variant combinations', async () => {
+    const dto = plainToInstance(CreateProductDto, {
+      ...validPayload,
+      hasVariants: true,
+      variantSelections: [
+        { variantTypeId: 1, variantValueIds: [10, 11] },
+        { variantTypeId: 2, variantValueIds: [20] },
+      ],
+      variantQuantities: [
+        { variantValueIds: [10, 20], quantity: 5 },
+        { variantValueIds: [11, 20], quantity: 0 },
+      ],
+    });
+
+    await expect(validate(dto)).resolves.toHaveLength(0);
+  });
+
+  it('rejects a negative variant quantity', async () => {
+    const dto = plainToInstance(CreateProductDto, {
+      ...validPayload,
+      hasVariants: true,
+      variantSelections: [{ variantTypeId: 1, variantValueIds: [10] }],
+      variantQuantities: [{ variantValueIds: [10], quantity: -1 }],
+    });
+
+    expect(await validate(dto)).not.toHaveLength(0);
+  });
 });

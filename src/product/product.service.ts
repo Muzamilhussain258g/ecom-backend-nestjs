@@ -8,6 +8,7 @@ import { Prisma } from 'generated/prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
 import {
   CreateProductDto,
+  ProductVariantQuantityDto,
   ProductVariantSelectionDto,
 } from './dto/create-product.dto';
 import { GetAllProductsDto } from './dto/get-all-products.dto';
@@ -43,6 +44,18 @@ const variantValueSelect = {
 
 const productInclude = {
   productCategories: categoryAssignments,
+  images: {
+    where: { isPrimary: true },
+    orderBy: { id: 'asc' },
+    take: 1,
+    select: {
+      id: true,
+      productImageUrl: true,
+      imageId: true,
+      isPrimary: true,
+      variantValue: { select: variantValueSelect },
+    },
+  },
 } satisfies Prisma.ProductInclude;
 
 const productWriteInclude = {
@@ -67,6 +80,7 @@ const productWriteInclude = {
 const productDetailSelect = {
   id: true,
   name: true,
+  slug: true,
   description: true,
   basePrice: true,
   productStatus: true,
@@ -79,7 +93,7 @@ const productDetailSelect = {
     select: { variantType: true },
   },
   variantValues: {
-    select: { variantValue: { select: variantValueSelect } },
+    select: { id: true, variantValue: { select: variantValueSelect } },
   },
   variants: {
     where: { isActive: true },
@@ -101,6 +115,7 @@ const productDetailSelect = {
     select: {
       id: true,
       productImageUrl: true,
+      imageId: true,
       isPrimary: true,
       variantValue: { select: variantValueSelect },
     },
@@ -151,12 +166,19 @@ export class ProductService {
       dto.hasVariants,
       dto.variantSelections,
     );
+    const combinations = this.buildCombinations(selections);
+    const quantities = this.prepareVariantQuantities(
+      dto.hasVariants,
+      combinations,
+      dto.variantQuantities,
+    );
 
     try {
       return await this.prisma.$transaction(async (transaction) => {
         const product = await transaction.product.create({
           data: {
             name: dto.name,
+            slug: this.createSlug(dto.name),
             description: dto.description,
             basePrice: dto.basePrice,
             hasVariants: dto.hasVariants,
@@ -182,12 +204,13 @@ export class ProductService {
         });
 
         if (dto.hasVariants) {
-          for (const combination of this.buildCombinations(selections)) {
+          for (const combination of combinations) {
             await this.createVariant(
               transaction,
               product.id,
               product.basePrice,
               combination,
+              quantities.get(combination.key)!,
             );
           }
         } else {
@@ -214,23 +237,30 @@ export class ProductService {
 
   async findAll({
     search,
+    category,
+    sortOrder,
     page,
     limit,
   }: GetAllProductsDto): Promise<ProductListResult> {
     const skip = (page - 1) * limit;
-    const where: Prisma.ProductWhereInput = search
-      ? {
-          OR: [
-            { name: { contains: search, mode: 'insensitive' } },
-            { description: { contains: search, mode: 'insensitive' } },
-          ],
-        }
-      : {};
+    const where: Prisma.ProductWhereInput = {
+      ...(search && {
+        OR: [
+          { name: { contains: search, mode: 'insensitive' } },
+          { description: { contains: search, mode: 'insensitive' } },
+        ],
+      }),
+      ...(category && {
+        productCategories: { some: { category: { slug: category } } },
+      }),
+    };
 
     const [products, total] = await this.prisma.$transaction([
       this.prisma.product.findMany({
         where,
-        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+        orderBy: sortOrder
+          ? [{ name: sortOrder }, { id: 'desc' }]
+          : [{ createdAt: 'desc' }, { id: 'desc' }],
         skip,
         take: limit,
         include: productInclude,
@@ -254,21 +284,21 @@ export class ProductService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(slug: string) {
     const [product, reviewStats] = await this.prisma.$transaction([
       this.prisma.product.findFirst({
-        where: { id, productStatus: true },
+        where: { slug, productStatus: true },
         select: productDetailSelect,
       }),
       this.prisma.review.aggregate({
-        where: { productId: id },
+        where: { product: { slug } },
         _avg: { stars: true },
         _count: { _all: true },
       }),
     ]);
 
     if (!product)
-      throw new NotFoundException(`Product with id ${id} not found`);
+      throw new NotFoundException(`Product with slug ${slug} not found`);
 
     const { reviews, variantTypes, variantValues, variants, ...details } =
       product;
@@ -277,8 +307,14 @@ export class ProductService {
       variantOptions: variantTypes.map(({ variantType }) => ({
         ...variantType,
         values: variantValues
-          .map(({ variantValue }) => variantValue)
-          .filter(({ variantType: type }) => type.id === variantType.id),
+          .filter(
+            ({ variantValue }) =>
+              variantValue.variantType.id === variantType.id,
+          )
+          .map(({ id, variantValue }) => ({
+            ...variantValue,
+            productVariantValueId: id,
+          })),
       })),
       variants: variants.map(({ combinationValues, ...variant }) => ({
         ...variant,
@@ -316,6 +352,7 @@ export class ProductService {
         where: { id },
         data: {
           name: dto.name,
+          slug: dto.name === undefined ? undefined : this.createSlug(dto.name),
           description: dto.description,
           basePrice: dto.basePrice,
           productStatus: dto.productStatus,
@@ -408,6 +445,7 @@ export class ProductService {
               id,
               product.basePrice,
               combination,
+              0,
             );
           }
         }
@@ -561,26 +599,84 @@ export class ProductService {
     }));
   }
 
-  private createVariant(
+  private async createVariant(
     transaction: Prisma.TransactionClient,
     productId: number,
     price: Prisma.Decimal,
     combination: Combination,
+    quantity: number,
   ) {
-    return transaction.variant.create({
+    const variant = await transaction.variant.create({
       data: {
         productId,
         combinationKey: combination.key,
         sku: `P-${productId}-${combination.codes.join('-')}`,
         price,
-        stock: 0,
-        combinationValues: {
-          create: combination.valueIds.map((variantValueId) => ({
-            variantValue: { connect: { id: variantValueId } },
-          })),
-        },
+        stock: quantity,
       },
     });
+
+    await transaction.variantCombinationValue.createMany({
+      data: combination.valueIds.map((variantValueId) => ({
+        variantId: variant.id,
+        variantValueId,
+      })),
+    });
+
+    return variant;
+  }
+
+  private prepareVariantQuantities(
+    hasVariants: boolean,
+    combinations: Combination[],
+    variantQuantities?: ProductVariantQuantityDto[],
+  ): Map<string, number> {
+    if (!hasVariants) {
+      if (variantQuantities !== undefined) {
+        throw new BadRequestException(
+          'variantQuantities are only allowed when hasVariants is true',
+        );
+      }
+      return new Map();
+    }
+
+    if (!variantQuantities?.length) {
+      throw new BadRequestException(
+        'variantQuantities are required when hasVariants is true',
+      );
+    }
+
+    const quantityByKey = new Map<string, number>();
+    for (const { variantValueIds, quantity } of variantQuantities) {
+      const key = [...variantValueIds].sort((a, b) => a - b).join('-');
+      if (quantityByKey.has(key)) {
+        throw new BadRequestException(
+          `Quantity for variant combination ${key} was provided more than once`,
+        );
+      }
+      quantityByKey.set(key, quantity);
+    }
+
+    const expectedKeys = new Set(combinations.map(({ key }) => key));
+    const unexpectedKeys = [...quantityByKey.keys()].filter(
+      (key) => !expectedKeys.has(key),
+    );
+    if (unexpectedKeys.length) {
+      throw new BadRequestException(
+        `Quantities contain invalid variant combinations: ${unexpectedKeys.join(', ')}`,
+      );
+    }
+
+    const missingKeys = combinations
+      .map(({ key }) => key)
+      .filter((key) => !quantityByKey.has(key));
+    if (missingKeys.length) {
+      throw new BadRequestException(
+        `Quantities are required for variant combinations: ${missingKeys.join(', ')}`,
+      );
+    }
+
+    return quantityByKey;
   }
 
   private validateCategoryAssignments(
@@ -596,6 +692,23 @@ export class ProductService {
         'Exactly one category must be marked as primary',
       );
     }
+  }
+
+  private createSlug(value: string): string {
+    const slug = value
+      .normalize('NFKD')
+      .toLowerCase()
+      .trim()
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^\p{Letter}\p{Number}]+/gu, '-')
+      .replace(/^-+|-+$/g, '');
+
+    if (!slug) {
+      throw new BadRequestException(
+        'Product name must contain at least one letter or number',
+      );
+    }
+    return slug;
   }
 
   private async ensureProductExists(id: number): Promise<void> {

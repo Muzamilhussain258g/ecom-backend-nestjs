@@ -83,6 +83,16 @@ export type VariantCombinationValue = Prisma.VariantCombinationValueModel
  */
 export type ProductImage = Prisma.ProductImageModel
 /**
+ * Model Media
+ * 
+ */
+export type Media = Prisma.MediaModel
+/**
+ * Model ProductMedia
+ * 
+ */
+export type ProductMedia = Prisma.ProductMediaModel
+/**
  * Model WishList
  * 
  */

@@ -43,11 +43,11 @@ export class ProductController {
     return this.productService.findAll(dto);
   }
 
-  @Get(':id')
+  @Get(':slug')
   @HttpCode(HttpStatus.OK)
   @ResponseMessage('Product fetched successfully')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.productService.findOne(id);
+  findOne(@Param('slug') slug: string) {
+    return this.productService.findOne(slug);
   }
 
   // Product writes are restricted to authenticated admins and sellers.

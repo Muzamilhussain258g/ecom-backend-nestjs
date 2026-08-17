@@ -6,6 +6,7 @@ import { VariantService } from './variant.service';
 describe('VariantService', () => {
   let service: VariantService;
   let prisma: {
+    $transaction: jest.Mock;
     variantType: {
       findMany: jest.Mock;
       findUnique: jest.Mock;
@@ -14,15 +15,21 @@ describe('VariantService', () => {
       delete: jest.Mock;
     };
     variantValue: {
+      findMany: jest.Mock;
       findUnique: jest.Mock;
       create: jest.Mock;
       update: jest.Mock;
       delete: jest.Mock;
+      deleteMany: jest.Mock;
     };
   };
 
   beforeEach(() => {
     prisma = {
+      $transaction: jest.fn(
+        (callback: (client: typeof prisma) => unknown): unknown =>
+          callback(prisma),
+      ),
       variantType: {
         findMany: jest.fn(),
         findUnique: jest.fn(),
@@ -31,10 +38,12 @@ describe('VariantService', () => {
         delete: jest.fn(),
       },
       variantValue: {
+        findMany: jest.fn(),
         findUnique: jest.fn(),
         create: jest.fn(),
         update: jest.fn(),
         delete: jest.fn(),
+        deleteMany: jest.fn(),
       },
     };
     service = new VariantService(prisma as unknown as PrismaService);
@@ -51,6 +60,54 @@ describe('VariantService', () => {
         values: { orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }] },
       },
     });
+  });
+
+  it('lists all values ordered by type and value sort order', async () => {
+    const values = [{ id: 20, value: 'Blue', variantType: { id: 1 } }];
+    prisma.variantValue.findMany.mockResolvedValue(values);
+
+    await expect(service.findAllValues()).resolves.toBe(values);
+    expect(prisma.variantValue.findMany).toHaveBeenCalledWith({
+      orderBy: [
+        { variantType: { sortOrder: 'asc' } },
+        { sortOrder: 'asc' },
+        { id: 'asc' },
+      ],
+      include: { variantType: true },
+    });
+  });
+
+  it('lists values belonging to one variant type', async () => {
+    const values = [{ id: 20, value: 'Blue', variantTypeId: 1 }];
+    prisma.variantType.findUnique.mockResolvedValue({ id: 1 });
+    prisma.variantValue.findMany.mockResolvedValue(values);
+
+    await expect(service.findValuesByType(1)).resolves.toBe(values);
+    expect(prisma.variantValue.findMany).toHaveBeenCalledWith({
+      where: { variantTypeId: 1 },
+      orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
+      include: { variantType: true },
+    });
+  });
+
+  it('returns not found when listing values for a missing type', async () => {
+    prisma.variantType.findUnique.mockResolvedValue(null);
+
+    await expect(service.findValuesByType(99)).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
+    expect(prisma.variantValue.findMany).not.toHaveBeenCalled();
+  });
+
+  it('deletes all values belonging to one variant type', async () => {
+    prisma.variantType.findUnique.mockResolvedValue({ id: 1 });
+    prisma.variantValue.deleteMany.mockResolvedValue({ count: 3 });
+
+    await expect(service.removeValuesByType(1)).resolves.toEqual({ count: 3 });
+    expect(prisma.variantValue.deleteMany).toHaveBeenCalledWith({
+      where: { variantTypeId: 1 },
+    });
+    expect(prisma.variantType.delete).not.toHaveBeenCalled();
   });
 
   it('creates a normalized variant type slug', async () => {
@@ -116,5 +173,20 @@ describe('VariantService', () => {
     await expect(service.removeValue(20)).rejects.toBeInstanceOf(
       ConflictException,
     );
+  });
+
+  it('deletes a variant type together with all of its values', async () => {
+    const deletedType = { id: 1, name: 'Color' };
+    prisma.variantType.findUnique.mockResolvedValue({ id: 1 });
+    prisma.variantValue.deleteMany.mockResolvedValue({ count: 2 });
+    prisma.variantType.delete.mockResolvedValue(deletedType);
+
+    await expect(service.removeType(1)).resolves.toBe(deletedType);
+    expect(prisma.variantValue.deleteMany).toHaveBeenCalledWith({
+      where: { variantTypeId: 1 },
+    });
+    expect(prisma.variantType.delete).toHaveBeenCalledWith({
+      where: { id: 1 },
+    });
   });
 });
