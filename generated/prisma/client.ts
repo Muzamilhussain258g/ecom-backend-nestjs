@@ -100,20 +100,35 @@ export type Variant = Prisma.VariantModel
  */
 export type VariantCombinationValue = Prisma.VariantCombinationValueModel
 /**
- * Model ProductImage
- * 
- */
-export type ProductImage = Prisma.ProductImageModel
-/**
  * Model Media
  * 
  */
 export type Media = Prisma.MediaModel
 /**
  * Model ProductMedia
- * 
+ *
  */
 export type ProductMedia = Prisma.ProductMediaModel
+/**
+ * Model CategoryMedia
+ *
+ */
+export type CategoryMedia = Prisma.CategoryMediaModel
+/**
+ * Model Collection
+ *
+ */
+export type Collection = Prisma.CollectionModel
+/**
+ * Model CollectionMedia
+ *
+ */
+export type CollectionMedia = Prisma.CollectionMediaModel
+/**
+ * Model CollectionProduct
+ *
+ */
+export type CollectionProduct = Prisma.CollectionProductModel
 /**
  * Model WishList
  * 

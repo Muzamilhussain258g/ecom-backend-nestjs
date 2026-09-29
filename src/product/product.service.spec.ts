@@ -1,6 +1,7 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { ProductService } from './product.service';
+import { MediaService } from '@/media/media.service';
 
 type ModelMock<T extends string> = Record<T, jest.Mock>;
 type PrismaMock = {
@@ -32,6 +33,17 @@ describe('ProductService', () => {
     hasVariants: false,
     stock: 12,
     categories: [{ categoryId: 3, isPrimary: true }],
+    media: [
+      {
+        providerPublicId: 'ecommerce/product/test-image',
+        providerAssetId: 'asset-1',
+        version: 1,
+        signature: 'verified',
+        format: 'webp',
+        isPrimary: true,
+        position: 0,
+      },
+    ],
   };
 
   let service: ProductService;
@@ -79,7 +91,17 @@ describe('ProductService', () => {
       }
       return Promise.resolve(input);
     });
-    service = new ProductService(prisma as unknown as PrismaService);
+    const mediaService = {
+      toMediaCreateInput: jest.fn(() => ({
+        providerPublicId: 'ecommerce/product/test-image',
+        url: 'https://res.cloudinary.com/demo/image/upload/test-image.webp',
+        format: 'webp',
+      })),
+    } as unknown as MediaService;
+    service = new ProductService(
+      prisma as unknown as PrismaService,
+      mediaService,
+    );
   });
 
   it('creates a default sellable variant for a simple product', async () => {
@@ -179,6 +201,7 @@ describe('ProductService', () => {
       basePrice: 700,
       hasVariants: true,
       categories: [{ categoryId: 2, isPrimary: true }],
+      media: baseDto.media,
       variantSelections: [
         { variantTypeId: 1, variantValueIds: [1, 2, 3] },
         { variantTypeId: 2, variantValueIds: [5, 6] },

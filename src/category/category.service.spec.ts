@@ -123,6 +123,7 @@ describe('CategoryService', () => {
           slug: true,
           parentId: true,
           _count: { select: { productCategories: true } },
+          media: { include: { media: true } },
           children: {
             orderBy: [{ categoryName: 'asc' }, { id: 'asc' }],
             select: {
@@ -131,6 +132,7 @@ describe('CategoryService', () => {
               slug: true,
               parentId: true,
               _count: { select: { productCategories: true } },
+              media: { include: { media: true } },
             },
           },
         },
@@ -181,6 +183,7 @@ describe('CategoryService', () => {
           slug: true,
           parentId: true,
           _count: { select: { productCategories: true } },
+          media: { include: { media: true } },
         },
       });
       expect(result.slug).toBe('mobile-phones');

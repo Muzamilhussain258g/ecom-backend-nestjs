@@ -19,9 +19,10 @@ const wishlistProductSelect = {
     take: 1,
     select: {
       id: true,
-      productImageUrl: true,
-      imageId: true,
       isPrimary: true,
+      position: true,
+      altText: true,
+      media: true,
       variantValue: { select: { id: true, value: true, code: true } },
     },
   },

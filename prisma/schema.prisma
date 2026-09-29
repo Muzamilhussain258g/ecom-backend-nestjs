@@ -49,6 +49,7 @@ model Category {
 
   // products Product[]
   productCategories ProductCategory[]
+  media             CategoryMedia?
 
   @@unique([parentId, categoryName])
   @@unique([parentId, slug])
@@ -83,8 +84,8 @@ model Product {
   variantTypes      ProductVariantType[]
   variantValues     ProductVariantValue[]
   variants          Variant[]
-  images            ProductImage[]
-  media             ProductMedia[]
+  images            ProductMedia[]
+  collections       CollectionProduct[]
 }
 
 model Review {
@@ -120,7 +121,7 @@ model VariantValue {
 
   products          ProductVariantValue[]
   combinationValues VariantCombinationValue[]
-  productImages     ProductImage[]
+  productMedia      ProductMedia[]
 
   @@unique([variantTypeId, code])
   @@index([variantTypeId])
@@ -140,11 +141,11 @@ model ProductVariantType {
 
 // this is for assigning the value to the product variant types eg: product1 has color=blue,red, size=small,large, material=cotton,polyester, etc 
 model ProductVariantValue {
-  id             Int            @id @default(autoincrement())
+  id             Int          @id @default(autoincrement())
   productId      Int
   variantValueId Int
-  product        Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
-  variantValue   VariantValue   @relation(fields: [variantValueId], references: [id], onDelete: Restrict)
+  product        Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variantValue   VariantValue @relation(fields: [variantValueId], references: [id], onDelete: Restrict)
 
   @@unique([productId, variantValueId])
   @@index([variantValueId])
@@ -179,22 +180,9 @@ model VariantCombinationValue {
   @@index([variantValueId])
 }
 
-model ProductImage {
-  id              Int           @id @default(autoincrement())
-  productId       Int
-  variantValueId  Int?
-  productImageUrl String
-  imageId         String
-  isPrimary       Boolean
-  product         Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
-  variantValue    VariantValue? @relation(fields: [variantValueId], references: [id], onDelete: Restrict)
-
-  @@index([productId])
-  @@index([variantValueId])
-}
-
 model Media {
   id               Int      @id @default(autoincrement())
+  providerAssetId  String?  @unique
   providerPublicId String   @unique
   url              String
   format           String?
@@ -204,23 +192,75 @@ model Media {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  products ProductMedia[]
+  products    ProductMedia[]
+  categories  CategoryMedia[]
+  collections CollectionMedia[]
 }
 
 model ProductMedia {
-  id        Int     @id @default(autoincrement())
-  productId Int
-  mediaId   Int
-  isPrimary Boolean @default(false)
-  position  Int     @default(0)
-  altText   String?
+  id             Int     @id @default(autoincrement())
+  productId      Int
+  mediaId        Int
+  isPrimary      Boolean @default(false)
+  position       Int     @default(0)
+  altText        String?
+  variantValueId Int?
 
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  media   Media   @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+  product      Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  media        Media         @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+  variantValue VariantValue? @relation(fields: [variantValueId], references: [id], onDelete: Restrict)
 
   @@unique([productId, mediaId])
   @@index([productId, position])
   @@index([mediaId])
+  @@index([variantValueId])
+}
+
+model CategoryMedia {
+  id         Int      @id @default(autoincrement())
+  categoryId Int      @unique
+  mediaId    Int
+  altText    String?
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  media      Media    @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+
+  @@index([mediaId])
+}
+
+model Collection {
+  id          Int                 @id @default(autoincrement())
+  name        String
+  slug        String              @unique
+  description String?
+  isActive    Boolean             @default(true)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  media       CollectionMedia?
+  products    CollectionProduct[]
+}
+
+model CollectionMedia {
+  id           Int        @id @default(autoincrement())
+  collectionId Int        @unique
+  mediaId      Int
+  altText      String?
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  media        Media      @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+
+  @@index([mediaId])
+}
+
+model CollectionProduct {
+  id           Int        @id @default(autoincrement())
+  collectionId Int
+  productId    Int
+  position     Int        @default(0)
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([collectionId, productId])
+  @@index([productId])
+  @@index([collectionId, position])
 }
 
 model WishList {

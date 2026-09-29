@@ -7,6 +7,8 @@ import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
 import { VariantModule } from './variant/variant.module';
 import { WishlistModule } from './wishlist/wishlist.module';
+import { MediaModule } from './media/media.module';
+import { CollectionModule } from './collection/collection.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { WishlistModule } from './wishlist/wishlist.module';
     ProductModule,
     VariantModule,
     WishlistModule,
+    MediaModule,
+    CollectionModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),

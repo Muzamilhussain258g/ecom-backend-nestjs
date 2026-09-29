@@ -15,6 +15,7 @@ import { GetAllProductsDto } from './dto/get-all-products.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { UpdateVariantDto } from './dto/update-variant.dto';
 import { UpdateVariantOptionsDto } from './dto/update-variant-options.dto';
+import { MediaService } from '@/media/media.service';
 
 const categoryAssignments = {
   orderBy: [{ isPrimary: 'desc' }, { id: 'asc' }],
@@ -50,9 +51,10 @@ const productInclude = {
     take: 1,
     select: {
       id: true,
-      productImageUrl: true,
-      imageId: true,
       isPrimary: true,
+      position: true,
+      altText: true,
+      media: true,
       variantValue: { select: variantValueSelect },
     },
   },
@@ -114,9 +116,10 @@ const productDetailSelect = {
     orderBy: [{ isPrimary: 'desc' }, { id: 'asc' }],
     select: {
       id: true,
-      productImageUrl: true,
-      imageId: true,
       isPrimary: true,
+      position: true,
+      altText: true,
+      media: true,
       variantValue: { select: variantValueSelect },
     },
   },
@@ -155,7 +158,10 @@ export interface ProductListResult {
 
 @Injectable()
 export class ProductService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly mediaService: MediaService,
+  ) {}
 
   async create(dto: CreateProductDto) {
     const categoryIds = dto.categories.map(({ categoryId }) => categoryId);
@@ -166,6 +172,12 @@ export class ProductService {
       dto.hasVariants,
       dto.variantSelections,
     );
+    this.validateProductMedia(dto, selections);
+    // Verify every Cloudinary proof before opening the database transaction.
+    const verifiedMedia = dto.media.map((item) => ({
+      association: item,
+      media: this.mediaService.toMediaCreateInput(item),
+    }));
     const combinations = this.buildCombinations(selections);
     const quantities = this.prepareVariantQuantities(
       dto.hasVariants,
@@ -199,6 +211,18 @@ export class ProductService {
                   variantValue: { connect: { id } },
                 })),
               ),
+            },
+            images: {
+              create: verifiedMedia.map(({ association, media }) => ({
+                isPrimary: association.isPrimary,
+                position: association.position,
+                altText: association.altText,
+                variantValue:
+                  association.variantValueId === undefined
+                    ? undefined
+                    : { connect: { id: association.variantValueId } },
+                media: { create: media },
+              })),
             },
           },
         });
@@ -690,6 +714,40 @@ export class ProductService {
     if (primaryCount !== 1) {
       throw new BadRequestException(
         'Exactly one category must be marked as primary',
+      );
+    }
+  }
+
+  private validateProductMedia(
+    dto: CreateProductDto,
+    selections: ValidatedSelection[],
+  ): void {
+    const publicIds = dto.media.map(({ providerPublicId }) => providerPublicId);
+    if (new Set(publicIds).size !== publicIds.length) {
+      throw new BadRequestException('Product media must be unique');
+    }
+
+    const positions = dto.media.map(({ position }) => position);
+    if (new Set(positions).size !== positions.length) {
+      throw new BadRequestException('Product media positions must be unique');
+    }
+
+    if (dto.media.filter(({ isPrimary }) => isPrimary).length !== 1) {
+      throw new BadRequestException(
+        'Exactly one product image must be marked as primary',
+      );
+    }
+
+    const selectedValueIds = new Set(
+      selections.flatMap(({ values }) => values.map(({ id }) => id)),
+    );
+    const invalidVariantValue = dto.media.find(
+      ({ variantValueId }) =>
+        variantValueId !== undefined && !selectedValueIds.has(variantValueId),
+    );
+    if (invalidVariantValue) {
+      throw new BadRequestException(
+        'A media variant value is not assigned to this product',
       );
     }
   }

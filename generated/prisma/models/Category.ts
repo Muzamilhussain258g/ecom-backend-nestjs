@@ -215,6 +215,7 @@ export type CategoryWhereInput = {
   parent?: Prisma.XOR<Prisma.CategoryNullableScalarRelationFilter, Prisma.CategoryWhereInput> | null
   children?: Prisma.CategoryListRelationFilter
   productCategories?: Prisma.ProductCategoryListRelationFilter
+  media?: Prisma.XOR<Prisma.CategoryMediaNullableScalarRelationFilter, Prisma.CategoryMediaWhereInput> | null
 }
 
 export type CategoryOrderByWithRelationInput = {
@@ -225,6 +226,7 @@ export type CategoryOrderByWithRelationInput = {
   parent?: Prisma.CategoryOrderByWithRelationInput
   children?: Prisma.CategoryOrderByRelationAggregateInput
   productCategories?: Prisma.ProductCategoryOrderByRelationAggregateInput
+  media?: Prisma.CategoryMediaOrderByWithRelationInput
 }
 
 export type CategoryWhereUniqueInput = Prisma.AtLeast<{
@@ -240,6 +242,7 @@ export type CategoryWhereUniqueInput = Prisma.AtLeast<{
   parent?: Prisma.XOR<Prisma.CategoryNullableScalarRelationFilter, Prisma.CategoryWhereInput> | null
   children?: Prisma.CategoryListRelationFilter
   productCategories?: Prisma.ProductCategoryListRelationFilter
+  media?: Prisma.XOR<Prisma.CategoryMediaNullableScalarRelationFilter, Prisma.CategoryMediaWhereInput> | null
 }, "id" | "parentId_categoryName" | "parentId_slug">
 
 export type CategoryOrderByWithAggregationInput = {
@@ -270,6 +273,7 @@ export type CategoryCreateInput = {
   parent?: Prisma.CategoryCreateNestedOneWithoutChildrenInput
   children?: Prisma.CategoryCreateNestedManyWithoutParentInput
   productCategories?: Prisma.ProductCategoryCreateNestedManyWithoutCategoryInput
+  media?: Prisma.CategoryMediaCreateNestedOneWithoutCategoryInput
 }
 
 export type CategoryUncheckedCreateInput = {
@@ -279,6 +283,7 @@ export type CategoryUncheckedCreateInput = {
   parentId?: number | null
   children?: Prisma.CategoryUncheckedCreateNestedManyWithoutParentInput
   productCategories?: Prisma.ProductCategoryUncheckedCreateNestedManyWithoutCategoryInput
+  media?: Prisma.CategoryMediaUncheckedCreateNestedOneWithoutCategoryInput
 }
 
 export type CategoryUpdateInput = {
@@ -287,6 +292,7 @@ export type CategoryUpdateInput = {
   parent?: Prisma.CategoryUpdateOneWithoutChildrenNestedInput
   children?: Prisma.CategoryUpdateManyWithoutParentNestedInput
   productCategories?: Prisma.ProductCategoryUpdateManyWithoutCategoryNestedInput
+  media?: Prisma.CategoryMediaUpdateOneWithoutCategoryNestedInput
 }
 
 export type CategoryUncheckedUpdateInput = {
@@ -296,6 +302,7 @@ export type CategoryUncheckedUpdateInput = {
   parentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   children?: Prisma.CategoryUncheckedUpdateManyWithoutParentNestedInput
   productCategories?: Prisma.ProductCategoryUncheckedUpdateManyWithoutCategoryNestedInput
+  media?: Prisma.CategoryMediaUncheckedUpdateOneWithoutCategoryNestedInput
 }
 
 export type CategoryCreateManyInput = {
@@ -458,11 +465,26 @@ export type CategoryUpdateOneRequiredWithoutProductCategoriesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CategoryUpdateToOneWithWhereWithoutProductCategoriesInput, Prisma.CategoryUpdateWithoutProductCategoriesInput>, Prisma.CategoryUncheckedUpdateWithoutProductCategoriesInput>
 }
 
+export type CategoryCreateNestedOneWithoutMediaInput = {
+  create?: Prisma.XOR<Prisma.CategoryCreateWithoutMediaInput, Prisma.CategoryUncheckedCreateWithoutMediaInput>
+  connectOrCreate?: Prisma.CategoryCreateOrConnectWithoutMediaInput
+  connect?: Prisma.CategoryWhereUniqueInput
+}
+
+export type CategoryUpdateOneRequiredWithoutMediaNestedInput = {
+  create?: Prisma.XOR<Prisma.CategoryCreateWithoutMediaInput, Prisma.CategoryUncheckedCreateWithoutMediaInput>
+  connectOrCreate?: Prisma.CategoryCreateOrConnectWithoutMediaInput
+  upsert?: Prisma.CategoryUpsertWithoutMediaInput
+  connect?: Prisma.CategoryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CategoryUpdateToOneWithWhereWithoutMediaInput, Prisma.CategoryUpdateWithoutMediaInput>, Prisma.CategoryUncheckedUpdateWithoutMediaInput>
+}
+
 export type CategoryCreateWithoutChildrenInput = {
   categoryName: string
   slug: string
   parent?: Prisma.CategoryCreateNestedOneWithoutChildrenInput
   productCategories?: Prisma.ProductCategoryCreateNestedManyWithoutCategoryInput
+  media?: Prisma.CategoryMediaCreateNestedOneWithoutCategoryInput
 }
 
 export type CategoryUncheckedCreateWithoutChildrenInput = {
@@ -471,6 +493,7 @@ export type CategoryUncheckedCreateWithoutChildrenInput = {
   slug: string
   parentId?: number | null
   productCategories?: Prisma.ProductCategoryUncheckedCreateNestedManyWithoutCategoryInput
+  media?: Prisma.CategoryMediaUncheckedCreateNestedOneWithoutCategoryInput
 }
 
 export type CategoryCreateOrConnectWithoutChildrenInput = {
@@ -483,6 +506,7 @@ export type CategoryCreateWithoutParentInput = {
   slug: string
   children?: Prisma.CategoryCreateNestedManyWithoutParentInput
   productCategories?: Prisma.ProductCategoryCreateNestedManyWithoutCategoryInput
+  media?: Prisma.CategoryMediaCreateNestedOneWithoutCategoryInput
 }
 
 export type CategoryUncheckedCreateWithoutParentInput = {
@@ -491,6 +515,7 @@ export type CategoryUncheckedCreateWithoutParentInput = {
   slug: string
   children?: Prisma.CategoryUncheckedCreateNestedManyWithoutParentInput
   productCategories?: Prisma.ProductCategoryUncheckedCreateNestedManyWithoutCategoryInput
+  media?: Prisma.CategoryMediaUncheckedCreateNestedOneWithoutCategoryInput
 }
 
 export type CategoryCreateOrConnectWithoutParentInput = {
@@ -519,6 +544,7 @@ export type CategoryUpdateWithoutChildrenInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   parent?: Prisma.CategoryUpdateOneWithoutChildrenNestedInput
   productCategories?: Prisma.ProductCategoryUpdateManyWithoutCategoryNestedInput
+  media?: Prisma.CategoryMediaUpdateOneWithoutCategoryNestedInput
 }
 
 export type CategoryUncheckedUpdateWithoutChildrenInput = {
@@ -527,6 +553,7 @@ export type CategoryUncheckedUpdateWithoutChildrenInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   parentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   productCategories?: Prisma.ProductCategoryUncheckedUpdateManyWithoutCategoryNestedInput
+  media?: Prisma.CategoryMediaUncheckedUpdateOneWithoutCategoryNestedInput
 }
 
 export type CategoryUpsertWithWhereUniqueWithoutParentInput = {
@@ -560,6 +587,7 @@ export type CategoryCreateWithoutProductCategoriesInput = {
   slug: string
   parent?: Prisma.CategoryCreateNestedOneWithoutChildrenInput
   children?: Prisma.CategoryCreateNestedManyWithoutParentInput
+  media?: Prisma.CategoryMediaCreateNestedOneWithoutCategoryInput
 }
 
 export type CategoryUncheckedCreateWithoutProductCategoriesInput = {
@@ -568,6 +596,7 @@ export type CategoryUncheckedCreateWithoutProductCategoriesInput = {
   slug: string
   parentId?: number | null
   children?: Prisma.CategoryUncheckedCreateNestedManyWithoutParentInput
+  media?: Prisma.CategoryMediaUncheckedCreateNestedOneWithoutCategoryInput
 }
 
 export type CategoryCreateOrConnectWithoutProductCategoriesInput = {
@@ -591,6 +620,7 @@ export type CategoryUpdateWithoutProductCategoriesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   parent?: Prisma.CategoryUpdateOneWithoutChildrenNestedInput
   children?: Prisma.CategoryUpdateManyWithoutParentNestedInput
+  media?: Prisma.CategoryMediaUpdateOneWithoutCategoryNestedInput
 }
 
 export type CategoryUncheckedUpdateWithoutProductCategoriesInput = {
@@ -599,6 +629,57 @@ export type CategoryUncheckedUpdateWithoutProductCategoriesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   parentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   children?: Prisma.CategoryUncheckedUpdateManyWithoutParentNestedInput
+  media?: Prisma.CategoryMediaUncheckedUpdateOneWithoutCategoryNestedInput
+}
+
+export type CategoryCreateWithoutMediaInput = {
+  categoryName: string
+  slug: string
+  parent?: Prisma.CategoryCreateNestedOneWithoutChildrenInput
+  children?: Prisma.CategoryCreateNestedManyWithoutParentInput
+  productCategories?: Prisma.ProductCategoryCreateNestedManyWithoutCategoryInput
+}
+
+export type CategoryUncheckedCreateWithoutMediaInput = {
+  id?: number
+  categoryName: string
+  slug: string
+  parentId?: number | null
+  children?: Prisma.CategoryUncheckedCreateNestedManyWithoutParentInput
+  productCategories?: Prisma.ProductCategoryUncheckedCreateNestedManyWithoutCategoryInput
+}
+
+export type CategoryCreateOrConnectWithoutMediaInput = {
+  where: Prisma.CategoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.CategoryCreateWithoutMediaInput, Prisma.CategoryUncheckedCreateWithoutMediaInput>
+}
+
+export type CategoryUpsertWithoutMediaInput = {
+  update: Prisma.XOR<Prisma.CategoryUpdateWithoutMediaInput, Prisma.CategoryUncheckedUpdateWithoutMediaInput>
+  create: Prisma.XOR<Prisma.CategoryCreateWithoutMediaInput, Prisma.CategoryUncheckedCreateWithoutMediaInput>
+  where?: Prisma.CategoryWhereInput
+}
+
+export type CategoryUpdateToOneWithWhereWithoutMediaInput = {
+  where?: Prisma.CategoryWhereInput
+  data: Prisma.XOR<Prisma.CategoryUpdateWithoutMediaInput, Prisma.CategoryUncheckedUpdateWithoutMediaInput>
+}
+
+export type CategoryUpdateWithoutMediaInput = {
+  categoryName?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  parent?: Prisma.CategoryUpdateOneWithoutChildrenNestedInput
+  children?: Prisma.CategoryUpdateManyWithoutParentNestedInput
+  productCategories?: Prisma.ProductCategoryUpdateManyWithoutCategoryNestedInput
+}
+
+export type CategoryUncheckedUpdateWithoutMediaInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryName?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  parentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  children?: Prisma.CategoryUncheckedUpdateManyWithoutParentNestedInput
+  productCategories?: Prisma.ProductCategoryUncheckedUpdateManyWithoutCategoryNestedInput
 }
 
 export type CategoryCreateManyParentInput = {
@@ -612,6 +693,7 @@ export type CategoryUpdateWithoutParentInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   children?: Prisma.CategoryUpdateManyWithoutParentNestedInput
   productCategories?: Prisma.ProductCategoryUpdateManyWithoutCategoryNestedInput
+  media?: Prisma.CategoryMediaUpdateOneWithoutCategoryNestedInput
 }
 
 export type CategoryUncheckedUpdateWithoutParentInput = {
@@ -620,6 +702,7 @@ export type CategoryUncheckedUpdateWithoutParentInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   children?: Prisma.CategoryUncheckedUpdateManyWithoutParentNestedInput
   productCategories?: Prisma.ProductCategoryUncheckedUpdateManyWithoutCategoryNestedInput
+  media?: Prisma.CategoryMediaUncheckedUpdateOneWithoutCategoryNestedInput
 }
 
 export type CategoryUncheckedUpdateManyWithoutParentInput = {
@@ -676,6 +759,7 @@ export type CategorySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   parent?: boolean | Prisma.Category$parentArgs<ExtArgs>
   children?: boolean | Prisma.Category$childrenArgs<ExtArgs>
   productCategories?: boolean | Prisma.Category$productCategoriesArgs<ExtArgs>
+  media?: boolean | Prisma.Category$mediaArgs<ExtArgs>
   _count?: boolean | Prisma.CategoryCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["category"]>
 
@@ -707,6 +791,7 @@ export type CategoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   parent?: boolean | Prisma.Category$parentArgs<ExtArgs>
   children?: boolean | Prisma.Category$childrenArgs<ExtArgs>
   productCategories?: boolean | Prisma.Category$productCategoriesArgs<ExtArgs>
+  media?: boolean | Prisma.Category$mediaArgs<ExtArgs>
   _count?: boolean | Prisma.CategoryCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CategoryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -722,6 +807,7 @@ export type $CategoryPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     parent: Prisma.$CategoryPayload<ExtArgs> | null
     children: Prisma.$CategoryPayload<ExtArgs>[]
     productCategories: Prisma.$ProductCategoryPayload<ExtArgs>[]
+    media: Prisma.$CategoryMediaPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1125,6 +1211,7 @@ export interface Prisma__CategoryClient<T, Null = never, ExtArgs extends runtime
   parent<T extends Prisma.Category$parentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Category$parentArgs<ExtArgs>>): Prisma.Prisma__CategoryClient<runtime.Types.Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   children<T extends Prisma.Category$childrenArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Category$childrenArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   productCategories<T extends Prisma.Category$productCategoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Category$productCategoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  media<T extends Prisma.Category$mediaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Category$mediaArgs<ExtArgs>>): Prisma.Prisma__CategoryMediaClient<runtime.Types.Result.GetResult<Prisma.$CategoryMediaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1623,6 +1710,25 @@ export type Category$productCategoriesArgs<ExtArgs extends runtime.Types.Extensi
   take?: number
   skip?: number
   distinct?: Prisma.ProductCategoryScalarFieldEnum | Prisma.ProductCategoryScalarFieldEnum[]
+}
+
+/**
+ * Category.media
+ */
+export type Category$mediaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CategoryMedia
+   */
+  select?: Prisma.CategoryMediaSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CategoryMedia
+   */
+  omit?: Prisma.CategoryMediaOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CategoryMediaInclude<ExtArgs> | null
+  where?: Prisma.CategoryMediaWhereInput
 }
 
 /**

@@ -6,7 +6,16 @@ import {
   IsString,
   MaxLength,
   Min,
+  ValidateNested,
 } from 'class-validator';
+import { UploadedMediaDto } from '@/media/dto/uploaded-media.dto';
+
+export class CreateCategoryImageDto extends UploadedMediaDto {
+  @IsOptional()
+  @IsString()
+  @MaxLength(250)
+  altText?: string;
+}
 
 export class CreateCategoryDto {
   @Transform(({ value }: { value: unknown }) =>
@@ -22,4 +31,9 @@ export class CreateCategoryDto {
   @IsInt()
   @Min(1)
   parentId?: number;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CreateCategoryImageDto)
+  image?: CreateCategoryImageDto;
 }

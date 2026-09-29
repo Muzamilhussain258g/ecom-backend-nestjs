@@ -63,9 +63,12 @@ export const ModelName = {
   ProductVariantValue: 'ProductVariantValue',
   Variant: 'Variant',
   VariantCombinationValue: 'VariantCombinationValue',
-  ProductImage: 'ProductImage',
   Media: 'Media',
   ProductMedia: 'ProductMedia',
+  CategoryMedia: 'CategoryMedia',
+  Collection: 'Collection',
+  CollectionMedia: 'CollectionMedia',
+  CollectionProduct: 'CollectionProduct',
   WishList: 'WishList',
   Cart: 'Cart',
   CartItem: 'CartItem',
@@ -226,20 +229,9 @@ export const VariantCombinationValueScalarFieldEnum = {
 export type VariantCombinationValueScalarFieldEnum = (typeof VariantCombinationValueScalarFieldEnum)[keyof typeof VariantCombinationValueScalarFieldEnum]
 
 
-export const ProductImageScalarFieldEnum = {
-  id: 'id',
-  productId: 'productId',
-  variantValueId: 'variantValueId',
-  productImageUrl: 'productImageUrl',
-  imageId: 'imageId',
-  isPrimary: 'isPrimary'
-} as const
-
-export type ProductImageScalarFieldEnum = (typeof ProductImageScalarFieldEnum)[keyof typeof ProductImageScalarFieldEnum]
-
-
 export const MediaScalarFieldEnum = {
   id: 'id',
+  providerAssetId: 'providerAssetId',
   providerPublicId: 'providerPublicId',
   url: 'url',
   format: 'format',
@@ -259,10 +251,54 @@ export const ProductMediaScalarFieldEnum = {
   mediaId: 'mediaId',
   isPrimary: 'isPrimary',
   position: 'position',
-  altText: 'altText'
+  altText: 'altText',
+  variantValueId: 'variantValueId'
 } as const
 
 export type ProductMediaScalarFieldEnum = (typeof ProductMediaScalarFieldEnum)[keyof typeof ProductMediaScalarFieldEnum]
+
+
+export const CategoryMediaScalarFieldEnum = {
+  id: 'id',
+  categoryId: 'categoryId',
+  mediaId: 'mediaId',
+  altText: 'altText'
+} as const
+
+export type CategoryMediaScalarFieldEnum = (typeof CategoryMediaScalarFieldEnum)[keyof typeof CategoryMediaScalarFieldEnum]
+
+
+export const CollectionScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CollectionScalarFieldEnum = (typeof CollectionScalarFieldEnum)[keyof typeof CollectionScalarFieldEnum]
+
+
+export const CollectionMediaScalarFieldEnum = {
+  id: 'id',
+  collectionId: 'collectionId',
+  mediaId: 'mediaId',
+  altText: 'altText'
+} as const
+
+export type CollectionMediaScalarFieldEnum = (typeof CollectionMediaScalarFieldEnum)[keyof typeof CollectionMediaScalarFieldEnum]
+
+
+export const CollectionProductScalarFieldEnum = {
+  id: 'id',
+  collectionId: 'collectionId',
+  productId: 'productId',
+  position: 'position'
+} as const
+
+export type CollectionProductScalarFieldEnum = (typeof CollectionProductScalarFieldEnum)[keyof typeof CollectionProductScalarFieldEnum]
 
 
 export const WishListScalarFieldEnum = {

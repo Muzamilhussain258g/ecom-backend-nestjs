@@ -1,6 +1,7 @@
 import { Transform, Type } from 'class-transformer';
 import {
   ArrayMinSize,
+  ArrayMaxSize,
   ArrayUnique,
   IsArray,
   IsBoolean,
@@ -13,6 +14,28 @@ import {
   ValidateNested,
   IsOptional,
 } from 'class-validator';
+import { UploadedMediaDto } from '@/media/dto/uploaded-media.dto';
+
+export class CreateProductMediaDto extends UploadedMediaDto {
+  @IsBoolean()
+  isPrimary!: boolean;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  position!: number;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(250)
+  altText?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  variantValueId?: number;
+}
 
 export class ProductCategoryAssignmentDto {
   @Type(() => Number)
@@ -105,4 +128,11 @@ export class CreateProductDto {
   @ValidateNested({ each: true })
   @Type(() => ProductVariantQuantityDto)
   variantQuantities?: ProductVariantQuantityDto[];
+
+  @IsArray()
+  @ArrayMinSize(1)
+  @ArrayMaxSize(10)
+  @ValidateNested({ each: true })
+  @Type(() => CreateProductMediaDto)
+  media!: CreateProductMediaDto[];
 }

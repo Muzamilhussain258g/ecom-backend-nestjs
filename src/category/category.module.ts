@@ -5,9 +5,10 @@ import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { CategoryController } from './category.controller';
 import { CategoryService } from './category.service';
+import { MediaModule } from '@/media/media.module';
 
 @Module({
-  imports: [PrismaModule, JwtModule.register({})],
+  imports: [PrismaModule, JwtModule.register({}), MediaModule],
   controllers: [CategoryController],
   providers: [CategoryService, JwtAuthGuard, RolesGuard],
 })

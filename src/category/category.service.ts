@@ -10,6 +10,7 @@ import { CategoryPaginationDto } from './dto/category-pagination.dto';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoryQueryNode } from './types/category-tree-node.type';
+import { MediaService } from '@/media/media.service';
 
 const categorySummarySelect = {
   id: true,
@@ -21,6 +22,7 @@ const categorySummarySelect = {
       productCategories: true,
     },
   },
+  media: { include: { media: true } },
 } satisfies Prisma.CategorySelect;
 
 type CategorySummaryRecord = Prisma.CategoryGetPayload<{
@@ -45,7 +47,10 @@ export interface CategoryListResult {
 
 @Injectable()
 export class CategoryService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly mediaService: MediaService,
+  ) {}
 
   async findAll({
     parentId,
@@ -122,11 +127,22 @@ export class CategoryService {
     await this.ensureUnique(dto.categoryName, slug, parentId);
 
     try {
+      const image = dto.image
+        ? this.mediaService.toMediaCreateInput(dto.image)
+        : undefined;
       const category = await this.prisma.category.create({
         data: {
           categoryName: dto.categoryName,
           slug,
           parentId,
+          ...(image !== undefined && {
+            media: {
+              create: {
+                altText: dto.image?.altText,
+                media: { create: image },
+              },
+            },
+          }),
         },
         select: categorySummarySelect,
       });

@@ -9,6 +9,17 @@ describe('CreateProductDto', () => {
     description: 'Latest Apple smartphone',
     basePrice: 250000,
     categories: [{ categoryId: 3, isPrimary: true }],
+    media: [
+      {
+        providerPublicId: 'ecommerce/product/test-image',
+        providerAssetId: 'asset-1',
+        version: 1,
+        signature: 'verified',
+        format: 'webp',
+        isPrimary: true,
+        position: 0,
+      },
+    ],
   };
 
   it('accepts and trims a valid payload', async () => {

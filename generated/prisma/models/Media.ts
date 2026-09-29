@@ -42,6 +42,7 @@ export type MediaSumAggregateOutputType = {
 
 export type MediaMinAggregateOutputType = {
   id: number | null
+  providerAssetId: string | null
   providerPublicId: string | null
   url: string | null
   format: string | null
@@ -54,6 +55,7 @@ export type MediaMinAggregateOutputType = {
 
 export type MediaMaxAggregateOutputType = {
   id: number | null
+  providerAssetId: string | null
   providerPublicId: string | null
   url: string | null
   format: string | null
@@ -66,6 +68,7 @@ export type MediaMaxAggregateOutputType = {
 
 export type MediaCountAggregateOutputType = {
   id: number
+  providerAssetId: number
   providerPublicId: number
   url: number
   format: number
@@ -94,6 +97,7 @@ export type MediaSumAggregateInputType = {
 
 export type MediaMinAggregateInputType = {
   id?: true
+  providerAssetId?: true
   providerPublicId?: true
   url?: true
   format?: true
@@ -106,6 +110,7 @@ export type MediaMinAggregateInputType = {
 
 export type MediaMaxAggregateInputType = {
   id?: true
+  providerAssetId?: true
   providerPublicId?: true
   url?: true
   format?: true
@@ -118,6 +123,7 @@ export type MediaMaxAggregateInputType = {
 
 export type MediaCountAggregateInputType = {
   id?: true
+  providerAssetId?: true
   providerPublicId?: true
   url?: true
   format?: true
@@ -217,6 +223,7 @@ export type MediaGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 
 export type MediaGroupByOutputType = {
   id: number
+  providerAssetId: string | null
   providerPublicId: string
   url: string
   format: string | null
@@ -252,6 +259,7 @@ export type MediaWhereInput = {
   OR?: Prisma.MediaWhereInput[]
   NOT?: Prisma.MediaWhereInput | Prisma.MediaWhereInput[]
   id?: Prisma.IntFilter<"Media"> | number
+  providerAssetId?: Prisma.StringNullableFilter<"Media"> | string | null
   providerPublicId?: Prisma.StringFilter<"Media"> | string
   url?: Prisma.StringFilter<"Media"> | string
   format?: Prisma.StringNullableFilter<"Media"> | string | null
@@ -261,10 +269,13 @@ export type MediaWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Media"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Media"> | Date | string
   products?: Prisma.ProductMediaListRelationFilter
+  categories?: Prisma.CategoryMediaListRelationFilter
+  collections?: Prisma.CollectionMediaListRelationFilter
 }
 
 export type MediaOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  providerAssetId?: Prisma.SortOrderInput | Prisma.SortOrder
   providerPublicId?: Prisma.SortOrder
   url?: Prisma.SortOrder
   format?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -274,10 +285,13 @@ export type MediaOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   products?: Prisma.ProductMediaOrderByRelationAggregateInput
+  categories?: Prisma.CategoryMediaOrderByRelationAggregateInput
+  collections?: Prisma.CollectionMediaOrderByRelationAggregateInput
 }
 
 export type MediaWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  providerAssetId?: string
   providerPublicId?: string
   AND?: Prisma.MediaWhereInput | Prisma.MediaWhereInput[]
   OR?: Prisma.MediaWhereInput[]
@@ -290,10 +304,13 @@ export type MediaWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Media"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Media"> | Date | string
   products?: Prisma.ProductMediaListRelationFilter
-}, "id" | "providerPublicId">
+  categories?: Prisma.CategoryMediaListRelationFilter
+  collections?: Prisma.CollectionMediaListRelationFilter
+}, "id" | "providerAssetId" | "providerPublicId">
 
 export type MediaOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  providerAssetId?: Prisma.SortOrderInput | Prisma.SortOrder
   providerPublicId?: Prisma.SortOrder
   url?: Prisma.SortOrder
   format?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -314,6 +331,7 @@ export type MediaScalarWhereWithAggregatesInput = {
   OR?: Prisma.MediaScalarWhereWithAggregatesInput[]
   NOT?: Prisma.MediaScalarWhereWithAggregatesInput | Prisma.MediaScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Media"> | number
+  providerAssetId?: Prisma.StringNullableWithAggregatesFilter<"Media"> | string | null
   providerPublicId?: Prisma.StringWithAggregatesFilter<"Media"> | string
   url?: Prisma.StringWithAggregatesFilter<"Media"> | string
   format?: Prisma.StringNullableWithAggregatesFilter<"Media"> | string | null
@@ -325,6 +343,7 @@ export type MediaScalarWhereWithAggregatesInput = {
 }
 
 export type MediaCreateInput = {
+  providerAssetId?: string | null
   providerPublicId: string
   url: string
   format?: string | null
@@ -334,10 +353,13 @@ export type MediaCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   products?: Prisma.ProductMediaCreateNestedManyWithoutMediaInput
+  categories?: Prisma.CategoryMediaCreateNestedManyWithoutMediaInput
+  collections?: Prisma.CollectionMediaCreateNestedManyWithoutMediaInput
 }
 
 export type MediaUncheckedCreateInput = {
   id?: number
+  providerAssetId?: string | null
   providerPublicId: string
   url: string
   format?: string | null
@@ -347,9 +369,12 @@ export type MediaUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   products?: Prisma.ProductMediaUncheckedCreateNestedManyWithoutMediaInput
+  categories?: Prisma.CategoryMediaUncheckedCreateNestedManyWithoutMediaInput
+  collections?: Prisma.CollectionMediaUncheckedCreateNestedManyWithoutMediaInput
 }
 
 export type MediaUpdateInput = {
+  providerAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerPublicId?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
   format?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -359,10 +384,13 @@ export type MediaUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   products?: Prisma.ProductMediaUpdateManyWithoutMediaNestedInput
+  categories?: Prisma.CategoryMediaUpdateManyWithoutMediaNestedInput
+  collections?: Prisma.CollectionMediaUpdateManyWithoutMediaNestedInput
 }
 
 export type MediaUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  providerAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerPublicId?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
   format?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -372,10 +400,13 @@ export type MediaUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   products?: Prisma.ProductMediaUncheckedUpdateManyWithoutMediaNestedInput
+  categories?: Prisma.CategoryMediaUncheckedUpdateManyWithoutMediaNestedInput
+  collections?: Prisma.CollectionMediaUncheckedUpdateManyWithoutMediaNestedInput
 }
 
 export type MediaCreateManyInput = {
   id?: number
+  providerAssetId?: string | null
   providerPublicId: string
   url: string
   format?: string | null
@@ -387,6 +418,7 @@ export type MediaCreateManyInput = {
 }
 
 export type MediaUpdateManyMutationInput = {
+  providerAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerPublicId?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
   format?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -399,6 +431,7 @@ export type MediaUpdateManyMutationInput = {
 
 export type MediaUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  providerAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerPublicId?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
   format?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -411,6 +444,7 @@ export type MediaUncheckedUpdateManyInput = {
 
 export type MediaCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  providerAssetId?: Prisma.SortOrder
   providerPublicId?: Prisma.SortOrder
   url?: Prisma.SortOrder
   format?: Prisma.SortOrder
@@ -430,6 +464,7 @@ export type MediaAvgOrderByAggregateInput = {
 
 export type MediaMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  providerAssetId?: Prisma.SortOrder
   providerPublicId?: Prisma.SortOrder
   url?: Prisma.SortOrder
   format?: Prisma.SortOrder
@@ -442,6 +477,7 @@ export type MediaMaxOrderByAggregateInput = {
 
 export type MediaMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  providerAssetId?: Prisma.SortOrder
   providerPublicId?: Prisma.SortOrder
   url?: Prisma.SortOrder
   format?: Prisma.SortOrder
@@ -482,7 +518,36 @@ export type MediaUpdateOneRequiredWithoutProductsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.MediaUpdateToOneWithWhereWithoutProductsInput, Prisma.MediaUpdateWithoutProductsInput>, Prisma.MediaUncheckedUpdateWithoutProductsInput>
 }
 
+export type MediaCreateNestedOneWithoutCategoriesInput = {
+  create?: Prisma.XOR<Prisma.MediaCreateWithoutCategoriesInput, Prisma.MediaUncheckedCreateWithoutCategoriesInput>
+  connectOrCreate?: Prisma.MediaCreateOrConnectWithoutCategoriesInput
+  connect?: Prisma.MediaWhereUniqueInput
+}
+
+export type MediaUpdateOneRequiredWithoutCategoriesNestedInput = {
+  create?: Prisma.XOR<Prisma.MediaCreateWithoutCategoriesInput, Prisma.MediaUncheckedCreateWithoutCategoriesInput>
+  connectOrCreate?: Prisma.MediaCreateOrConnectWithoutCategoriesInput
+  upsert?: Prisma.MediaUpsertWithoutCategoriesInput
+  connect?: Prisma.MediaWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MediaUpdateToOneWithWhereWithoutCategoriesInput, Prisma.MediaUpdateWithoutCategoriesInput>, Prisma.MediaUncheckedUpdateWithoutCategoriesInput>
+}
+
+export type MediaCreateNestedOneWithoutCollectionsInput = {
+  create?: Prisma.XOR<Prisma.MediaCreateWithoutCollectionsInput, Prisma.MediaUncheckedCreateWithoutCollectionsInput>
+  connectOrCreate?: Prisma.MediaCreateOrConnectWithoutCollectionsInput
+  connect?: Prisma.MediaWhereUniqueInput
+}
+
+export type MediaUpdateOneRequiredWithoutCollectionsNestedInput = {
+  create?: Prisma.XOR<Prisma.MediaCreateWithoutCollectionsInput, Prisma.MediaUncheckedCreateWithoutCollectionsInput>
+  connectOrCreate?: Prisma.MediaCreateOrConnectWithoutCollectionsInput
+  upsert?: Prisma.MediaUpsertWithoutCollectionsInput
+  connect?: Prisma.MediaWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MediaUpdateToOneWithWhereWithoutCollectionsInput, Prisma.MediaUpdateWithoutCollectionsInput>, Prisma.MediaUncheckedUpdateWithoutCollectionsInput>
+}
+
 export type MediaCreateWithoutProductsInput = {
+  providerAssetId?: string | null
   providerPublicId: string
   url: string
   format?: string | null
@@ -491,10 +556,13 @@ export type MediaCreateWithoutProductsInput = {
   height?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  categories?: Prisma.CategoryMediaCreateNestedManyWithoutMediaInput
+  collections?: Prisma.CollectionMediaCreateNestedManyWithoutMediaInput
 }
 
 export type MediaUncheckedCreateWithoutProductsInput = {
   id?: number
+  providerAssetId?: string | null
   providerPublicId: string
   url: string
   format?: string | null
@@ -503,6 +571,8 @@ export type MediaUncheckedCreateWithoutProductsInput = {
   height?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  categories?: Prisma.CategoryMediaUncheckedCreateNestedManyWithoutMediaInput
+  collections?: Prisma.CollectionMediaUncheckedCreateNestedManyWithoutMediaInput
 }
 
 export type MediaCreateOrConnectWithoutProductsInput = {
@@ -522,6 +592,7 @@ export type MediaUpdateToOneWithWhereWithoutProductsInput = {
 }
 
 export type MediaUpdateWithoutProductsInput = {
+  providerAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerPublicId?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
   format?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -530,10 +601,13 @@ export type MediaUpdateWithoutProductsInput = {
   height?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  categories?: Prisma.CategoryMediaUpdateManyWithoutMediaNestedInput
+  collections?: Prisma.CollectionMediaUpdateManyWithoutMediaNestedInput
 }
 
 export type MediaUncheckedUpdateWithoutProductsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  providerAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerPublicId?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
   format?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -542,6 +616,156 @@ export type MediaUncheckedUpdateWithoutProductsInput = {
   height?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  categories?: Prisma.CategoryMediaUncheckedUpdateManyWithoutMediaNestedInput
+  collections?: Prisma.CollectionMediaUncheckedUpdateManyWithoutMediaNestedInput
+}
+
+export type MediaCreateWithoutCategoriesInput = {
+  providerAssetId?: string | null
+  providerPublicId: string
+  url: string
+  format?: string | null
+  bytes?: number | null
+  width?: number | null
+  height?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  products?: Prisma.ProductMediaCreateNestedManyWithoutMediaInput
+  collections?: Prisma.CollectionMediaCreateNestedManyWithoutMediaInput
+}
+
+export type MediaUncheckedCreateWithoutCategoriesInput = {
+  id?: number
+  providerAssetId?: string | null
+  providerPublicId: string
+  url: string
+  format?: string | null
+  bytes?: number | null
+  width?: number | null
+  height?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  products?: Prisma.ProductMediaUncheckedCreateNestedManyWithoutMediaInput
+  collections?: Prisma.CollectionMediaUncheckedCreateNestedManyWithoutMediaInput
+}
+
+export type MediaCreateOrConnectWithoutCategoriesInput = {
+  where: Prisma.MediaWhereUniqueInput
+  create: Prisma.XOR<Prisma.MediaCreateWithoutCategoriesInput, Prisma.MediaUncheckedCreateWithoutCategoriesInput>
+}
+
+export type MediaUpsertWithoutCategoriesInput = {
+  update: Prisma.XOR<Prisma.MediaUpdateWithoutCategoriesInput, Prisma.MediaUncheckedUpdateWithoutCategoriesInput>
+  create: Prisma.XOR<Prisma.MediaCreateWithoutCategoriesInput, Prisma.MediaUncheckedCreateWithoutCategoriesInput>
+  where?: Prisma.MediaWhereInput
+}
+
+export type MediaUpdateToOneWithWhereWithoutCategoriesInput = {
+  where?: Prisma.MediaWhereInput
+  data: Prisma.XOR<Prisma.MediaUpdateWithoutCategoriesInput, Prisma.MediaUncheckedUpdateWithoutCategoriesInput>
+}
+
+export type MediaUpdateWithoutCategoriesInput = {
+  providerAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerPublicId?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
+  format?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bytes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  width?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  height?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  products?: Prisma.ProductMediaUpdateManyWithoutMediaNestedInput
+  collections?: Prisma.CollectionMediaUpdateManyWithoutMediaNestedInput
+}
+
+export type MediaUncheckedUpdateWithoutCategoriesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  providerAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerPublicId?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
+  format?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bytes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  width?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  height?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  products?: Prisma.ProductMediaUncheckedUpdateManyWithoutMediaNestedInput
+  collections?: Prisma.CollectionMediaUncheckedUpdateManyWithoutMediaNestedInput
+}
+
+export type MediaCreateWithoutCollectionsInput = {
+  providerAssetId?: string | null
+  providerPublicId: string
+  url: string
+  format?: string | null
+  bytes?: number | null
+  width?: number | null
+  height?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  products?: Prisma.ProductMediaCreateNestedManyWithoutMediaInput
+  categories?: Prisma.CategoryMediaCreateNestedManyWithoutMediaInput
+}
+
+export type MediaUncheckedCreateWithoutCollectionsInput = {
+  id?: number
+  providerAssetId?: string | null
+  providerPublicId: string
+  url: string
+  format?: string | null
+  bytes?: number | null
+  width?: number | null
+  height?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  products?: Prisma.ProductMediaUncheckedCreateNestedManyWithoutMediaInput
+  categories?: Prisma.CategoryMediaUncheckedCreateNestedManyWithoutMediaInput
+}
+
+export type MediaCreateOrConnectWithoutCollectionsInput = {
+  where: Prisma.MediaWhereUniqueInput
+  create: Prisma.XOR<Prisma.MediaCreateWithoutCollectionsInput, Prisma.MediaUncheckedCreateWithoutCollectionsInput>
+}
+
+export type MediaUpsertWithoutCollectionsInput = {
+  update: Prisma.XOR<Prisma.MediaUpdateWithoutCollectionsInput, Prisma.MediaUncheckedUpdateWithoutCollectionsInput>
+  create: Prisma.XOR<Prisma.MediaCreateWithoutCollectionsInput, Prisma.MediaUncheckedCreateWithoutCollectionsInput>
+  where?: Prisma.MediaWhereInput
+}
+
+export type MediaUpdateToOneWithWhereWithoutCollectionsInput = {
+  where?: Prisma.MediaWhereInput
+  data: Prisma.XOR<Prisma.MediaUpdateWithoutCollectionsInput, Prisma.MediaUncheckedUpdateWithoutCollectionsInput>
+}
+
+export type MediaUpdateWithoutCollectionsInput = {
+  providerAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerPublicId?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
+  format?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bytes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  width?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  height?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  products?: Prisma.ProductMediaUpdateManyWithoutMediaNestedInput
+  categories?: Prisma.CategoryMediaUpdateManyWithoutMediaNestedInput
+}
+
+export type MediaUncheckedUpdateWithoutCollectionsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  providerAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerPublicId?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
+  format?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bytes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  width?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  height?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  products?: Prisma.ProductMediaUncheckedUpdateManyWithoutMediaNestedInput
+  categories?: Prisma.CategoryMediaUncheckedUpdateManyWithoutMediaNestedInput
 }
 
 
@@ -551,10 +775,14 @@ export type MediaUncheckedUpdateWithoutProductsInput = {
 
 export type MediaCountOutputType = {
   products: number
+  categories: number
+  collections: number
 }
 
 export type MediaCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   products?: boolean | MediaCountOutputTypeCountProductsArgs
+  categories?: boolean | MediaCountOutputTypeCountCategoriesArgs
+  collections?: boolean | MediaCountOutputTypeCountCollectionsArgs
 }
 
 /**
@@ -574,9 +802,24 @@ export type MediaCountOutputTypeCountProductsArgs<ExtArgs extends runtime.Types.
   where?: Prisma.ProductMediaWhereInput
 }
 
+/**
+ * MediaCountOutputType without action
+ */
+export type MediaCountOutputTypeCountCategoriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CategoryMediaWhereInput
+}
+
+/**
+ * MediaCountOutputType without action
+ */
+export type MediaCountOutputTypeCountCollectionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CollectionMediaWhereInput
+}
+
 
 export type MediaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  providerAssetId?: boolean
   providerPublicId?: boolean
   url?: boolean
   format?: boolean
@@ -586,11 +829,14 @@ export type MediaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   createdAt?: boolean
   updatedAt?: boolean
   products?: boolean | Prisma.Media$productsArgs<ExtArgs>
+  categories?: boolean | Prisma.Media$categoriesArgs<ExtArgs>
+  collections?: boolean | Prisma.Media$collectionsArgs<ExtArgs>
   _count?: boolean | Prisma.MediaCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["media"]>
 
 export type MediaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  providerAssetId?: boolean
   providerPublicId?: boolean
   url?: boolean
   format?: boolean
@@ -603,6 +849,7 @@ export type MediaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 
 export type MediaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  providerAssetId?: boolean
   providerPublicId?: boolean
   url?: boolean
   format?: boolean
@@ -615,6 +862,7 @@ export type MediaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 
 export type MediaSelectScalar = {
   id?: boolean
+  providerAssetId?: boolean
   providerPublicId?: boolean
   url?: boolean
   format?: boolean
@@ -625,9 +873,11 @@ export type MediaSelectScalar = {
   updatedAt?: boolean
 }
 
-export type MediaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "providerPublicId" | "url" | "format" | "bytes" | "width" | "height" | "createdAt" | "updatedAt", ExtArgs["result"]["media"]>
+export type MediaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "providerAssetId" | "providerPublicId" | "url" | "format" | "bytes" | "width" | "height" | "createdAt" | "updatedAt", ExtArgs["result"]["media"]>
 export type MediaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   products?: boolean | Prisma.Media$productsArgs<ExtArgs>
+  categories?: boolean | Prisma.Media$categoriesArgs<ExtArgs>
+  collections?: boolean | Prisma.Media$collectionsArgs<ExtArgs>
   _count?: boolean | Prisma.MediaCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MediaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -637,9 +887,12 @@ export type $MediaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   name: "Media"
   objects: {
     products: Prisma.$ProductMediaPayload<ExtArgs>[]
+    categories: Prisma.$CategoryMediaPayload<ExtArgs>[]
+    collections: Prisma.$CollectionMediaPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
+    providerAssetId: string | null
     providerPublicId: string
     url: string
     format: string | null
@@ -1043,6 +1296,8 @@ readonly fields: MediaFieldRefs;
 export interface Prisma__MediaClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   products<T extends Prisma.Media$productsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Media$productsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductMediaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  categories<T extends Prisma.Media$categoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Media$categoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CategoryMediaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  collections<T extends Prisma.Media$collectionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Media$collectionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CollectionMediaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1073,6 +1328,7 @@ export interface Prisma__MediaClient<T, Null = never, ExtArgs extends runtime.Ty
  */
 export interface MediaFieldRefs {
   readonly id: Prisma.FieldRef<"Media", 'Int'>
+  readonly providerAssetId: Prisma.FieldRef<"Media", 'String'>
   readonly providerPublicId: Prisma.FieldRef<"Media", 'String'>
   readonly url: Prisma.FieldRef<"Media", 'String'>
   readonly format: Prisma.FieldRef<"Media", 'String'>
@@ -1495,6 +1751,54 @@ export type Media$productsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.ProductMediaScalarFieldEnum | Prisma.ProductMediaScalarFieldEnum[]
+}
+
+/**
+ * Media.categories
+ */
+export type Media$categoriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CategoryMedia
+   */
+  select?: Prisma.CategoryMediaSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CategoryMedia
+   */
+  omit?: Prisma.CategoryMediaOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CategoryMediaInclude<ExtArgs> | null
+  where?: Prisma.CategoryMediaWhereInput
+  orderBy?: Prisma.CategoryMediaOrderByWithRelationInput | Prisma.CategoryMediaOrderByWithRelationInput[]
+  cursor?: Prisma.CategoryMediaWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CategoryMediaScalarFieldEnum | Prisma.CategoryMediaScalarFieldEnum[]
+}
+
+/**
+ * Media.collections
+ */
+export type Media$collectionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CollectionMedia
+   */
+  select?: Prisma.CollectionMediaSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CollectionMedia
+   */
+  omit?: Prisma.CollectionMediaOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CollectionMediaInclude<ExtArgs> | null
+  where?: Prisma.CollectionMediaWhereInput
+  orderBy?: Prisma.CollectionMediaOrderByWithRelationInput | Prisma.CollectionMediaOrderByWithRelationInput[]
+  cursor?: Prisma.CollectionMediaWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CollectionMediaScalarFieldEnum | Prisma.CollectionMediaScalarFieldEnum[]
 }
 
 /**
