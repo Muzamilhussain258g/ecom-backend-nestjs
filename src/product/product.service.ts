@@ -161,7 +161,7 @@ export class ProductService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly mediaService: MediaService,
-  ) {}
+  ) { }
 
   async create(dto: CreateProductDto) {
     const categoryIds = dto.categories.map(({ categoryId }) => categoryId);

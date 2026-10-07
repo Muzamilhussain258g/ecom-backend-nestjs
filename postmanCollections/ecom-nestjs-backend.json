@@ -1,0 +1,1070 @@
+{
+	"info": {
+		"_postman_id": "ecom-nestjs-api-collection",
+		"name": "E-Commerce NestJS Backend API",
+		"description": "Complete Postman collection for E-Commerce Backend NestJS application with automatic auth token saving and pre-configured payload samples.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refreshToken",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Sign Up / Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"Password123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/signup",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign In / Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const jsonData = pm.response.json();",
+									"    const token = jsonData.data ? jsonData.data.accessToken : jsonData.accessToken;",
+									"    const refreshToken = jsonData.data ? jsonData.data.refreshToken : jsonData.refreshToken;",
+									"    if (token) {",
+									"        pm.collectionVariables.set('accessToken', token);",
+									"        console.log('accessToken set:', token);",
+									"    }",
+									"    if (refreshToken) {",
+									"        pm.collectionVariables.set('refreshToken', refreshToken);",
+									"        console.log('refreshToken set:', refreshToken);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"Password123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/signin",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Access Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const jsonData = pm.response.json();",
+									"    const token = jsonData.data ? jsonData.data.accessToken : jsonData.accessToken;",
+									"    if (token) {",
+									"        pm.collectionVariables.set('accessToken', token);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/refresh",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Updated\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/profile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"currentPassword\": \"Password123!\",\n  \"newPassword\": \"NewPassword123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign Out",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/signout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"signout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Categories",
+			"item": [
+				{
+					"name": "Get All Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/categories?page=1&limit=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"categories"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/categories/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"categories",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Category (Admin/Seller)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"categoryName\": \"Electronics\",\n  \"slug\": \"electronics\",\n  \"parentId\": null\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/categories",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Category (Admin/Seller)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"categoryName\": \"Consumer Electronics\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/categories/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"categories",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Category (Admin/Seller)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/categories/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"categories",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Get All Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products?page=1&limit=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product By Slug",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products/wireless-headphones",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"wireless-headphones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Product (Admin/Seller)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Wireless Noise Canceling Headphones\",\n  \"slug\": \"wireless-noise-canceling-headphones\",\n  \"description\": \"Premium over-ear headphones with high-fidelity sound.\",\n  \"basePrice\": 199.99,\n  \"productStatus\": true,\n  \"hasVariants\": false\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product (Admin/Seller)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"basePrice\": 179.99,\n  \"description\": \"Updated description for noise canceling headphones.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product Variant Options (Admin/Seller)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"variantValueIds\": [1, 2, 3]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products/1/variant-options",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"1",
+								"variant-options"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product Variant (Admin/Seller)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"price\": 189.99,\n  \"stock\": 50,\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products/1/variants/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"1",
+								"variants",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Variant Types & Values",
+			"item": [
+				{
+					"name": "Get All Variant Types",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/variant-types",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"variant-types"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Variant Type (Seller)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Color\",\n  \"slug\": \"color\",\n  \"sortOrder\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/variant-types",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"variant-types"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Variant Value To Type (Seller)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"value\": \"Black\",\n  \"code\": \"#000000\",\n  \"sortOrder\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/variant-types/1/values",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"variant-types",
+								"1",
+								"values"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Values By Variant Type ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/variant-types/1/values",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"variant-types",
+								"1",
+								"values"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Variant Values",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/variant-values",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"variant-values"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Collections",
+			"item": [
+				{
+					"name": "Get All Collections",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/collections",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Collection By Slug",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/collections/summer-sale",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections",
+								"summer-sale"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Collection (Admin/Seller)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Summer Sale\",\n  \"slug\": \"summer-sale\",\n  \"description\": \"Special discounts for summer products.\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/collections",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Wishlist",
+			"item": [
+				{
+					"name": "Get User Wishlist",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/wishlist?page=1&limit=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"wishlist"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Product To Wishlist",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/wishlist/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"wishlist",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Product From Wishlist",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/wishlist/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"wishlist",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Media",
+			"item": [
+				{
+					"name": "Generate Upload Signature (Admin/Seller)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"purpose\": \"product\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/media/upload-signature",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"media",
+								"upload-signature"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Media (Admin/Seller)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/media/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"media",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "AI Agent",
+			"item": [
+				{
+					"name": "Chat - Search Products",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"Do you have any green jeans available? Show me prices and sizes.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/ai-agent/chat",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"ai-agent",
+								"chat"
+							]
+						},
+						"description": "Sends a natural-language shopping query. Gemini may call searchProducts and/or getProductDetails against the live catalog."
+					},
+					"response": []
+				},
+				{
+					"name": "Chat - Product Details",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"What colors and sizes are available for wireless headphones, and is anything in stock?\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/ai-agent/chat",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"ai-agent",
+								"chat"
+							]
+						},
+						"description": "Asks about a specific product so Gemini uses getProductDetails (sizes, colors, stock, prices)."
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

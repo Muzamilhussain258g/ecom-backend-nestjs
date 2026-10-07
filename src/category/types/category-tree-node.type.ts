@@ -15,8 +15,8 @@ export interface CategoryQueryNode {
   categoryName: string;
   slug: string;
   parentId: number | null;
-  _count: {
-    productCategories: number;
-  };
+  // _count: {
+  //   productCategories: number;
+  // };
   children?: CategoryQueryNode[];
 }

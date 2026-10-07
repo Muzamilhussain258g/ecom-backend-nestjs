@@ -31,6 +31,7 @@ export class CategoryController {
   @ResponseMessage('Categories fetched successfully')
   findAll(@Query() pagination: CategoryPaginationDto) {
     return this.categoryService.findAll(pagination);
+    // return { message: "hello categories" };
   }
 
   @Get(':id')

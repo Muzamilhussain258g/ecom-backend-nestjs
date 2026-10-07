@@ -9,9 +9,13 @@ import { VariantModule } from './variant/variant.module';
 import { WishlistModule } from './wishlist/wishlist.module';
 import { MediaModule } from './media/media.module';
 import { CollectionModule } from './collection/collection.module';
+import { AiAgentModule } from './ai-agent/ai-agent.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     AuthModule,
     CategoryModule,
     ProductModule,
@@ -19,9 +23,7 @@ import { CollectionModule } from './collection/collection.module';
     WishlistModule,
     MediaModule,
     CollectionModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
+    AiAgentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

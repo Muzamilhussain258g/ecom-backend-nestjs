@@ -37,7 +37,7 @@ const wishlistEntrySelect = {
 
 @Injectable()
 export class WishlistService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async add(userId: number, productId: number) {
     const product = await this.prisma.product.findFirst({

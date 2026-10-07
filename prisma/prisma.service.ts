@@ -10,8 +10,7 @@ import { PrismaClient } from "generated/prisma/client";
 @Injectable()
 export class PrismaService
   extends PrismaClient
-  implements OnModuleInit, OnModuleDestroy
-{
+  implements OnModuleInit, OnModuleDestroy {
   constructor(configService: ConfigService) {
     const databaseUrl =
       configService.getOrThrow<string>("DATABASE_URL");
