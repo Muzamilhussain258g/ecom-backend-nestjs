@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
+import { AuthModule } from '@/auth/auth.module';
 import { PrismaModule } from 'prisma/prisma.module';
-import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { WishlistController } from './wishlist.controller';
 import { WishlistService } from './wishlist.service';
 
 @Module({
-  imports: [PrismaModule, JwtModule.register({})],
+  imports: [PrismaModule, AuthModule],
   controllers: [WishlistController],
-  providers: [WishlistService, JwtAuthGuard],
+  providers: [WishlistService],
 })
 export class WishlistModule {}

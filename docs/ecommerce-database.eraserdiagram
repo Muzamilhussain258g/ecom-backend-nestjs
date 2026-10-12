@@ -1,0 +1,281 @@
+entity-relationship-diagram
+
+direction right
+colorMode pastel
+styleMode plain
+typeface clean
+
+User [color: blue] {
+  id int pk
+  email string unique
+  password string
+  role UserRole
+  createdAt datetime
+  updatedAt datetime
+  name string
+}
+
+RefreshToken [color: blue] {
+  id int pk
+  userId int fk
+  expiresAt datetime
+  isRevoked boolean
+  refreshTokenHash string unique
+  refreshTokenId string unique
+  createdAt datetime
+}
+
+Address [color: blue] {
+  id int pk
+  userId int fk
+  label AddressType
+  fullName string
+  phone string
+  street string
+  city string
+  province string
+  postalCode string
+  country string
+  isDefault boolean
+  createdAt datetime
+}
+
+Category [color: green] {
+  id int pk
+  categoryName string
+  slug string
+  parentId int fk nullable
+}
+
+ProductCategory [color: gray] {
+  id int pk
+  categoryId int fk
+  productId int fk
+  isPrimary boolean
+}
+
+Product [color: green] {
+  id int pk
+  name string
+  slug string unique
+  description string
+  createdAt datetime
+  updatedAt datetime
+  basePrice decimal
+  productStatus boolean
+  hasVariants boolean
+}
+
+Review [color: blue] {
+  id int pk
+  userId int fk
+  productId int fk
+  review string
+  stars decimal
+}
+
+WishList [color: blue] {
+  id int pk
+  userId int fk
+  productId int fk
+}
+
+VariantType [color: orange] {
+  id int pk
+  name string
+  slug string unique
+  sortOrder int
+}
+
+VariantValue [color: orange] {
+  id int pk
+  variantTypeId int fk
+  value string
+  code string
+  metadata json nullable
+  sortOrder int
+}
+
+ProductVariantType [color: gray] {
+  id int pk
+  productId int fk
+  variantTypeId int fk
+}
+
+ProductVariantValue [color: gray] {
+  id int pk
+  productId int fk
+  variantValueId int fk
+}
+
+Variant [color: orange] {
+  id int pk
+  productId int fk
+  combinationKey string
+  stock int
+  sku string unique
+  price decimal
+  isActive boolean
+}
+
+VariantCombinationValue [color: gray] {
+  id int pk
+  variantId int fk
+  variantValueId int fk
+}
+
+Media [color: purple] {
+  id int pk
+  providerAssetId string unique nullable
+  providerPublicId string unique
+  url string
+  format string nullable
+  bytes int nullable
+  width int nullable
+  height int nullable
+  createdAt datetime
+  updatedAt datetime
+}
+
+ProductMedia [color: gray] {
+  id int pk
+  productId int fk
+  mediaId int fk
+  isPrimary boolean
+  position int
+  altText string nullable
+  variantValueId int fk nullable
+}
+
+CategoryMedia [color: gray] {
+  id int pk
+  categoryId int fk unique
+  mediaId int fk
+  altText string nullable
+}
+
+Collection [color: purple] {
+  id int pk
+  name string
+  slug string unique
+  description string nullable
+  isActive boolean
+  createdAt datetime
+  updatedAt datetime
+}
+
+CollectionMedia [color: gray] {
+  id int pk
+  collectionId int fk unique
+  mediaId int fk
+  altText string nullable
+}
+
+CollectionProduct [color: gray] {
+  id int pk
+  collectionId int fk
+  productId int fk
+  position int
+}
+
+Cart [color: yellow] {
+  id int pk
+  userId int fk unique
+}
+
+CartItem [color: yellow] {
+  id int pk
+  cartId int fk
+  variantId int fk
+  isSelected boolean
+  buyingQuantity int
+}
+
+Order [color: red] {
+  id int pk
+  userId int fk
+  shippingAddressId int fk nullable
+  shippingFullName string
+  shippingPhone string
+  shippingStreet string
+  shippingCity string
+  shippingProvince string
+  shippingPostalCode string
+  shippingCountry string
+  totalAmount decimal
+  status OrderStatus
+  createdAt datetime
+}
+
+OrderItem [color: red] {
+  id int pk
+  orderId int fk
+  variantId int fk
+  quantity int
+  price decimal
+}
+
+PaymentMethod [color: red] {
+  id int pk
+  userId int fk
+  type PaymentMethodType
+  provider PaymentProvider
+  cardLast4 string nullable
+  cardBrand string nullable
+  isDefault boolean
+  createdAt datetime
+}
+
+Payment [color: red] {
+  id int pk
+  orderId int fk
+  paymentMethodId int fk nullable
+  transactionId string unique nullable
+  amount decimal
+  currency string
+  status PaymentStatus
+  gateway PaymentGateway
+  paidAt datetime nullable
+  createdAt datetime
+}
+
+RefreshToken.userId > User.id
+Address.userId > User.id
+Review.userId > User.id
+Review.productId > Product.id
+WishList.userId > User.id
+WishList.productId > Product.id
+Cart.userId - User.id
+Order.userId > User.id
+PaymentMethod.userId > User.id
+
+Category.parentId > Category.id
+ProductCategory.categoryId > Category.id
+ProductCategory.productId > Product.id
+
+VariantValue.variantTypeId > VariantType.id
+ProductVariantType.productId > Product.id
+ProductVariantType.variantTypeId > VariantType.id
+ProductVariantValue.productId > Product.id
+ProductVariantValue.variantValueId > VariantValue.id
+Variant.productId > Product.id
+VariantCombinationValue.variantId > Variant.id
+VariantCombinationValue.variantValueId > VariantValue.id
+
+ProductMedia.productId > Product.id
+ProductMedia.mediaId > Media.id
+ProductMedia.variantValueId > VariantValue.id
+CategoryMedia.categoryId - Category.id
+CategoryMedia.mediaId > Media.id
+CollectionMedia.collectionId - Collection.id
+CollectionMedia.mediaId > Media.id
+CollectionProduct.collectionId > Collection.id
+CollectionProduct.productId > Product.id
+
+CartItem.cartId > Cart.id
+CartItem.variantId > Variant.id
+Order.shippingAddressId > Address.id
+OrderItem.orderId > Order.id
+OrderItem.variantId > Variant.id
+Payment.orderId > Order.id
+Payment.paymentMethodId > PaymentMethod.id

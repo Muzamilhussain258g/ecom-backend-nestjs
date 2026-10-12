@@ -1,15 +1,14 @@
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
+import { AuthModule } from '@/auth/auth.module';
 import { PrismaModule } from 'prisma/prisma.module';
-import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { ProductController } from './product.controller';
 import { ProductService } from './product.service';
 import { MediaModule } from '@/media/media.module';
 
 @Module({
-  imports: [PrismaModule, JwtModule.register({}), MediaModule],
+  imports: [PrismaModule, AuthModule, MediaModule],
   controllers: [ProductController],
-  providers: [ProductService, JwtAuthGuard, RolesGuard],
+  providers: [ProductService, RolesGuard],
 })
 export class ProductModule {}

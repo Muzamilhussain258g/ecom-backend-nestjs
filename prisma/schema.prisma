@@ -82,7 +82,7 @@ model Product {
   wishlistedBy      WishList[]
   productCategories ProductCategory[]
   variantTypes      ProductVariantType[]
-  variantValues     ProductVariantValue[]
+  // variantValues     ProductVariantValue[]
   variants          Variant[]
   images            ProductMedia[]
   collections       CollectionProduct[]
@@ -129,11 +129,12 @@ model VariantValue {
 
 // this is for assigninng the variant types to the products eg: product1 has color, size, material, etc
 model ProductVariantType {
-  id            Int         @id @default(autoincrement())
-  productId     Int
-  variantTypeId Int
-  product       Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
-  variantType   VariantType @relation(fields: [variantTypeId], references: [id], onDelete: Restrict)
+  id                   Int                   @id @default(autoincrement())
+  productId            Int
+  variantTypeId        Int
+  product              Product               @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variantType          VariantType           @relation(fields: [variantTypeId], references: [id], onDelete: Restrict)
+  productVariantValues ProductVariantValue[]
 
   @@unique([productId, variantTypeId])
   @@index([variantTypeId])
@@ -141,13 +142,16 @@ model ProductVariantType {
 
 // this is for assigning the value to the product variant types eg: product1 has color=blue,red, size=small,large, material=cotton,polyester, etc 
 model ProductVariantValue {
-  id             Int          @id @default(autoincrement())
-  productId      Int
-  variantValueId Int
-  product        Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
-  variantValue   VariantValue @relation(fields: [variantValueId], references: [id], onDelete: Restrict)
+  id                   Int @id @default(autoincrement())
+  // productId            Int
+  productVariantTypeId Int
+  variantValueId       Int
 
-  @@unique([productId, variantValueId])
+  // product      Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productVariantType ProductVariantType @relation(fields: [productVariantTypeId], references: [id], onDelete: Cascade)
+  variantValue       VariantValue       @relation(fields: [variantValueId], references: [id], onDelete: Restrict)
+
+  @@unique([productVariantTypeId, variantValueId])
   @@index([variantValueId])
 }
 

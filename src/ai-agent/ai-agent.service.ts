@@ -59,7 +59,15 @@ export class AiAgentService {
       { role: 'user', parts: [{ text: userMessage }] },
     ];
 
-    let response = await this.generate(contents);
+    let llmCalls = 0;
+    const callLlm = () => {
+      llmCalls += 1;
+      this.logger.log(`LLM call #${llmCalls}`);
+      return this.generate(contents);
+    };
+
+    let response = await callLlm();
+    console.log("this.generate(contents):",response)
     let functionCalls = response.functionCalls ?? [];
     let rounds = 0;
 
@@ -102,7 +110,7 @@ export class AiAgentService {
         parts: functionResponseParts,
       });
 
-      response = await this.generate(contents);
+      response = await callLlm();
       functionCalls = response.functionCalls ?? [];
     }
 
@@ -119,7 +127,7 @@ export class AiAgentService {
       );
     }
 
-    return { reply };
+    return { reply, llmCalls };
   }
 
   private generate(contents: Content[]): Promise<GenerateContentResponse> {

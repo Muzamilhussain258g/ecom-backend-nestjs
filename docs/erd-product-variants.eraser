@@ -1,0 +1,79 @@
+// Source: prisma/schema.prisma; logical field names.
+// nullable = optional column. One-to-one lines do not imply mandatory existence.
+notation crows-feet
+typeface clean
+
+Product [color: blue] {
+  id Int pk
+  name String
+  slug String unique
+  description String
+  createdAt DateTime
+  updatedAt DateTime
+  basePrice Decimal
+  productStatus Boolean
+  hasVariants Boolean
+}
+
+VariantType [color: purple] {
+  id Int pk
+  name String
+  slug String unique
+  sortOrder Int
+}
+
+VariantValue [color: purple] {
+  id Int pk
+  variantTypeId Int fk
+  value String
+  code String
+  metadata Json nullable
+  sortOrder Int
+  // @@unique([variantTypeId, code])
+  // @@index([variantTypeId])
+}
+
+ProductVariantType [color: purple] {
+  id Int pk
+  productId Int fk
+  variantTypeId Int fk
+  // @@unique([productId, variantTypeId])
+  // @@index([variantTypeId])
+}
+
+ProductVariantValue [color: purple] {
+  id Int pk
+  productVariantTypeId Int fk
+  variantValueId Int fk
+  // @@unique([productVariantTypeId, variantValueId])
+  // @@index([variantValueId])
+}
+
+Variant [color: purple] {
+  id Int pk
+  productId Int fk
+  combinationKey String
+  stock Int
+  sku String unique
+  price Decimal
+  isActive Boolean
+  // @@unique([productId, combinationKey])
+  // @@index([productId])
+}
+
+VariantCombinationValue [color: purple] {
+  id Int pk
+  variantId Int fk
+  variantValueId Int fk
+  // @@unique([variantId, variantValueId])
+  // @@index([variantValueId])
+}
+
+VariantValue.variantTypeId > VariantType.id
+ProductVariantType.productId > Product.id
+ProductVariantType.variantTypeId > VariantType.id
+ProductVariantValue.productVariantTypeId > ProductVariantType.id
+ProductVariantValue.variantValueId > VariantValue.id
+Variant.productId > Product.id
+VariantCombinationValue.variantId > Variant.id
+VariantCombinationValue.variantValueId > VariantValue.id

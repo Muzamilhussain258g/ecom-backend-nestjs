@@ -1,0 +1,309 @@
+// Source: prisma/schema.prisma; logical field names.
+// nullable = optional column. One-to-one lines do not imply mandatory existence.
+notation crows-feet
+typeface clean
+
+User [color: blue] {
+  id Int pk
+  email String unique
+  password String
+  role UserRole
+  createdAt DateTime
+  updatedAt DateTime
+  name String
+}
+
+RefreshToken [color: blue] {
+  id Int pk
+  userId Int fk
+  expiresAt DateTime
+  isRevoked Boolean
+  refreshTokenHash String unique
+  refreshTokenId String unique
+  createdAt DateTime
+}
+
+Category [color: blue] {
+  id Int pk
+  categoryName String
+  slug String
+  parentId Int fk,nullable
+  // @@unique([parentId, categoryName])
+  // @@unique([parentId, slug])
+}
+
+ProductCategory [color: blue] {
+  id Int pk
+  categoryId Int fk
+  productId Int fk
+  isPrimary Boolean
+  // @@unique([productId, categoryId])
+  // @@index([categoryId])
+}
+
+Product [color: blue] {
+  id Int pk
+  name String
+  slug String unique
+  description String
+  createdAt DateTime
+  updatedAt DateTime
+  basePrice Decimal
+  productStatus Boolean
+  hasVariants Boolean
+}
+
+Review [color: blue] {
+  id Int pk
+  userId Int fk
+  productId Int fk
+  review String
+  stars Decimal
+}
+
+VariantType [color: purple] {
+  id Int pk
+  name String
+  slug String unique
+  sortOrder Int
+}
+
+VariantValue [color: purple] {
+  id Int pk
+  variantTypeId Int fk
+  value String
+  code String
+  metadata Json nullable
+  sortOrder Int
+  // @@unique([variantTypeId, code])
+  // @@index([variantTypeId])
+}
+
+ProductVariantType [color: purple] {
+  id Int pk
+  productId Int fk
+  variantTypeId Int fk
+  // @@unique([productId, variantTypeId])
+  // @@index([variantTypeId])
+}
+
+ProductVariantValue [color: purple] {
+  id Int pk
+  productVariantTypeId Int fk
+  variantValueId Int fk
+  // @@unique([productVariantTypeId, variantValueId])
+  // @@index([variantValueId])
+}
+
+Variant [color: purple] {
+  id Int pk
+  productId Int fk
+  combinationKey String
+  stock Int
+  sku String unique
+  price Decimal
+  isActive Boolean
+  // @@unique([productId, combinationKey])
+  // @@index([productId])
+}
+
+VariantCombinationValue [color: purple] {
+  id Int pk
+  variantId Int fk
+  variantValueId Int fk
+  // @@unique([variantId, variantValueId])
+  // @@index([variantValueId])
+}
+
+Media [color: green] {
+  id Int pk
+  providerAssetId String unique,nullable
+  providerPublicId String unique
+  url String
+  format String nullable
+  bytes Int nullable
+  width Int nullable
+  height Int nullable
+  createdAt DateTime
+  updatedAt DateTime
+}
+
+ProductMedia [color: green] {
+  id Int pk
+  productId Int fk
+  mediaId Int fk
+  isPrimary Boolean
+  position Int
+  altText String nullable
+  variantValueId Int fk,nullable
+  // @@unique([productId, mediaId])
+  // @@index([productId, position])
+  // @@index([mediaId])
+  // @@index([variantValueId])
+}
+
+CategoryMedia [color: green] {
+  id Int pk
+  categoryId Int fk,unique
+  mediaId Int fk
+  altText String nullable
+  // @@index([mediaId])
+}
+
+Collection [color: blue] {
+  id Int pk
+  name String
+  slug String unique
+  description String nullable
+  isActive Boolean
+  createdAt DateTime
+  updatedAt DateTime
+}
+
+CollectionMedia [color: green] {
+  id Int pk
+  collectionId Int fk,unique
+  mediaId Int fk
+  altText String nullable
+  // @@index([mediaId])
+}
+
+CollectionProduct [color: blue] {
+  id Int pk
+  collectionId Int fk
+  productId Int fk
+  position Int
+  // @@unique([collectionId, productId])
+  // @@index([productId])
+  // @@index([collectionId, position])
+}
+
+WishList [color: blue] {
+  id Int pk
+  userId Int fk
+  productId Int fk
+  // @@unique([userId, productId])
+}
+
+Cart [color: blue] {
+  id Int pk
+  userId Int fk,unique,column=user_id
+}
+
+CartItem [color: blue] {
+  id Int pk
+  cartId Int fk,column=cart_id
+  variantId Int fk,column=variant_id
+  isSelected Boolean column=is_selected
+  buyingQuantity Int column=buying_quantity
+  // @@unique([cartId, variantId])
+}
+
+Order [color: orange] {
+  id Int pk
+  userId Int fk
+  shippingAddressId Int fk,nullable
+  shippingFullName String
+  shippingPhone String
+  shippingStreet String
+  shippingCity String
+  shippingProvince String
+  shippingPostalCode String
+  shippingCountry String
+  totalAmount Decimal
+  status OrderStatus
+  createdAt DateTime column=created_at
+}
+
+OrderItem [color: orange] {
+  id Int pk
+  orderId Int fk
+  variantId Int fk
+  quantity Int
+  price Decimal
+}
+
+PaymentMethod [color: orange] {
+  id Int pk
+  userId Int fk
+  type PaymentMethodType
+  provider PaymentProvider
+  cardLast4 String nullable
+  cardBrand String nullable
+  isDefault Boolean
+  createdAt DateTime
+}
+
+Payment [color: orange] {
+  id Int pk
+  orderId Int fk
+  paymentMethodId Int fk,nullable
+  transactionId String unique,nullable
+  amount Decimal
+  currency String
+  status PaymentStatus
+  gateway PaymentGateway
+  paidAt DateTime nullable
+  createdAt DateTime
+}
+
+Address [color: blue] {
+  id Int pk
+  userId Int fk
+  label AddressType
+  fullName String
+  phone String
+  street String
+  city String
+  province String
+  postalCode String
+  country String
+  isDefault Boolean
+  createdAt DateTime
+}
+
+RefreshToken.userId > User.id
+Category.parentId > Category.id
+ProductCategory.categoryId > Category.id
+ProductCategory.productId > Product.id
+Review.userId > User.id
+Review.productId > Product.id
+VariantValue.variantTypeId > VariantType.id
+ProductVariantType.productId > Product.id
+ProductVariantType.variantTypeId > VariantType.id
+ProductVariantValue.productVariantTypeId > ProductVariantType.id
+ProductVariantValue.variantValueId > VariantValue.id
+Variant.productId > Product.id
+VariantCombinationValue.variantId > Variant.id
+VariantCombinationValue.variantValueId > VariantValue.id
+ProductMedia.productId > Product.id
+ProductMedia.mediaId > Media.id
+ProductMedia.variantValueId > VariantValue.id
+CategoryMedia.categoryId - Category.id
+CategoryMedia.mediaId > Media.id
+CollectionMedia.collectionId - Collection.id
+CollectionMedia.mediaId > Media.id
+CollectionProduct.collectionId > Collection.id
+CollectionProduct.productId > Product.id
+WishList.userId > User.id
+WishList.productId > Product.id
+Cart.userId - User.id
+CartItem.cartId > Cart.id
+CartItem.variantId > Variant.id
+Order.userId > User.id
+Order.shippingAddressId > Address.id
+OrderItem.orderId > Order.id
+OrderItem.variantId > Variant.id
+PaymentMethod.userId > User.id
+Payment.orderId > Order.id
+Payment.paymentMethodId > PaymentMethod.id
+Address.userId > User.id
+
+// Enum values
+// UserRole: customer, admin, seller
+// OrderStatus: pending, confirmed, processing, shipped, delivered, cancelled, returned
+// PaymentGateway: payfast, jazzcash, easypaisa, cod
+// PaymentMethodType: card, wallet, bank_transfer, cod
+// PaymentProvider: visa, mastercard, jazzcash, easypaisa
+// PaymentStatus: pending, success, failed, refunded
+// AddressType: home, office, other
