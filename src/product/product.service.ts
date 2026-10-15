@@ -64,10 +64,12 @@ const productWriteInclude = {
   productCategories: categoryAssignments,
   variantTypes: {
     orderBy: { variantType: { sortOrder: 'asc' } },
-    include: { variantType: true },
-  },
-  variantValues: {
-    include: { variantValue: { select: variantValueSelect } },
+    include: {
+      variantType: true,
+      productVariantValues: {
+        include: { variantValue: { select: variantValueSelect } },
+      },
+    },
   },
   variants: {
     orderBy: { id: 'asc' },
@@ -92,10 +94,12 @@ const productDetailSelect = {
   productCategories: categoryAssignments,
   variantTypes: {
     orderBy: { variantType: { sortOrder: 'asc' } },
-    select: { variantType: true },
-  },
-  variantValues: {
-    select: { id: true, variantValue: { select: variantValueSelect } },
+    select: {
+      variantType: true,
+      productVariantValues: {
+        select: { id: true, variantValue: { select: variantValueSelect } },
+      },
+    },
   },
   variants: {
     where: { isActive: true },
@@ -174,7 +178,7 @@ export class ProductService {
     );
     this.validateProductMedia(dto, selections);
     // Verify every Cloudinary proof before opening the database transaction.
-    const verifiedMedia = dto.media.map((item) => ({
+    const verifiedMedia = (dto.media ?? []).map((item) => ({
       association: item,
       media: this.mediaService.toMediaCreateInput(item),
     }));
@@ -201,29 +205,29 @@ export class ProductService {
               })),
             },
             variantTypes: {
-              create: selections.map(({ variantTypeId }) => ({
+              create: selections.map(({ variantTypeId, values }) => ({
                 variantType: { connect: { id: variantTypeId } },
+                productVariantValues: {
+                  create: values.map(({ id }) => ({
+                    variantValue: { connect: { id } },
+                  })),
+                },
               })),
             },
-            variantValues: {
-              create: selections.flatMap(({ values }) =>
-                values.map(({ id }) => ({
-                  variantValue: { connect: { id } },
-                })),
-              ),
-            },
-            images: {
-              create: verifiedMedia.map(({ association, media }) => ({
-                isPrimary: association.isPrimary,
-                position: association.position,
-                altText: association.altText,
-                variantValue:
-                  association.variantValueId === undefined
-                    ? undefined
-                    : { connect: { id: association.variantValueId } },
-                media: { create: media },
-              })),
-            },
+            images: verifiedMedia.length
+              ? {
+                  create: verifiedMedia.map(({ association, media }) => ({
+                    isPrimary: association.isPrimary,
+                    position: association.position,
+                    altText: association.altText,
+                    variantValue:
+                      association.variantValueId === undefined
+                        ? undefined
+                        : { connect: { id: association.variantValueId } },
+                    media: { create: media },
+                  })),
+                }
+              : undefined,
           },
         });
 
@@ -324,22 +328,18 @@ export class ProductService {
     if (!product)
       throw new NotFoundException(`Product with slug ${slug} not found`);
 
-    const { reviews, variantTypes, variantValues, variants, ...details } =
-      product;
+    const { reviews, variantTypes, variants, ...details } = product;
     return {
       ...details,
-      variantOptions: variantTypes.map(({ variantType }) => ({
-        ...variantType,
-        values: variantValues
-          .filter(
-            ({ variantValue }) =>
-              variantValue.variantType.id === variantType.id,
-          )
-          .map(({ id, variantValue }) => ({
+      variantOptions: variantTypes.map(
+        ({ variantType, productVariantValues }) => ({
+          ...variantType,
+          values: productVariantValues.map(({ id, variantValue }) => ({
             ...variantValue,
             productVariantValueId: id,
           })),
-      })),
+        }),
+      ),
       variants: variants.map(({ combinationValues, ...variant }) => ({
         ...variant,
         values: combinationValues.map(({ variantValue }) => variantValue),
@@ -421,26 +421,25 @@ export class ProductService {
         );
         const desiredKeys = new Set(desiredCombinations.map(({ key }) => key));
 
+        // Cascade deletes ProductVariantValue rows via productVariantType relation
         await transaction.productVariantType.deleteMany({
           where: { productId: id },
         });
-        await transaction.productVariantValue.deleteMany({
-          where: { productId: id },
-        });
-        await transaction.productVariantType.createMany({
-          data: selections.map(({ variantTypeId }) => ({
-            productId: id,
-            variantTypeId,
-          })),
-        });
-        await transaction.productVariantValue.createMany({
-          data: selections.flatMap(({ values }) =>
-            values.map(({ id: variantValueId }) => ({
+
+        for (const selection of selections) {
+          await transaction.productVariantType.create({
+            data: {
               productId: id,
-              variantValueId,
-            })),
-          ),
-        });
+              variantTypeId: selection.variantTypeId,
+              productVariantValues: {
+                create: selection.values.map(({ id: variantValueId }) => ({
+                  variantValueId,
+                })),
+              },
+            },
+          });
+        }
+
         await transaction.product.update({
           where: { id },
           data: { hasVariants: true },
@@ -722,6 +721,9 @@ export class ProductService {
     dto: CreateProductDto,
     selections: ValidatedSelection[],
   ): void {
+    // media is optional — skip all checks when not provided
+    if (!dto.media?.length) return;
+
     const publicIds = dto.media.map(({ providerPublicId }) => providerPublicId);
     if (new Set(publicIds).size !== publicIds.length) {
       throw new BadRequestException('Product media must be unique');

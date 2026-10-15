@@ -2497,7 +2497,7 @@ export type ProductVariantTypeScalarFieldEnum = (typeof ProductVariantTypeScalar
 
 export const ProductVariantValueScalarFieldEnum = {
   id: 'id',
-  productId: 'productId',
+  productVariantTypeId: 'productVariantTypeId',
   variantValueId: 'variantValueId'
 } as const
 

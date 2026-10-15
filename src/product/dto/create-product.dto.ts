@@ -129,10 +129,10 @@ export class CreateProductDto {
   @Type(() => ProductVariantQuantityDto)
   variantQuantities?: ProductVariantQuantityDto[];
 
+  @IsOptional()
   @IsArray()
-  @ArrayMinSize(1)
   @ArrayMaxSize(10)
   @ValidateNested({ each: true })
   @Type(() => CreateProductMediaDto)
-  media!: CreateProductMediaDto[];
+  media?: CreateProductMediaDto[];
 }

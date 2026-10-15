@@ -20,9 +20,9 @@ model User {
   cart           Cart?
   orders         Order[]
   paymentMethods PaymentMethod[]
+  refreshTokens  RefreshToken[]
   reviews        Review[]
   wishlist       WishList[]
-  refreshTokens  RefreshToken[]
 }
 
 model RefreshToken {
@@ -31,25 +31,20 @@ model RefreshToken {
   expiresAt        DateTime
   isRevoked        Boolean  @default(false)
   refreshTokenHash String   @unique
-  refreshTokenId   String   @unique // <-- NAYA FIELD (jti)
-
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshTokenId   String   @unique
+  createdAt        DateTime @default(now())
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Category {
-  id           Int    @id @default(autoincrement())
-  categoryName String
-  slug         String
-  parentId     Int?
-
-  parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
-  children Category[] @relation("CategoryHierarchy")
-
-  // products Product[]
-  productCategories ProductCategory[]
+  id                Int               @id @default(autoincrement())
+  categoryName      String
+  slug              String
+  parentId          Int?
+  parent            Category?         @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+  children          Category[]        @relation("CategoryHierarchy")
   media             CategoryMedia?
+  productCategories ProductCategory[]
 
   @@unique([parentId, categoryName])
   @@unique([parentId, slug])
@@ -68,24 +63,22 @@ model ProductCategory {
 }
 
 model Product {
-  id            Int      @id @default(autoincrement())
-  name          String
-  slug          String   @unique
-  description   String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  basePrice     Decimal
-  productStatus Boolean  @default(true)
-  hasVariants   Boolean  @default(false)
-
-  reviews           Review[]
-  wishlistedBy      WishList[]
-  productCategories ProductCategory[]
-  variantTypes      ProductVariantType[]
-  // variantValues     ProductVariantValue[]
-  variants          Variant[]
-  images            ProductMedia[]
+  id                Int                  @id @default(autoincrement())
+  name              String
+  slug              String               @unique
+  description       String
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  basePrice         Decimal
+  productStatus     Boolean              @default(true)
+  hasVariants       Boolean              @default(false)
   collections       CollectionProduct[]
+  productCategories ProductCategory[]
+  images            ProductMedia[]
+  variantTypes      ProductVariantType[]
+  reviews           Review[]
+  variants          Variant[]
+  wishlistedBy      WishList[]
 }
 
 model Review {
@@ -98,76 +91,66 @@ model Review {
   user      User    @relation(fields: [userId], references: [id])
 }
 
-// this is for making the global variant types eg: color, size, material,etc 
 model VariantType {
-  id        Int    @id @default(autoincrement())
+  id        Int                  @id @default(autoincrement())
   name      String
-  slug      String @unique
-  sortOrder Int    @default(0)
-
-  values   VariantValue[]
-  products ProductVariantType[]
+  slug      String               @unique
+  sortOrder Int                  @default(0)
+  products  ProductVariantType[]
+  values    VariantValue[]
 }
 
-// this is for assigning the value to the variant types eg: (color=blue,red,etc), (size=small,large,xl,etc), etc 
 model VariantValue {
-  id            Int         @id @default(autoincrement())
-  variantTypeId Int
-  value         String
-  code          String
-  metadata      Json?
-  sortOrder     Int         @default(0)
-  variantType   VariantType @relation(fields: [variantTypeId], references: [id], onDelete: Restrict)
-
+  id                Int                       @id @default(autoincrement())
+  variantTypeId     Int
+  value             String
+  code              String
+  metadata          Json?
+  sortOrder         Int                       @default(0)
+  productMedia      ProductMedia[]
   products          ProductVariantValue[]
   combinationValues VariantCombinationValue[]
-  productMedia      ProductMedia[]
+  variantType       VariantType               @relation(fields: [variantTypeId], references: [id])
 
   @@unique([variantTypeId, code])
   @@index([variantTypeId])
 }
 
-// this is for assigninng the variant types to the products eg: product1 has color, size, material, etc
 model ProductVariantType {
   id                   Int                   @id @default(autoincrement())
   productId            Int
   variantTypeId        Int
   product              Product               @relation(fields: [productId], references: [id], onDelete: Cascade)
-  variantType          VariantType           @relation(fields: [variantTypeId], references: [id], onDelete: Restrict)
+  variantType          VariantType           @relation(fields: [variantTypeId], references: [id])
   productVariantValues ProductVariantValue[]
 
   @@unique([productId, variantTypeId])
   @@index([variantTypeId])
 }
 
-// this is for assigning the value to the product variant types eg: product1 has color=blue,red, size=small,large, material=cotton,polyester, etc 
 model ProductVariantValue {
-  id                   Int @id @default(autoincrement())
-  // productId            Int
+  id                   Int                @id @default(autoincrement())
   productVariantTypeId Int
   variantValueId       Int
-
-  // product      Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productVariantType ProductVariantType @relation(fields: [productVariantTypeId], references: [id], onDelete: Cascade)
-  variantValue       VariantValue       @relation(fields: [variantValueId], references: [id], onDelete: Restrict)
+  productVariantType   ProductVariantType @relation(fields: [productVariantTypeId], references: [id], onDelete: Cascade)
+  variantValue         VariantValue       @relation(fields: [variantValueId], references: [id])
 
   @@unique([productVariantTypeId, variantValueId])
   @@index([variantValueId])
 }
 
 model Variant {
-  id             Int     @id @default(autoincrement())
-  productId      Int
-  combinationKey String
-  stock          Int
-  sku            String  @unique
-  price          Decimal
-  isActive       Boolean @default(true)
-  product        Product @relation(fields: [productId], references: [id], onDelete: Restrict)
-
-  combinationValues VariantCombinationValue[]
+  id                Int                       @id @default(autoincrement())
+  productId         Int
+  combinationKey    String
+  stock             Int
+  sku               String                    @unique
+  price             Decimal
+  isActive          Boolean                   @default(true)
   cartItems         CartItem[]
   orderItems        OrderItem[]
+  product           Product                   @relation(fields: [productId], references: [id])
+  combinationValues VariantCombinationValue[]
 
   @@unique([productId, combinationKey])
   @@index([productId])
@@ -178,41 +161,39 @@ model VariantCombinationValue {
   variantId      Int
   variantValueId Int
   variant        Variant      @relation(fields: [variantId], references: [id], onDelete: Cascade)
-  variantValue   VariantValue @relation(fields: [variantValueId], references: [id], onDelete: Restrict)
+  variantValue   VariantValue @relation(fields: [variantValueId], references: [id])
 
   @@unique([variantId, variantValueId])
   @@index([variantValueId])
 }
 
 model Media {
-  id               Int      @id @default(autoincrement())
-  providerAssetId  String?  @unique
-  providerPublicId String   @unique
+  id               Int               @id @default(autoincrement())
+  providerAssetId  String?           @unique
+  providerPublicId String            @unique
   url              String
   format           String?
   bytes            Int?
   width            Int?
   height           Int?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
-  products    ProductMedia[]
-  categories  CategoryMedia[]
-  collections CollectionMedia[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  categories       CategoryMedia[]
+  collections      CollectionMedia[]
+  products         ProductMedia[]
 }
 
 model ProductMedia {
-  id             Int     @id @default(autoincrement())
+  id             Int           @id @default(autoincrement())
   productId      Int
   mediaId        Int
-  isPrimary      Boolean @default(false)
-  position       Int     @default(0)
+  isPrimary      Boolean       @default(false)
+  position       Int           @default(0)
   altText        String?
   variantValueId Int?
-
-  product      Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
-  media        Media         @relation(fields: [mediaId], references: [id], onDelete: Restrict)
-  variantValue VariantValue? @relation(fields: [variantValueId], references: [id], onDelete: Restrict)
+  media          Media         @relation(fields: [mediaId], references: [id])
+  product        Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variantValue   VariantValue? @relation(fields: [variantValueId], references: [id], onDelete: Restrict)
 
   @@unique([productId, mediaId])
   @@index([productId, position])
@@ -226,7 +207,7 @@ model CategoryMedia {
   mediaId    Int
   altText    String?
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  media      Media    @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+  media      Media    @relation(fields: [mediaId], references: [id])
 
   @@index([mediaId])
 }
@@ -249,7 +230,7 @@ model CollectionMedia {
   mediaId      Int
   altText      String?
   collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
-  media        Media      @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+  media        Media      @relation(fields: [mediaId], references: [id])
 
   @@index([mediaId])
 }

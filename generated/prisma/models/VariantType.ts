@@ -212,8 +212,8 @@ export type VariantTypeWhereInput = {
   name?: Prisma.StringFilter<"VariantType"> | string
   slug?: Prisma.StringFilter<"VariantType"> | string
   sortOrder?: Prisma.IntFilter<"VariantType"> | number
-  values?: Prisma.VariantValueListRelationFilter
   products?: Prisma.ProductVariantTypeListRelationFilter
+  values?: Prisma.VariantValueListRelationFilter
 }
 
 export type VariantTypeOrderByWithRelationInput = {
@@ -221,8 +221,8 @@ export type VariantTypeOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
-  values?: Prisma.VariantValueOrderByRelationAggregateInput
   products?: Prisma.ProductVariantTypeOrderByRelationAggregateInput
+  values?: Prisma.VariantValueOrderByRelationAggregateInput
 }
 
 export type VariantTypeWhereUniqueInput = Prisma.AtLeast<{
@@ -233,8 +233,8 @@ export type VariantTypeWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.VariantTypeWhereInput | Prisma.VariantTypeWhereInput[]
   name?: Prisma.StringFilter<"VariantType"> | string
   sortOrder?: Prisma.IntFilter<"VariantType"> | number
-  values?: Prisma.VariantValueListRelationFilter
   products?: Prisma.ProductVariantTypeListRelationFilter
+  values?: Prisma.VariantValueListRelationFilter
 }, "id" | "slug">
 
 export type VariantTypeOrderByWithAggregationInput = {
@@ -263,8 +263,8 @@ export type VariantTypeCreateInput = {
   name: string
   slug: string
   sortOrder?: number
-  values?: Prisma.VariantValueCreateNestedManyWithoutVariantTypeInput
   products?: Prisma.ProductVariantTypeCreateNestedManyWithoutVariantTypeInput
+  values?: Prisma.VariantValueCreateNestedManyWithoutVariantTypeInput
 }
 
 export type VariantTypeUncheckedCreateInput = {
@@ -272,16 +272,16 @@ export type VariantTypeUncheckedCreateInput = {
   name: string
   slug: string
   sortOrder?: number
-  values?: Prisma.VariantValueUncheckedCreateNestedManyWithoutVariantTypeInput
   products?: Prisma.ProductVariantTypeUncheckedCreateNestedManyWithoutVariantTypeInput
+  values?: Prisma.VariantValueUncheckedCreateNestedManyWithoutVariantTypeInput
 }
 
 export type VariantTypeUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  values?: Prisma.VariantValueUpdateManyWithoutVariantTypeNestedInput
   products?: Prisma.ProductVariantTypeUpdateManyWithoutVariantTypeNestedInput
+  values?: Prisma.VariantValueUpdateManyWithoutVariantTypeNestedInput
 }
 
 export type VariantTypeUncheckedUpdateInput = {
@@ -289,8 +289,8 @@ export type VariantTypeUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  values?: Prisma.VariantValueUncheckedUpdateManyWithoutVariantTypeNestedInput
   products?: Prisma.ProductVariantTypeUncheckedUpdateManyWithoutVariantTypeNestedInput
+  values?: Prisma.VariantValueUncheckedUpdateManyWithoutVariantTypeNestedInput
 }
 
 export type VariantTypeCreateManyInput = {
@@ -475,13 +475,13 @@ export type VariantTypeUncheckedUpdateWithoutProductsInput = {
  */
 
 export type VariantTypeCountOutputType = {
-  values: number
   products: number
+  values: number
 }
 
 export type VariantTypeCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  values?: boolean | VariantTypeCountOutputTypeCountValuesArgs
   products?: boolean | VariantTypeCountOutputTypeCountProductsArgs
+  values?: boolean | VariantTypeCountOutputTypeCountValuesArgs
 }
 
 /**
@@ -497,15 +497,15 @@ export type VariantTypeCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.
 /**
  * VariantTypeCountOutputType without action
  */
-export type VariantTypeCountOutputTypeCountValuesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.VariantValueWhereInput
+export type VariantTypeCountOutputTypeCountProductsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProductVariantTypeWhereInput
 }
 
 /**
  * VariantTypeCountOutputType without action
  */
-export type VariantTypeCountOutputTypeCountProductsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ProductVariantTypeWhereInput
+export type VariantTypeCountOutputTypeCountValuesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.VariantValueWhereInput
 }
 
 
@@ -514,8 +514,8 @@ export type VariantTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   name?: boolean
   slug?: boolean
   sortOrder?: boolean
-  values?: boolean | Prisma.VariantType$valuesArgs<ExtArgs>
   products?: boolean | Prisma.VariantType$productsArgs<ExtArgs>
+  values?: boolean | Prisma.VariantType$valuesArgs<ExtArgs>
   _count?: boolean | Prisma.VariantTypeCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["variantType"]>
 
@@ -542,8 +542,8 @@ export type VariantTypeSelectScalar = {
 
 export type VariantTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "sortOrder", ExtArgs["result"]["variantType"]>
 export type VariantTypeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  values?: boolean | Prisma.VariantType$valuesArgs<ExtArgs>
   products?: boolean | Prisma.VariantType$productsArgs<ExtArgs>
+  values?: boolean | Prisma.VariantType$valuesArgs<ExtArgs>
   _count?: boolean | Prisma.VariantTypeCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type VariantTypeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -552,8 +552,8 @@ export type VariantTypeIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.
 export type $VariantTypePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "VariantType"
   objects: {
-    values: Prisma.$VariantValuePayload<ExtArgs>[]
     products: Prisma.$ProductVariantTypePayload<ExtArgs>[]
+    values: Prisma.$VariantValuePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -954,8 +954,8 @@ readonly fields: VariantTypeFieldRefs;
  */
 export interface Prisma__VariantTypeClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  values<T extends Prisma.VariantType$valuesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.VariantType$valuesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VariantValuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   products<T extends Prisma.VariantType$productsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.VariantType$productsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductVariantTypePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  values<T extends Prisma.VariantType$valuesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.VariantType$valuesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VariantValuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1382,30 +1382,6 @@ export type VariantTypeDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
 }
 
 /**
- * VariantType.values
- */
-export type VariantType$valuesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the VariantValue
-   */
-  select?: Prisma.VariantValueSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the VariantValue
-   */
-  omit?: Prisma.VariantValueOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.VariantValueInclude<ExtArgs> | null
-  where?: Prisma.VariantValueWhereInput
-  orderBy?: Prisma.VariantValueOrderByWithRelationInput | Prisma.VariantValueOrderByWithRelationInput[]
-  cursor?: Prisma.VariantValueWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.VariantValueScalarFieldEnum | Prisma.VariantValueScalarFieldEnum[]
-}
-
-/**
  * VariantType.products
  */
 export type VariantType$productsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1427,6 +1403,30 @@ export type VariantType$productsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.ProductVariantTypeScalarFieldEnum | Prisma.ProductVariantTypeScalarFieldEnum[]
+}
+
+/**
+ * VariantType.values
+ */
+export type VariantType$valuesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the VariantValue
+   */
+  select?: Prisma.VariantValueSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the VariantValue
+   */
+  omit?: Prisma.VariantValueOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.VariantValueInclude<ExtArgs> | null
+  where?: Prisma.VariantValueWhereInput
+  orderBy?: Prisma.VariantValueOrderByWithRelationInput | Prisma.VariantValueOrderByWithRelationInput[]
+  cursor?: Prisma.VariantValueWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.VariantValueScalarFieldEnum | Prisma.VariantValueScalarFieldEnum[]
 }
 
 /**

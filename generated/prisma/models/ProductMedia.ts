@@ -248,8 +248,8 @@ export type ProductMediaWhereInput = {
   position?: Prisma.IntFilter<"ProductMedia"> | number
   altText?: Prisma.StringNullableFilter<"ProductMedia"> | string | null
   variantValueId?: Prisma.IntNullableFilter<"ProductMedia"> | number | null
-  product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
   media?: Prisma.XOR<Prisma.MediaScalarRelationFilter, Prisma.MediaWhereInput>
+  product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
   variantValue?: Prisma.XOR<Prisma.VariantValueNullableScalarRelationFilter, Prisma.VariantValueWhereInput> | null
 }
 
@@ -261,8 +261,8 @@ export type ProductMediaOrderByWithRelationInput = {
   position?: Prisma.SortOrder
   altText?: Prisma.SortOrderInput | Prisma.SortOrder
   variantValueId?: Prisma.SortOrderInput | Prisma.SortOrder
-  product?: Prisma.ProductOrderByWithRelationInput
   media?: Prisma.MediaOrderByWithRelationInput
+  product?: Prisma.ProductOrderByWithRelationInput
   variantValue?: Prisma.VariantValueOrderByWithRelationInput
 }
 
@@ -278,8 +278,8 @@ export type ProductMediaWhereUniqueInput = Prisma.AtLeast<{
   position?: Prisma.IntFilter<"ProductMedia"> | number
   altText?: Prisma.StringNullableFilter<"ProductMedia"> | string | null
   variantValueId?: Prisma.IntNullableFilter<"ProductMedia"> | number | null
-  product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
   media?: Prisma.XOR<Prisma.MediaScalarRelationFilter, Prisma.MediaWhereInput>
+  product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
   variantValue?: Prisma.XOR<Prisma.VariantValueNullableScalarRelationFilter, Prisma.VariantValueWhereInput> | null
 }, "id" | "productId_mediaId">
 
@@ -315,8 +315,8 @@ export type ProductMediaCreateInput = {
   isPrimary?: boolean
   position?: number
   altText?: string | null
-  product: Prisma.ProductCreateNestedOneWithoutImagesInput
   media: Prisma.MediaCreateNestedOneWithoutProductsInput
+  product: Prisma.ProductCreateNestedOneWithoutImagesInput
   variantValue?: Prisma.VariantValueCreateNestedOneWithoutProductMediaInput
 }
 
@@ -334,8 +334,8 @@ export type ProductMediaUpdateInput = {
   isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   altText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  product?: Prisma.ProductUpdateOneRequiredWithoutImagesNestedInput
   media?: Prisma.MediaUpdateOneRequiredWithoutProductsNestedInput
+  product?: Prisma.ProductUpdateOneRequiredWithoutImagesNestedInput
   variantValue?: Prisma.VariantValueUpdateOneWithoutProductMediaNestedInput
 }
 
@@ -622,8 +622,8 @@ export type ProductMediaCreateWithoutVariantValueInput = {
   isPrimary?: boolean
   position?: number
   altText?: string | null
-  product: Prisma.ProductCreateNestedOneWithoutImagesInput
   media: Prisma.MediaCreateNestedOneWithoutProductsInput
+  product: Prisma.ProductCreateNestedOneWithoutImagesInput
 }
 
 export type ProductMediaUncheckedCreateWithoutVariantValueInput = {
@@ -752,8 +752,8 @@ export type ProductMediaUpdateWithoutVariantValueInput = {
   isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   altText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  product?: Prisma.ProductUpdateOneRequiredWithoutImagesNestedInput
   media?: Prisma.MediaUpdateOneRequiredWithoutProductsNestedInput
+  product?: Prisma.ProductUpdateOneRequiredWithoutImagesNestedInput
 }
 
 export type ProductMediaUncheckedUpdateWithoutVariantValueInput = {
@@ -819,8 +819,8 @@ export type ProductMediaSelect<ExtArgs extends runtime.Types.Extensions.Internal
   position?: boolean
   altText?: boolean
   variantValueId?: boolean
-  product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   media?: boolean | Prisma.MediaDefaultArgs<ExtArgs>
+  product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   variantValue?: boolean | Prisma.ProductMedia$variantValueArgs<ExtArgs>
 }, ExtArgs["result"]["productMedia"]>
 
@@ -832,8 +832,8 @@ export type ProductMediaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   position?: boolean
   altText?: boolean
   variantValueId?: boolean
-  product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   media?: boolean | Prisma.MediaDefaultArgs<ExtArgs>
+  product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   variantValue?: boolean | Prisma.ProductMedia$variantValueArgs<ExtArgs>
 }, ExtArgs["result"]["productMedia"]>
 
@@ -845,8 +845,8 @@ export type ProductMediaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   position?: boolean
   altText?: boolean
   variantValueId?: boolean
-  product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   media?: boolean | Prisma.MediaDefaultArgs<ExtArgs>
+  product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   variantValue?: boolean | Prisma.ProductMedia$variantValueArgs<ExtArgs>
 }, ExtArgs["result"]["productMedia"]>
 
@@ -862,26 +862,26 @@ export type ProductMediaSelectScalar = {
 
 export type ProductMediaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productId" | "mediaId" | "isPrimary" | "position" | "altText" | "variantValueId", ExtArgs["result"]["productMedia"]>
 export type ProductMediaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   media?: boolean | Prisma.MediaDefaultArgs<ExtArgs>
+  product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   variantValue?: boolean | Prisma.ProductMedia$variantValueArgs<ExtArgs>
 }
 export type ProductMediaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   media?: boolean | Prisma.MediaDefaultArgs<ExtArgs>
+  product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   variantValue?: boolean | Prisma.ProductMedia$variantValueArgs<ExtArgs>
 }
 export type ProductMediaIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   media?: boolean | Prisma.MediaDefaultArgs<ExtArgs>
+  product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   variantValue?: boolean | Prisma.ProductMedia$variantValueArgs<ExtArgs>
 }
 
 export type $ProductMediaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ProductMedia"
   objects: {
-    product: Prisma.$ProductPayload<ExtArgs>
     media: Prisma.$MediaPayload<ExtArgs>
+    product: Prisma.$ProductPayload<ExtArgs>
     variantValue: Prisma.$VariantValuePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1286,8 +1286,8 @@ readonly fields: ProductMediaFieldRefs;
  */
 export interface Prisma__ProductMediaClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  product<T extends Prisma.ProductDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductDefaultArgs<ExtArgs>>): Prisma.Prisma__ProductClient<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   media<T extends Prisma.MediaDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaDefaultArgs<ExtArgs>>): Prisma.Prisma__MediaClient<runtime.Types.Result.GetResult<Prisma.$MediaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  product<T extends Prisma.ProductDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductDefaultArgs<ExtArgs>>): Prisma.Prisma__ProductClient<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   variantValue<T extends Prisma.ProductMedia$variantValueArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductMedia$variantValueArgs<ExtArgs>>): Prisma.Prisma__VariantValueClient<runtime.Types.Result.GetResult<Prisma.$VariantValuePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.

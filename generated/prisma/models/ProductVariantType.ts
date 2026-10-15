@@ -210,6 +210,7 @@ export type ProductVariantTypeWhereInput = {
   variantTypeId?: Prisma.IntFilter<"ProductVariantType"> | number
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
   variantType?: Prisma.XOR<Prisma.VariantTypeScalarRelationFilter, Prisma.VariantTypeWhereInput>
+  productVariantValues?: Prisma.ProductVariantValueListRelationFilter
 }
 
 export type ProductVariantTypeOrderByWithRelationInput = {
@@ -218,6 +219,7 @@ export type ProductVariantTypeOrderByWithRelationInput = {
   variantTypeId?: Prisma.SortOrder
   product?: Prisma.ProductOrderByWithRelationInput
   variantType?: Prisma.VariantTypeOrderByWithRelationInput
+  productVariantValues?: Prisma.ProductVariantValueOrderByRelationAggregateInput
 }
 
 export type ProductVariantTypeWhereUniqueInput = Prisma.AtLeast<{
@@ -230,6 +232,7 @@ export type ProductVariantTypeWhereUniqueInput = Prisma.AtLeast<{
   variantTypeId?: Prisma.IntFilter<"ProductVariantType"> | number
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
   variantType?: Prisma.XOR<Prisma.VariantTypeScalarRelationFilter, Prisma.VariantTypeWhereInput>
+  productVariantValues?: Prisma.ProductVariantValueListRelationFilter
 }, "id" | "productId_variantTypeId">
 
 export type ProductVariantTypeOrderByWithAggregationInput = {
@@ -255,23 +258,27 @@ export type ProductVariantTypeScalarWhereWithAggregatesInput = {
 export type ProductVariantTypeCreateInput = {
   product: Prisma.ProductCreateNestedOneWithoutVariantTypesInput
   variantType: Prisma.VariantTypeCreateNestedOneWithoutProductsInput
+  productVariantValues?: Prisma.ProductVariantValueCreateNestedManyWithoutProductVariantTypeInput
 }
 
 export type ProductVariantTypeUncheckedCreateInput = {
   id?: number
   productId: number
   variantTypeId: number
+  productVariantValues?: Prisma.ProductVariantValueUncheckedCreateNestedManyWithoutProductVariantTypeInput
 }
 
 export type ProductVariantTypeUpdateInput = {
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantTypesNestedInput
   variantType?: Prisma.VariantTypeUpdateOneRequiredWithoutProductsNestedInput
+  productVariantValues?: Prisma.ProductVariantValueUpdateManyWithoutProductVariantTypeNestedInput
 }
 
 export type ProductVariantTypeUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   productId?: Prisma.IntFieldUpdateOperationsInput | number
   variantTypeId?: Prisma.IntFieldUpdateOperationsInput | number
+  productVariantValues?: Prisma.ProductVariantValueUncheckedUpdateManyWithoutProductVariantTypeNestedInput
 }
 
 export type ProductVariantTypeCreateManyInput = {
@@ -333,6 +340,11 @@ export type ProductVariantTypeSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   productId?: Prisma.SortOrder
   variantTypeId?: Prisma.SortOrder
+}
+
+export type ProductVariantTypeScalarRelationFilter = {
+  is?: Prisma.ProductVariantTypeWhereInput
+  isNot?: Prisma.ProductVariantTypeWhereInput
 }
 
 export type ProductVariantTypeCreateNestedManyWithoutProductInput = {
@@ -419,13 +431,29 @@ export type ProductVariantTypeUncheckedUpdateManyWithoutVariantTypeNestedInput =
   deleteMany?: Prisma.ProductVariantTypeScalarWhereInput | Prisma.ProductVariantTypeScalarWhereInput[]
 }
 
+export type ProductVariantTypeCreateNestedOneWithoutProductVariantValuesInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantTypeCreateWithoutProductVariantValuesInput, Prisma.ProductVariantTypeUncheckedCreateWithoutProductVariantValuesInput>
+  connectOrCreate?: Prisma.ProductVariantTypeCreateOrConnectWithoutProductVariantValuesInput
+  connect?: Prisma.ProductVariantTypeWhereUniqueInput
+}
+
+export type ProductVariantTypeUpdateOneRequiredWithoutProductVariantValuesNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantTypeCreateWithoutProductVariantValuesInput, Prisma.ProductVariantTypeUncheckedCreateWithoutProductVariantValuesInput>
+  connectOrCreate?: Prisma.ProductVariantTypeCreateOrConnectWithoutProductVariantValuesInput
+  upsert?: Prisma.ProductVariantTypeUpsertWithoutProductVariantValuesInput
+  connect?: Prisma.ProductVariantTypeWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProductVariantTypeUpdateToOneWithWhereWithoutProductVariantValuesInput, Prisma.ProductVariantTypeUpdateWithoutProductVariantValuesInput>, Prisma.ProductVariantTypeUncheckedUpdateWithoutProductVariantValuesInput>
+}
+
 export type ProductVariantTypeCreateWithoutProductInput = {
   variantType: Prisma.VariantTypeCreateNestedOneWithoutProductsInput
+  productVariantValues?: Prisma.ProductVariantValueCreateNestedManyWithoutProductVariantTypeInput
 }
 
 export type ProductVariantTypeUncheckedCreateWithoutProductInput = {
   id?: number
   variantTypeId: number
+  productVariantValues?: Prisma.ProductVariantValueUncheckedCreateNestedManyWithoutProductVariantTypeInput
 }
 
 export type ProductVariantTypeCreateOrConnectWithoutProductInput = {
@@ -465,11 +493,13 @@ export type ProductVariantTypeScalarWhereInput = {
 
 export type ProductVariantTypeCreateWithoutVariantTypeInput = {
   product: Prisma.ProductCreateNestedOneWithoutVariantTypesInput
+  productVariantValues?: Prisma.ProductVariantValueCreateNestedManyWithoutProductVariantTypeInput
 }
 
 export type ProductVariantTypeUncheckedCreateWithoutVariantTypeInput = {
   id?: number
   productId: number
+  productVariantValues?: Prisma.ProductVariantValueUncheckedCreateNestedManyWithoutProductVariantTypeInput
 }
 
 export type ProductVariantTypeCreateOrConnectWithoutVariantTypeInput = {
@@ -498,6 +528,44 @@ export type ProductVariantTypeUpdateManyWithWhereWithoutVariantTypeInput = {
   data: Prisma.XOR<Prisma.ProductVariantTypeUpdateManyMutationInput, Prisma.ProductVariantTypeUncheckedUpdateManyWithoutVariantTypeInput>
 }
 
+export type ProductVariantTypeCreateWithoutProductVariantValuesInput = {
+  product: Prisma.ProductCreateNestedOneWithoutVariantTypesInput
+  variantType: Prisma.VariantTypeCreateNestedOneWithoutProductsInput
+}
+
+export type ProductVariantTypeUncheckedCreateWithoutProductVariantValuesInput = {
+  id?: number
+  productId: number
+  variantTypeId: number
+}
+
+export type ProductVariantTypeCreateOrConnectWithoutProductVariantValuesInput = {
+  where: Prisma.ProductVariantTypeWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductVariantTypeCreateWithoutProductVariantValuesInput, Prisma.ProductVariantTypeUncheckedCreateWithoutProductVariantValuesInput>
+}
+
+export type ProductVariantTypeUpsertWithoutProductVariantValuesInput = {
+  update: Prisma.XOR<Prisma.ProductVariantTypeUpdateWithoutProductVariantValuesInput, Prisma.ProductVariantTypeUncheckedUpdateWithoutProductVariantValuesInput>
+  create: Prisma.XOR<Prisma.ProductVariantTypeCreateWithoutProductVariantValuesInput, Prisma.ProductVariantTypeUncheckedCreateWithoutProductVariantValuesInput>
+  where?: Prisma.ProductVariantTypeWhereInput
+}
+
+export type ProductVariantTypeUpdateToOneWithWhereWithoutProductVariantValuesInput = {
+  where?: Prisma.ProductVariantTypeWhereInput
+  data: Prisma.XOR<Prisma.ProductVariantTypeUpdateWithoutProductVariantValuesInput, Prisma.ProductVariantTypeUncheckedUpdateWithoutProductVariantValuesInput>
+}
+
+export type ProductVariantTypeUpdateWithoutProductVariantValuesInput = {
+  product?: Prisma.ProductUpdateOneRequiredWithoutVariantTypesNestedInput
+  variantType?: Prisma.VariantTypeUpdateOneRequiredWithoutProductsNestedInput
+}
+
+export type ProductVariantTypeUncheckedUpdateWithoutProductVariantValuesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  productId?: Prisma.IntFieldUpdateOperationsInput | number
+  variantTypeId?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
 export type ProductVariantTypeCreateManyProductInput = {
   id?: number
   variantTypeId: number
@@ -505,11 +573,13 @@ export type ProductVariantTypeCreateManyProductInput = {
 
 export type ProductVariantTypeUpdateWithoutProductInput = {
   variantType?: Prisma.VariantTypeUpdateOneRequiredWithoutProductsNestedInput
+  productVariantValues?: Prisma.ProductVariantValueUpdateManyWithoutProductVariantTypeNestedInput
 }
 
 export type ProductVariantTypeUncheckedUpdateWithoutProductInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   variantTypeId?: Prisma.IntFieldUpdateOperationsInput | number
+  productVariantValues?: Prisma.ProductVariantValueUncheckedUpdateManyWithoutProductVariantTypeNestedInput
 }
 
 export type ProductVariantTypeUncheckedUpdateManyWithoutProductInput = {
@@ -524,11 +594,13 @@ export type ProductVariantTypeCreateManyVariantTypeInput = {
 
 export type ProductVariantTypeUpdateWithoutVariantTypeInput = {
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantTypesNestedInput
+  productVariantValues?: Prisma.ProductVariantValueUpdateManyWithoutProductVariantTypeNestedInput
 }
 
 export type ProductVariantTypeUncheckedUpdateWithoutVariantTypeInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   productId?: Prisma.IntFieldUpdateOperationsInput | number
+  productVariantValues?: Prisma.ProductVariantValueUncheckedUpdateManyWithoutProductVariantTypeNestedInput
 }
 
 export type ProductVariantTypeUncheckedUpdateManyWithoutVariantTypeInput = {
@@ -537,6 +609,35 @@ export type ProductVariantTypeUncheckedUpdateManyWithoutVariantTypeInput = {
 }
 
 
+/**
+ * Count Type ProductVariantTypeCountOutputType
+ */
+
+export type ProductVariantTypeCountOutputType = {
+  productVariantValues: number
+}
+
+export type ProductVariantTypeCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  productVariantValues?: boolean | ProductVariantTypeCountOutputTypeCountProductVariantValuesArgs
+}
+
+/**
+ * ProductVariantTypeCountOutputType without action
+ */
+export type ProductVariantTypeCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProductVariantTypeCountOutputType
+   */
+  select?: Prisma.ProductVariantTypeCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ProductVariantTypeCountOutputType without action
+ */
+export type ProductVariantTypeCountOutputTypeCountProductVariantValuesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProductVariantValueWhereInput
+}
+
 
 export type ProductVariantTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -544,6 +645,8 @@ export type ProductVariantTypeSelect<ExtArgs extends runtime.Types.Extensions.In
   variantTypeId?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   variantType?: boolean | Prisma.VariantTypeDefaultArgs<ExtArgs>
+  productVariantValues?: boolean | Prisma.ProductVariantType$productVariantValuesArgs<ExtArgs>
+  _count?: boolean | Prisma.ProductVariantTypeCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["productVariantType"]>
 
 export type ProductVariantTypeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -572,6 +675,8 @@ export type ProductVariantTypeOmit<ExtArgs extends runtime.Types.Extensions.Inte
 export type ProductVariantTypeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   variantType?: boolean | Prisma.VariantTypeDefaultArgs<ExtArgs>
+  productVariantValues?: boolean | Prisma.ProductVariantType$productVariantValuesArgs<ExtArgs>
+  _count?: boolean | Prisma.ProductVariantTypeCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProductVariantTypeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
@@ -587,6 +692,7 @@ export type $ProductVariantTypePayload<ExtArgs extends runtime.Types.Extensions.
   objects: {
     product: Prisma.$ProductPayload<ExtArgs>
     variantType: Prisma.$VariantTypePayload<ExtArgs>
+    productVariantValues: Prisma.$ProductVariantValuePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -988,6 +1094,7 @@ export interface Prisma__ProductVariantTypeClient<T, Null = never, ExtArgs exten
   readonly [Symbol.toStringTag]: "PrismaPromise"
   product<T extends Prisma.ProductDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductDefaultArgs<ExtArgs>>): Prisma.Prisma__ProductClient<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   variantType<T extends Prisma.VariantTypeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.VariantTypeDefaultArgs<ExtArgs>>): Prisma.Prisma__VariantTypeClient<runtime.Types.Result.GetResult<Prisma.$VariantTypePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  productVariantValues<T extends Prisma.ProductVariantType$productVariantValuesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariantType$productVariantValuesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductVariantValuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1418,6 +1525,30 @@ export type ProductVariantTypeDeleteManyArgs<ExtArgs extends runtime.Types.Exten
    * Limit how many ProductVariantTypes to delete.
    */
   limit?: number
+}
+
+/**
+ * ProductVariantType.productVariantValues
+ */
+export type ProductVariantType$productVariantValuesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProductVariantValue
+   */
+  select?: Prisma.ProductVariantValueSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProductVariantValue
+   */
+  omit?: Prisma.ProductVariantValueOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProductVariantValueInclude<ExtArgs> | null
+  where?: Prisma.ProductVariantValueWhereInput
+  orderBy?: Prisma.ProductVariantValueOrderByWithRelationInput | Prisma.ProductVariantValueOrderByWithRelationInput[]
+  cursor?: Prisma.ProductVariantValueWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProductVariantValueScalarFieldEnum | Prisma.ProductVariantValueScalarFieldEnum[]
 }
 
 /**

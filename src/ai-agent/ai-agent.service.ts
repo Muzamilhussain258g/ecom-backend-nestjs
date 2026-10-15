@@ -202,15 +202,19 @@ export class AiAgentService {
     if (params.color?.trim()) {
       const color = params.color.trim();
       filters.push({
-        variantValues: {
+        variantTypes: {
           some: {
-            variantValue: {
-              value: { equals: color, mode: 'insensitive' },
-              variantType: {
-                OR: [
-                  { name: { equals: 'color', mode: 'insensitive' } },
-                  { slug: { equals: 'color', mode: 'insensitive' } },
-                ],
+            productVariantValues: {
+              some: {
+                variantValue: {
+                  value: { equals: color, mode: 'insensitive' },
+                  variantType: {
+                    OR: [
+                      { name: { equals: 'color', mode: 'insensitive' } },
+                      { slug: { equals: 'color', mode: 'insensitive' } },
+                    ],
+                  },
+                },
               },
             },
           },

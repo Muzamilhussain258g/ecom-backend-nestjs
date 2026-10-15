@@ -244,10 +244,10 @@ export type VariantWhereInput = {
   sku?: Prisma.StringFilter<"Variant"> | string
   price?: Prisma.DecimalFilter<"Variant"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFilter<"Variant"> | boolean
-  product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
-  combinationValues?: Prisma.VariantCombinationValueListRelationFilter
   cartItems?: Prisma.CartItemListRelationFilter
   orderItems?: Prisma.OrderItemListRelationFilter
+  product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
+  combinationValues?: Prisma.VariantCombinationValueListRelationFilter
 }
 
 export type VariantOrderByWithRelationInput = {
@@ -258,10 +258,10 @@ export type VariantOrderByWithRelationInput = {
   sku?: Prisma.SortOrder
   price?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
-  product?: Prisma.ProductOrderByWithRelationInput
-  combinationValues?: Prisma.VariantCombinationValueOrderByRelationAggregateInput
   cartItems?: Prisma.CartItemOrderByRelationAggregateInput
   orderItems?: Prisma.OrderItemOrderByRelationAggregateInput
+  product?: Prisma.ProductOrderByWithRelationInput
+  combinationValues?: Prisma.VariantCombinationValueOrderByRelationAggregateInput
 }
 
 export type VariantWhereUniqueInput = Prisma.AtLeast<{
@@ -276,10 +276,10 @@ export type VariantWhereUniqueInput = Prisma.AtLeast<{
   stock?: Prisma.IntFilter<"Variant"> | number
   price?: Prisma.DecimalFilter<"Variant"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFilter<"Variant"> | boolean
-  product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
-  combinationValues?: Prisma.VariantCombinationValueListRelationFilter
   cartItems?: Prisma.CartItemListRelationFilter
   orderItems?: Prisma.OrderItemListRelationFilter
+  product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
+  combinationValues?: Prisma.VariantCombinationValueListRelationFilter
 }, "id" | "sku" | "productId_combinationKey">
 
 export type VariantOrderByWithAggregationInput = {
@@ -316,10 +316,10 @@ export type VariantCreateInput = {
   sku: string
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
-  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
-  combinationValues?: Prisma.VariantCombinationValueCreateNestedManyWithoutVariantInput
   cartItems?: Prisma.CartItemCreateNestedManyWithoutVariantInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutVariantInput
+  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  combinationValues?: Prisma.VariantCombinationValueCreateNestedManyWithoutVariantInput
 }
 
 export type VariantUncheckedCreateInput = {
@@ -330,9 +330,9 @@ export type VariantUncheckedCreateInput = {
   sku: string
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
-  combinationValues?: Prisma.VariantCombinationValueUncheckedCreateNestedManyWithoutVariantInput
   cartItems?: Prisma.CartItemUncheckedCreateNestedManyWithoutVariantInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutVariantInput
+  combinationValues?: Prisma.VariantCombinationValueUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type VariantUpdateInput = {
@@ -341,10 +341,10 @@ export type VariantUpdateInput = {
   sku?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
-  combinationValues?: Prisma.VariantCombinationValueUpdateManyWithoutVariantNestedInput
   cartItems?: Prisma.CartItemUpdateManyWithoutVariantNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutVariantNestedInput
+  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  combinationValues?: Prisma.VariantCombinationValueUpdateManyWithoutVariantNestedInput
 }
 
 export type VariantUncheckedUpdateInput = {
@@ -355,9 +355,9 @@ export type VariantUncheckedUpdateInput = {
   sku?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  combinationValues?: Prisma.VariantCombinationValueUncheckedUpdateManyWithoutVariantNestedInput
   cartItems?: Prisma.CartItemUncheckedUpdateManyWithoutVariantNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutVariantNestedInput
+  combinationValues?: Prisma.VariantCombinationValueUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type VariantCreateManyInput = {
@@ -542,9 +542,9 @@ export type VariantCreateWithoutProductInput = {
   sku: string
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
-  combinationValues?: Prisma.VariantCombinationValueCreateNestedManyWithoutVariantInput
   cartItems?: Prisma.CartItemCreateNestedManyWithoutVariantInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutVariantInput
+  combinationValues?: Prisma.VariantCombinationValueCreateNestedManyWithoutVariantInput
 }
 
 export type VariantUncheckedCreateWithoutProductInput = {
@@ -554,9 +554,9 @@ export type VariantUncheckedCreateWithoutProductInput = {
   sku: string
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
-  combinationValues?: Prisma.VariantCombinationValueUncheckedCreateNestedManyWithoutVariantInput
   cartItems?: Prisma.CartItemUncheckedCreateNestedManyWithoutVariantInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutVariantInput
+  combinationValues?: Prisma.VariantCombinationValueUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type VariantCreateOrConnectWithoutProductInput = {
@@ -604,9 +604,9 @@ export type VariantCreateWithoutCombinationValuesInput = {
   sku: string
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
-  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
   cartItems?: Prisma.CartItemCreateNestedManyWithoutVariantInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutVariantInput
+  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
 }
 
 export type VariantUncheckedCreateWithoutCombinationValuesInput = {
@@ -643,9 +643,9 @@ export type VariantUpdateWithoutCombinationValuesInput = {
   sku?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
   cartItems?: Prisma.CartItemUpdateManyWithoutVariantNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutVariantNestedInput
+  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
 }
 
 export type VariantUncheckedUpdateWithoutCombinationValuesInput = {
@@ -666,9 +666,9 @@ export type VariantCreateWithoutCartItemsInput = {
   sku: string
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutVariantInput
   product: Prisma.ProductCreateNestedOneWithoutVariantsInput
   combinationValues?: Prisma.VariantCombinationValueCreateNestedManyWithoutVariantInput
-  orderItems?: Prisma.OrderItemCreateNestedManyWithoutVariantInput
 }
 
 export type VariantUncheckedCreateWithoutCartItemsInput = {
@@ -679,8 +679,8 @@ export type VariantUncheckedCreateWithoutCartItemsInput = {
   sku: string
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
-  combinationValues?: Prisma.VariantCombinationValueUncheckedCreateNestedManyWithoutVariantInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutVariantInput
+  combinationValues?: Prisma.VariantCombinationValueUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type VariantCreateOrConnectWithoutCartItemsInput = {
@@ -705,9 +705,9 @@ export type VariantUpdateWithoutCartItemsInput = {
   sku?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  orderItems?: Prisma.OrderItemUpdateManyWithoutVariantNestedInput
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
   combinationValues?: Prisma.VariantCombinationValueUpdateManyWithoutVariantNestedInput
-  orderItems?: Prisma.OrderItemUpdateManyWithoutVariantNestedInput
 }
 
 export type VariantUncheckedUpdateWithoutCartItemsInput = {
@@ -718,8 +718,8 @@ export type VariantUncheckedUpdateWithoutCartItemsInput = {
   sku?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  combinationValues?: Prisma.VariantCombinationValueUncheckedUpdateManyWithoutVariantNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutVariantNestedInput
+  combinationValues?: Prisma.VariantCombinationValueUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type VariantCreateWithoutOrderItemsInput = {
@@ -728,9 +728,9 @@ export type VariantCreateWithoutOrderItemsInput = {
   sku: string
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  cartItems?: Prisma.CartItemCreateNestedManyWithoutVariantInput
   product: Prisma.ProductCreateNestedOneWithoutVariantsInput
   combinationValues?: Prisma.VariantCombinationValueCreateNestedManyWithoutVariantInput
-  cartItems?: Prisma.CartItemCreateNestedManyWithoutVariantInput
 }
 
 export type VariantUncheckedCreateWithoutOrderItemsInput = {
@@ -741,8 +741,8 @@ export type VariantUncheckedCreateWithoutOrderItemsInput = {
   sku: string
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
-  combinationValues?: Prisma.VariantCombinationValueUncheckedCreateNestedManyWithoutVariantInput
   cartItems?: Prisma.CartItemUncheckedCreateNestedManyWithoutVariantInput
+  combinationValues?: Prisma.VariantCombinationValueUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type VariantCreateOrConnectWithoutOrderItemsInput = {
@@ -767,9 +767,9 @@ export type VariantUpdateWithoutOrderItemsInput = {
   sku?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cartItems?: Prisma.CartItemUpdateManyWithoutVariantNestedInput
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
   combinationValues?: Prisma.VariantCombinationValueUpdateManyWithoutVariantNestedInput
-  cartItems?: Prisma.CartItemUpdateManyWithoutVariantNestedInput
 }
 
 export type VariantUncheckedUpdateWithoutOrderItemsInput = {
@@ -780,8 +780,8 @@ export type VariantUncheckedUpdateWithoutOrderItemsInput = {
   sku?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  combinationValues?: Prisma.VariantCombinationValueUncheckedUpdateManyWithoutVariantNestedInput
   cartItems?: Prisma.CartItemUncheckedUpdateManyWithoutVariantNestedInput
+  combinationValues?: Prisma.VariantCombinationValueUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type VariantCreateManyProductInput = {
@@ -799,9 +799,9 @@ export type VariantUpdateWithoutProductInput = {
   sku?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  combinationValues?: Prisma.VariantCombinationValueUpdateManyWithoutVariantNestedInput
   cartItems?: Prisma.CartItemUpdateManyWithoutVariantNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutVariantNestedInput
+  combinationValues?: Prisma.VariantCombinationValueUpdateManyWithoutVariantNestedInput
 }
 
 export type VariantUncheckedUpdateWithoutProductInput = {
@@ -811,9 +811,9 @@ export type VariantUncheckedUpdateWithoutProductInput = {
   sku?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  combinationValues?: Prisma.VariantCombinationValueUncheckedUpdateManyWithoutVariantNestedInput
   cartItems?: Prisma.CartItemUncheckedUpdateManyWithoutVariantNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutVariantNestedInput
+  combinationValues?: Prisma.VariantCombinationValueUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type VariantUncheckedUpdateManyWithoutProductInput = {
@@ -831,15 +831,15 @@ export type VariantUncheckedUpdateManyWithoutProductInput = {
  */
 
 export type VariantCountOutputType = {
-  combinationValues: number
   cartItems: number
   orderItems: number
+  combinationValues: number
 }
 
 export type VariantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  combinationValues?: boolean | VariantCountOutputTypeCountCombinationValuesArgs
   cartItems?: boolean | VariantCountOutputTypeCountCartItemsArgs
   orderItems?: boolean | VariantCountOutputTypeCountOrderItemsArgs
+  combinationValues?: boolean | VariantCountOutputTypeCountCombinationValuesArgs
 }
 
 /**
@@ -850,13 +850,6 @@ export type VariantCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exte
    * Select specific fields to fetch from the VariantCountOutputType
    */
   select?: Prisma.VariantCountOutputTypeSelect<ExtArgs> | null
-}
-
-/**
- * VariantCountOutputType without action
- */
-export type VariantCountOutputTypeCountCombinationValuesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.VariantCombinationValueWhereInput
 }
 
 /**
@@ -873,6 +866,13 @@ export type VariantCountOutputTypeCountOrderItemsArgs<ExtArgs extends runtime.Ty
   where?: Prisma.OrderItemWhereInput
 }
 
+/**
+ * VariantCountOutputType without action
+ */
+export type VariantCountOutputTypeCountCombinationValuesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.VariantCombinationValueWhereInput
+}
+
 
 export type VariantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -882,10 +882,10 @@ export type VariantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   sku?: boolean
   price?: boolean
   isActive?: boolean
-  product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
-  combinationValues?: boolean | Prisma.Variant$combinationValuesArgs<ExtArgs>
   cartItems?: boolean | Prisma.Variant$cartItemsArgs<ExtArgs>
   orderItems?: boolean | Prisma.Variant$orderItemsArgs<ExtArgs>
+  product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  combinationValues?: boolean | Prisma.Variant$combinationValuesArgs<ExtArgs>
   _count?: boolean | Prisma.VariantCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["variant"]>
 
@@ -923,10 +923,10 @@ export type VariantSelectScalar = {
 
 export type VariantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productId" | "combinationKey" | "stock" | "sku" | "price" | "isActive", ExtArgs["result"]["variant"]>
 export type VariantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
-  combinationValues?: boolean | Prisma.Variant$combinationValuesArgs<ExtArgs>
   cartItems?: boolean | Prisma.Variant$cartItemsArgs<ExtArgs>
   orderItems?: boolean | Prisma.Variant$orderItemsArgs<ExtArgs>
+  product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  combinationValues?: boolean | Prisma.Variant$combinationValuesArgs<ExtArgs>
   _count?: boolean | Prisma.VariantCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type VariantIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -939,10 +939,10 @@ export type VariantIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type $VariantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Variant"
   objects: {
-    product: Prisma.$ProductPayload<ExtArgs>
-    combinationValues: Prisma.$VariantCombinationValuePayload<ExtArgs>[]
     cartItems: Prisma.$CartItemPayload<ExtArgs>[]
     orderItems: Prisma.$OrderItemPayload<ExtArgs>[]
+    product: Prisma.$ProductPayload<ExtArgs>
+    combinationValues: Prisma.$VariantCombinationValuePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1346,10 +1346,10 @@ readonly fields: VariantFieldRefs;
  */
 export interface Prisma__VariantClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  product<T extends Prisma.ProductDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductDefaultArgs<ExtArgs>>): Prisma.Prisma__ProductClient<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  combinationValues<T extends Prisma.Variant$combinationValuesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Variant$combinationValuesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VariantCombinationValuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   cartItems<T extends Prisma.Variant$cartItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Variant$cartItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CartItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   orderItems<T extends Prisma.Variant$orderItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Variant$orderItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  product<T extends Prisma.ProductDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductDefaultArgs<ExtArgs>>): Prisma.Prisma__ProductClient<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  combinationValues<T extends Prisma.Variant$combinationValuesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Variant$combinationValuesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VariantCombinationValuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1787,30 +1787,6 @@ export type VariantDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
 }
 
 /**
- * Variant.combinationValues
- */
-export type Variant$combinationValuesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the VariantCombinationValue
-   */
-  select?: Prisma.VariantCombinationValueSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the VariantCombinationValue
-   */
-  omit?: Prisma.VariantCombinationValueOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.VariantCombinationValueInclude<ExtArgs> | null
-  where?: Prisma.VariantCombinationValueWhereInput
-  orderBy?: Prisma.VariantCombinationValueOrderByWithRelationInput | Prisma.VariantCombinationValueOrderByWithRelationInput[]
-  cursor?: Prisma.VariantCombinationValueWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.VariantCombinationValueScalarFieldEnum | Prisma.VariantCombinationValueScalarFieldEnum[]
-}
-
-/**
  * Variant.cartItems
  */
 export type Variant$cartItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1856,6 +1832,30 @@ export type Variant$orderItemsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.OrderItemScalarFieldEnum | Prisma.OrderItemScalarFieldEnum[]
+}
+
+/**
+ * Variant.combinationValues
+ */
+export type Variant$combinationValuesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the VariantCombinationValue
+   */
+  select?: Prisma.VariantCombinationValueSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the VariantCombinationValue
+   */
+  omit?: Prisma.VariantCombinationValueOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.VariantCombinationValueInclude<ExtArgs> | null
+  where?: Prisma.VariantCombinationValueWhereInput
+  orderBy?: Prisma.VariantCombinationValueOrderByWithRelationInput | Prisma.VariantCombinationValueOrderByWithRelationInput[]
+  cursor?: Prisma.VariantCombinationValueWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.VariantCombinationValueScalarFieldEnum | Prisma.VariantCombinationValueScalarFieldEnum[]
 }
 
 /**
