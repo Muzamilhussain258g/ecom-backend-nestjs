@@ -313,17 +313,23 @@ export class ProductService {
   }
 
   async findOne(slug: string) {
-    const [product, reviewStats] = await this.prisma.$transaction([
-      this.prisma.product.findFirst({
-        where: { slug, productStatus: true },
-        select: productDetailSelect,
-      }),
-      this.prisma.review.aggregate({
-        where: { product: { slug } },
-        _avg: { stars: true },
-        _count: { _all: true },
-      }),
-    ]);
+    const [product, reviewStats] = await this.prisma.$transaction(
+      [
+        this.prisma.product.findFirst({
+          where: { slug, productStatus: true },
+          select: productDetailSelect,
+        }),
+        this.prisma.review.aggregate({
+          where: { product: { slug } },
+          _avg: { stars: true },
+          _count: { _all: true },
+        }),
+      ],
+      {
+        maxWait: 10_000,
+        timeout: 20_000,
+      },
+    );
 
     if (!product)
       throw new NotFoundException(`Product with slug ${slug} not found`);

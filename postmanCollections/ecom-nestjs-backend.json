@@ -1,1802 +1,3464 @@
 {
-	"info": {
-		"_postman_id": "ecom-nestjs-api-collection",
-		"name": "E-Commerce NestJS Backend API",
-		"description": "Complete Postman collection for E-Commerce Backend NestJS application with automatic auth token saving and pre-configured payload samples.",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"variable": [
-		{
-			"key": "baseUrl",
-			"value": "http://localhost:8080/api/v1",
-			"type": "string"
-		},
-		{
-			"key": "accessToken",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "refreshToken",
-			"value": "",
-			"type": "string"
-		}
-	],
-	"item": [
-		{
-			"name": "Authentication",
-			"item": [
-				{
-					"name": "Sign Up / Register",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"Password123!\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/auth/signup",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"auth",
-								"signup"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Sign In / Login",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"if (pm.response.code === 200) {",
-									"    const jsonData = pm.response.json();",
-									"    const token = jsonData.data ? jsonData.data.accessToken : jsonData.accessToken;",
-									"    const refreshToken = jsonData.data ? jsonData.data.refreshToken : jsonData.refreshToken;",
-									"    if (token) {",
-									"        pm.collectionVariables.set('accessToken', token);",
-									"        console.log('accessToken set:', token);",
-									"    }",
-									"    if (refreshToken) {",
-									"        pm.collectionVariables.set('refreshToken', refreshToken);",
-									"        console.log('refreshToken set:', refreshToken);",
-									"    }",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"Password123!\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/auth/signin",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"auth",
-								"signin"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Current User Profile",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/auth/me",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"auth",
-								"me"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Refresh Access Token",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"if (pm.response.code === 200) {",
-									"    const jsonData = pm.response.json();",
-									"    const token = jsonData.data ? jsonData.data.accessToken : jsonData.accessToken;",
-									"    if (token) {",
-									"        pm.collectionVariables.set('accessToken', token);",
-									"    }",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/auth/refresh",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"auth",
-								"refresh"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Profile",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"John Updated\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/auth/profile",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"auth",
-								"profile"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Password",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"currentPassword\": \"Password123!\",\n  \"newPassword\": \"NewPassword123!\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/auth/password",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"auth",
-								"password"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Sign Out",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/auth/signout",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"auth",
-								"signout"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Categories",
-			"item": [
-				{
-					"name": "Get All Categories",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/categories?page=1&limit=10",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"categories"
-							],
-							"query": [
-								{
-									"key": "page",
-									"value": "1"
-								},
-								{
-									"key": "limit",
-									"value": "10"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Category By ID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/categories/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"categories",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Category (Admin/Seller)",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"categoryName\": \"Electronics\",\n  \"slug\": \"electronics\",\n  \"parentId\": null\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/categories",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"categories"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Category (Admin/Seller)",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"categoryName\": \"Consumer Electronics\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/categories/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"categories",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Category (Admin/Seller)",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/categories/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"categories",
-								"1"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Products",
-			"item": [
-				{
-					"name": "Get All Products",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/products?page=1&limit=10",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"products"
-							],
-							"query": [
-								{
-									"key": "page",
-									"value": "1"
-								},
-								{
-									"key": "limit",
-									"value": "10"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Product By Slug",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/products/wireless-headphones",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"products",
-								"wireless-headphones"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Product (Admin/Seller)",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Wireless Noise Canceling Headphones\",\n  \"slug\": \"wireless-noise-canceling-headphones\",\n  \"description\": \"Premium over-ear headphones with high-fidelity sound.\",\n  \"basePrice\": 199.99,\n  \"productStatus\": true,\n  \"hasVariants\": false\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/products",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"products"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Product (Admin/Seller)",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"basePrice\": 179.99,\n  \"description\": \"Updated description for noise canceling headphones.\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/products/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"products",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Product Variant Options (Admin/Seller)",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"variantValueIds\": [1, 2, 3]\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/products/1/variant-options",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"products",
-								"1",
-								"variant-options"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Product Variant (Admin/Seller)",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"price\": 189.99,\n  \"stock\": 50,\n  \"isActive\": true\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/products/1/variants/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"products",
-								"1",
-								"variants",
-								"1"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Variant Types & Values",
-			"item": [
-				{
-					"name": "Get All Variant Types",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/variant-types",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"variant-types"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Variant Type (Seller)",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Color\",\n  \"slug\": \"color\",\n  \"sortOrder\": 1\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/variant-types",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"variant-types"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Add Variant Value To Type (Seller)",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"value\": \"Black\",\n  \"code\": \"#000000\",\n  \"sortOrder\": 1\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/variant-types/1/values",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"variant-types",
-								"1",
-								"values"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Values By Variant Type ID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/variant-types/1/values",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"variant-types",
-								"1",
-								"values"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get All Variant Values",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/variant-values",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"variant-values"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Collections",
-			"item": [
-				{
-					"name": "Get All Collections",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/collections",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"collections"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Collection By Slug",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/collections/summer-sale",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"collections",
-								"summer-sale"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Collection (Admin/Seller)",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Summer Sale\",\n  \"slug\": \"summer-sale\",\n  \"description\": \"Special discounts for summer products.\",\n  \"isActive\": true\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/collections",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"collections"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Wishlist",
-			"item": [
-				{
-					"name": "Get User Wishlist",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/wishlist?page=1&limit=10",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"wishlist"
-							],
-							"query": [
-								{
-									"key": "page",
-									"value": "1"
-								},
-								{
-									"key": "limit",
-									"value": "10"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Add Product To Wishlist",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/wishlist/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"wishlist",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Remove Product From Wishlist",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/wishlist/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"wishlist",
-								"1"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Media",
-			"item": [
-				{
-					"name": "Generate Upload Signature (Admin/Seller)",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"purpose\": \"product\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/media/upload-signature",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"media",
-								"upload-signature"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Media (Admin/Seller)",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/media/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"media",
-								"1"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "AI Agent",
-			"item": [
-				{
-					"name": "Chat - Search Products",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"message\": \"Do you have any green jeans available? Show me prices and sizes.\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/ai-agent/chat",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"ai-agent",
-								"chat"
-							]
-						},
-						"description": "Sends a natural-language shopping query. Gemini may call searchProducts and/or getProductDetails against the live catalog."
-					},
-					"response": []
-				},
-				{
-					"name": "Chat - Product Details",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"message\": \"What colors and sizes are available for wireless headphones, and is anything in stock?\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/ai-agent/chat",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"ai-agent",
-								"chat"
-							]
-						},
-						"description": "Asks about a specific product so Gemini uses getProductDetails (sizes, colors, stock, prices)."
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Addresses",
-			"item": [
-				{
-					"name": "Create Shipping Address",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"label\": \"home\",\n  \"fullName\": \"Jane Doe\",\n  \"phone\": \"+1-555-0199\",\n  \"street\": \"123 Elm Street, Apt 4B\",\n  \"city\": \"Metropolis\",\n  \"province\": \"Central State\",\n  \"postalCode\": \"12345\",\n  \"country\": \"United States\",\n  \"isDefault\": true\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/addresses",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"addresses"
-							]
-						},
-						"description": "Creates a new shipping address. If it is the user's first address or marked default, it becomes the default shipping address."
-					},
-					"response": []
-				},
-				{
-					"name": "List All Addresses",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/addresses",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"addresses"
-							]
-						},
-						"description": "Retrieves all saved shipping addresses for the authenticated user, ordered with newest first."
-					},
-					"response": []
-				},
-				{
-					"name": "Get Address by ID",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/addresses/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"addresses",
-								"1"
-							]
-						},
-						"description": "Fetches a specific shipping address by ID for the authenticated user. Returns 404 if not found or not owned."
-					},
-					"response": []
-				},
-				{
-					"name": "Update Address",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"phone\": \"+1-555-9999\",\n  \"isDefault\": true\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/addresses/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"addresses",
-								"1"
-							]
-						},
-						"description": "Updates details on an owned address. Setting isDefault to true demotes previous default. Setting isDefault to false on the only default is rejected with 400."
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Address",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/addresses/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"addresses",
-								"1"
-							]
-						},
-						"description": "Deletes an owned shipping address. If the deleted address was default, the next latest remaining address is auto-promoted to default."
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Cart",
-			"item": [
-				{
-					"name": "Get Current Cart",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/cart",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"cart"
-							]
-						},
-						"description": "Retrieves the current user's shopping cart, items, item totals, and subtotal."
-					},
-					"response": []
-				},
-				{
-					"name": "Add Item to Cart",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"variantId\": 1,\n  \"buyingQuantity\": 2,\n  \"isSelected\": true\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/cart/items",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"cart",
-								"items"
-							]
-						},
-						"description": "Adds a product variant to the cart or increments its quantity."
-					},
-					"response": []
-				},
-				{
-					"name": "Update Cart Item",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"buyingQuantity\": 3,\n  \"isSelected\": true\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/cart/items/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"cart",
-								"items",
-								"1"
-							]
-						},
-						"description": "Updates quantity or selected status for a cart item."
-					},
-					"response": []
-				},
-				{
-					"name": "Remove Item from Cart",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/cart/items/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"cart",
-								"items",
-								"1"
-							]
-						},
-						"description": "Removes a specific item from the cart."
-					},
-					"response": []
-				},
-				{
-					"name": "Clear Cart",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/cart/clear",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"cart",
-								"clear"
-							]
-						},
-						"description": "Clears all items in the user's cart."
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Reviews",
-			"item": [
-				{
-					"name": "Submit Product Review",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"stars\": 5,\n  \"review\": \"Exceptional quality and fast shipping!\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/products/1/reviews",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"products",
-								"1",
-								"reviews"
-							]
-						},
-						"description": "Submits a review with a star rating (1-5) and an optional review description for a product."
-					},
-					"response": []
-				},
-				{
-					"name": "Get Product Reviews",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/products/1/reviews?page=1&limit=10",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"products",
-								"1",
-								"reviews"
-							],
-							"query": [
-								{
-									"key": "page",
-									"value": "1"
-								},
-								{
-									"key": "limit",
-									"value": "10"
-								}
-							]
-						},
-						"description": "Fetches paginated reviews for a product along with an aggregate rating summary."
-					},
-					"response": []
-				},
-				{
-					"name": "Update Review",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"stars\": 4.5,\n  \"review\": \"Updated review: still good after a month of use.\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/reviews/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"reviews",
-								"1"
-							]
-						},
-						"description": "Updates stars or optional review text on an owned review."
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Review",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/reviews/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"reviews",
-								"1"
-							]
-						},
-						"description": "Deletes an owned review (or any review if performed by an admin)."
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Orders",
-			"item": [
-				{
-					"name": "Place Order (Checkout Cart)",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"shippingAddressId\": 1\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/orders",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"orders"
-							]
-						},
-						"description": "Places a COD order from selected cart items. Uses user default address if shippingAddressId is omitted. Atomically deducts variant stock, creates COD pending payment, and removes checked-out items from cart."
-					},
-					"response": []
-				},
-				{
-					"name": "Place Order (Direct Buy Now)",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"shippingAddressId\": 1,\n  \"items\": [\n    {\n      \"variantId\": 1,\n      \"quantity\": 2\n    }\n  ]\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/orders",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"orders"
-							]
-						},
-						"description": "Places a direct COD order for specific variants and quantities without requiring prior addition to the cart."
-					},
-					"response": []
-				},
-				{
-					"name": "List My Orders",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/orders?page=1&limit=10",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"orders"
-							],
-							"query": [
-								{
-									"key": "page",
-									"value": "1"
-								},
-								{
-									"key": "limit",
-									"value": "10"
-								}
-							]
-						},
-						"description": "Retrieves the authenticated user's order history sorted newest first with pagination and optional status filter."
-					},
-					"response": []
-				},
-				{
-					"name": "Get Order by ID",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/orders/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"orders",
-								"1"
-							]
-						},
-						"description": "Retrieves detailed order information including items, product details, shipping address snapshot, and payment records."
-					},
-					"response": []
-				},
-				{
-					"name": "Cancel Order",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/orders/1/cancel",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"orders",
-								"1",
-								"cancel"
-							]
-						},
-						"description": "Cancels a pending order, restocks all reserved product variants, and marks the payment as failed."
-					},
-					"response": []
-				},
-				{
-					"name": "Admin: List All Orders",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/orders/admin/all?page=1&limit=10",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"orders",
-								"admin",
-								"all"
-							],
-							"query": [
-								{
-									"key": "page",
-									"value": "1"
-								},
-								{
-									"key": "limit",
-									"value": "10"
-								}
-							]
-						},
-						"description": "Admin/Seller endpoint to retrieve orders across all customers with pagination and status/userId filters."
-					},
-					"response": []
-				},
-				{
-					"name": "Admin: Update Order Status",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"status\": \"delivered\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/orders/admin/1/status",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"orders",
-								"admin",
-								"1",
-								"status"
-							]
-						},
-						"description": "Admin/Seller endpoint to update order status. Marking as delivered automatically flags the COD payment as success with paid timestamp. Marking as cancelled or returned automatically restocks variants."
-					},
-					"response": []
-				}
-			]
-		}
-	]
+  "info": {
+    "_postman_id": "ecom-nestjs-role-based-api",
+    "name": "E-Commerce Backend API (Role-Based)",
+    "description": "Complete production-ready Postman collection for the NestJS E-Commerce backend service organized by Role (Public/Guest, Customer, Seller, and Admin). Configured with automatic token persistence, rich realistic payloads matching class-validator DTOs, and the ngrok live tunnel endpoint.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://palpitate-expend-epic.ngrok-free.dev/api/v1",
+      "type": "string",
+      "description": "Active API base URL (Defaulted to live ngrok endpoint)"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string",
+      "description": "Customer or active user JWT access token"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string",
+      "description": "Active user JWT refresh token"
+    },
+    {
+      "key": "sellerAccessToken",
+      "value": "",
+      "type": "string",
+      "description": "Dedicated JWT access token for Seller role"
+    },
+    {
+      "key": "adminAccessToken",
+      "value": "",
+      "type": "string",
+      "description": "Dedicated JWT access token for Admin role"
+    },
+    {
+      "key": "productId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "productSlug",
+      "value": "classic-leather-wallet",
+      "type": "string"
+    },
+    {
+      "key": "variantId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "variantTypeId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "variantValueId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "categoryId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "collectionSlug",
+      "value": "summer-fitness-essentials-2026",
+      "type": "string"
+    },
+    {
+      "key": "addressId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "cartItemId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "orderId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "reviewId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "mediaId",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🌐 1. Public / Guest (No Auth Required)",
+      "description": "Endpoints accessible by unauthenticated visitors and storefront browsers, including account onboarding, catalogue browsing, search, and the AI shopping assistant.",
+      "item": [
+        {
+          "name": "Authentication (Public Onboarding)",
+          "item": [
+            {
+              "name": "Sign Up / Register User",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/signup",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "signup"
+                  ]
+                },
+                "description": "Creates a new customer user account. Password must be strong (min 8 chars, uppercase, lowercase, number, special char).",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Alex Johnson\",\n  \"email\": \"customer@example.com\",\n  \"password\": \"Password123!\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (pm.response.code === 200 || pm.response.code === 201) {",
+                      "    const res = pm.response.json();",
+                      "    const data = res.data || res;",
+                      "    const token = data.accessToken;",
+                      "    const refreshToken = data.refreshToken;",
+                      "    ",
+                      "    if (token) {",
+                      "        pm.collectionVariables.set('accessToken', token);",
+                      "        ",
+                      "        console.log('Access token saved for current user:', token);",
+                      "    }",
+                      "    if (refreshToken) {",
+                      "        pm.collectionVariables.set('refreshToken', refreshToken);",
+                      "        console.log('Refresh token saved');",
+                      "    }",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Sign In / Login",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/signin",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "signin"
+                  ]
+                },
+                "description": "Authenticates user and returns JWT accessToken + refreshToken. Tokens are automatically stored in collection variables.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"customer@example.com\",\n  \"password\": \"Password123!\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (pm.response.code === 200 || pm.response.code === 201) {",
+                      "    const res = pm.response.json();",
+                      "    const data = res.data || res;",
+                      "    const token = data.accessToken;",
+                      "    const refreshToken = data.refreshToken;",
+                      "    ",
+                      "    if (token) {",
+                      "        pm.collectionVariables.set('accessToken', token);",
+                      "        ",
+                      "        console.log('Access token saved for current user:', token);",
+                      "    }",
+                      "    if (refreshToken) {",
+                      "        pm.collectionVariables.set('refreshToken', refreshToken);",
+                      "        console.log('Refresh token saved');",
+                      "    }",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Refresh Access Token",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/refresh",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "refresh"
+                  ]
+                },
+                "description": "Issues a new short-lived accessToken using a valid, non-revoked refreshToken.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (pm.response.code === 200) {",
+                      "    const res = pm.response.json();",
+                      "    const data = res.data || res;",
+                      "    if (data.accessToken) {",
+                      "        pm.collectionVariables.set('accessToken', data.accessToken);",
+                      "        console.log('Access token refreshed:', data.accessToken);",
+                      "    }",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Sign Out / Logout",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/signout",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "signout"
+                  ]
+                },
+                "description": "Revokes the supplied refresh token in database.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Products (Catalog Browsing)",
+          "item": [
+            {
+              "name": "List Products (with Search, Filter, Sort & Pagination)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/products?page=1&limit=10&search=shoes&category=footwear&sortOrder=asc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "products"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": "Page number (default 1)"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10",
+                      "description": "Items per page (max 100)"
+                    },
+                    {
+                      "key": "search",
+                      "value": "shoes",
+                      "description": "Optional text query matching name or description"
+                    },
+                    {
+                      "key": "category",
+                      "value": "footwear",
+                      "description": "Optional category slug filter"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "asc",
+                      "description": "Product name sort: asc or desc"
+                    }
+                  ]
+                },
+                "description": "Public catalogue listing with pagination metadata and associated variants and primary media."
+              },
+              "response": []
+            },
+            {
+              "name": "Get Product Details by Slug",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/products/{{productSlug}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "products",
+                    "{{productSlug}}"
+                  ]
+                },
+                "description": "Fetches complete product detail by unique slug, including all variants, variant options, prices, stock, categories, and media."
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Categories (Browsing)",
+          "item": [
+            {
+              "name": "List Categories (Hierarchy & Pagination)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/categories?page=1&limit=20&depth=2",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "categories"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "depth",
+                      "value": "2",
+                      "description": "Hierarchy depth (1-10)"
+                    }
+                  ]
+                },
+                "description": "Retrieves active category tree with parent-child hierarchy and cover images."
+              },
+              "response": []
+            },
+            {
+              "name": "Get Category by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/categories/{{categoryId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "categories",
+                    "{{categoryId}}"
+                  ]
+                },
+                "description": "Retrieves single category details by numeric ID including children and media."
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Collections (Promotions & Curations)",
+          "item": [
+            {
+              "name": "List All Active Collections",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/collections",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "collections"
+                  ]
+                },
+                "description": "Public list of active curated collections with cover image and product previews."
+              },
+              "response": []
+            },
+            {
+              "name": "Get Collection by Slug",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/collections/{{collectionSlug}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "collections",
+                    "{{collectionSlug}}"
+                  ]
+                },
+                "description": "Fetches single collection by slug including ordered product listings."
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Product Reviews (Public View)",
+          "item": [
+            {
+              "name": "Get Reviews for Product",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/products/{{productId}}/reviews?page=1&limit=10",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "products",
+                    "{{productId}}",
+                    "reviews"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                },
+                "description": "Returns customer reviews and aggregate rating summary (total reviews, average stars, breakdown) for a product."
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "AI Shopping Assistant",
+          "item": [
+            {
+              "name": "Chat with AI Shopping Assistant",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/ai-agent/chat",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "ai-agent",
+                    "chat"
+                  ]
+                },
+                "description": "Natural language shopping assistant powered by Google Gemini that queries live store inventory.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"Hello! I need a comfortable running shoe in size 9 under $150. What do you have?\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Health & Status",
+          "item": [
+            {
+              "name": "Server Welcome / Health Check",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": []
+                },
+                "description": "Basic health probe to verify API server reachability."
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "👤 2. Customer Role (Authenticated Customer)",
+      "description": "Endpoints used by authenticated shoppers: managing personal profiles, delivery addresses, shopping cart items, wishlist, order placement with COD checkout, and leaving reviews.",
+      "item": [
+        {
+          "name": "Customer Authentication & Profile",
+          "item": [
+            {
+              "name": "Sign In as Customer",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/signin",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "signin"
+                  ]
+                },
+                "description": "Logs in as a customer and saves the token to {{accessToken}}.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"customer@example.com\",\n  \"password\": \"Password123!\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (pm.response.code === 200 || pm.response.code === 201) {",
+                      "    const res = pm.response.json();",
+                      "    const data = res.data || res;",
+                      "    const token = data.accessToken;",
+                      "    const refreshToken = data.refreshToken;",
+                      "    ",
+                      "    if (token) {",
+                      "        pm.collectionVariables.set('accessToken', token);",
+                      "        ",
+                      "        console.log('Access token saved for current user:', token);",
+                      "    }",
+                      "    if (refreshToken) {",
+                      "        pm.collectionVariables.set('refreshToken', refreshToken);",
+                      "        console.log('Refresh token saved');",
+                      "    }",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get My Profile (Current User)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "me"
+                  ]
+                },
+                "description": "Fetches currently authenticated user identity (id, name, email, role).",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update My Profile",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/profile",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "profile"
+                  ]
+                },
+                "description": "Updates customer full name or email.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Alex Johnson Updated\",\n  \"email\": \"alex.updated@example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Change My Password",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/password",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "password"
+                  ]
+                },
+                "description": "Updates account password after verifying currentPassword.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"currentPassword\": \"Password123!\",\n  \"newPassword\": \"NewCustomerPassword456!\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Shipping Addresses",
+          "item": [
+            {
+              "name": "List My Addresses",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/addresses",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "addresses"
+                  ]
+                },
+                "description": "Retrieves all saved shipping addresses for current customer with default flag.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Shipping Address (Home / Office / Other)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/addresses",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "addresses"
+                  ]
+                },
+                "description": "Adds a new delivery address. Label must be one of: home, office, other.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"label\": \"home\",\n  \"fullName\": \"Alex Johnson\",\n  \"phone\": \"+1-555-0199\",\n  \"street\": \"123 Elm Street, Apt 4B\",\n  \"city\": \"Metropolis\",\n  \"province\": \"Central State\",\n  \"postalCode\": \"10001\",\n  \"country\": \"United States\",\n  \"isDefault\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    const res = pm.response.json();",
+                      "    const data = res.data || res;",
+                      "    if (data.id) {",
+                      "        pm.collectionVariables.set('addressId', String(data.id));",
+                      "        console.log('Saved addressId:', data.id);",
+                      "    }",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get Address by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/addresses/{{addressId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "addresses",
+                    "{{addressId}}"
+                  ]
+                },
+                "description": "Retrieves a single address belonging to current customer.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Shipping Address",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/addresses/{{addressId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "addresses",
+                    "{{addressId}}"
+                  ]
+                },
+                "description": "Updates fields on an existing shipping address.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"label\": \"office\",\n  \"fullName\": \"Alex Johnson\",\n  \"phone\": \"+1-555-0199\",\n  \"street\": \"789 Business Parkway, Suite 300\",\n  \"city\": \"Metropolis\",\n  \"province\": \"Central State\",\n  \"postalCode\": \"10002\",\n  \"country\": \"United States\",\n  \"isDefault\": false\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Shipping Address",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/addresses/{{addressId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "addresses",
+                    "{{addressId}}"
+                  ]
+                },
+                "description": "Deletes a shipping address belonging to current customer.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Shopping Cart",
+          "item": [
+            {
+              "name": "Get My Cart",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/cart",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "cart"
+                  ]
+                },
+                "description": "Retrieves customer cart, selected items, item quantities, prices, subtotal, and stock validation.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Add Item to Cart",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/cart/items",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "cart",
+                    "items"
+                  ]
+                },
+                "description": "Adds a specific product variant to the customer cart.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"variantId\": 1,\n  \"buyingQuantity\": 2,\n  \"isSelected\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (pm.response.code === 200) {",
+                      "    const res = pm.response.json();",
+                      "    const data = res.data || res;",
+                      "    if (data.items && data.items.length > 0) {",
+                      "        pm.collectionVariables.set('cartItemId', String(data.items[0].id));",
+                      "    }",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Update Cart Item (Quantity or Selection)",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/cart/items/{{cartItemId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "cart",
+                    "items",
+                    "{{cartItemId}}"
+                  ]
+                },
+                "description": "Updates buying quantity or toggles checkout selection checkbox.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"buyingQuantity\": 3,\n  \"isSelected\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Remove Item from Cart",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/cart/items/{{cartItemId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "cart",
+                    "items",
+                    "{{cartItemId}}"
+                  ]
+                },
+                "description": "Removes an individual item line from the cart.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Clear Entire Cart",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/cart/clear",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "cart",
+                    "clear"
+                  ]
+                },
+                "description": "Empties all items from the customer active cart.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Wishlist",
+          "item": [
+            {
+              "name": "Get My Wishlist",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/wishlist?page=1&limit=20",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "wishlist"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    }
+                  ]
+                },
+                "description": "Returns customer wishlist items with product information and prices.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Add Product to Wishlist",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/wishlist/{{productId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "wishlist",
+                    "{{productId}}"
+                  ]
+                },
+                "description": "Adds a product to customer wishlist by numeric productId in path.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Remove Product from Wishlist",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/wishlist/{{productId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "wishlist",
+                    "{{productId}}"
+                  ]
+                },
+                "description": "Removes product from wishlist.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Orders (COD Checkout)",
+          "item": [
+            {
+              "name": "Place Order (Checkout Selected Cart Items)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "description": "Places a Cash on Delivery (COD) order using currently selected cart items. Stock is atomically decremented and cart items removed.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"shippingAddressId\": 1,\n  \"paymentGateway\": \"cod\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    const res = pm.response.json();",
+                      "    const data = res.data || res;",
+                      "    if (data.id) {",
+                      "        pm.collectionVariables.set('orderId', String(data.id));",
+                      "        console.log('Created orderId:', data.id);",
+                      "    }",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Place Direct Order (Specific Items Checkout)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "description": "Direct checkout bypassing cart (Buy Now) by passing explicit items array.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"shippingAddressId\": 1,\n  \"paymentGateway\": \"cod\",\n  \"items\": [\n    {\n      \"variantId\": 1,\n      \"quantity\": 2\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    const res = pm.response.json();",
+                      "    const data = res.data || res;",
+                      "    if (data.id) {",
+                      "        pm.collectionVariables.set('orderId', String(data.id));",
+                      "    }",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "List My Orders",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders?page=1&limit=10&status=pending",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "status",
+                      "value": "pending",
+                      "description": "Optional status filter: pending, confirmed, processing, shipped, delivered, cancelled, returned"
+                    }
+                  ]
+                },
+                "description": "Fetches paginated order history for current customer.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get My Order by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}"
+                  ]
+                },
+                "description": "Returns full order breakdown with item snapshot, tracking, and shipping address snapshot.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Cancel Pending Order",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/cancel",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "cancel"
+                  ]
+                },
+                "description": "Allows customer to cancel an order as long as status is still \"pending\". Automatically restocks inventory.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Reviews",
+          "item": [
+            {
+              "name": "Submit Product Review",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/products/{{productId}}/reviews",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "products",
+                    "{{productId}}",
+                    "reviews"
+                  ]
+                },
+                "description": "Submits a verified product rating (1 to 5 stars) and optional review text. One review per user per product.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"stars\": 5,\n  \"review\": \"Outstanding quality and very fast shipping! Fits perfectly.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    const res = pm.response.json();",
+                      "    const data = res.data || res;",
+                      "    if (data.id) {",
+                      "        pm.collectionVariables.set('reviewId', String(data.id));",
+                      "    }",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Update My Review",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/reviews/{{reviewId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reviews",
+                    "{{reviewId}}"
+                  ]
+                },
+                "description": "Updates the user own review rating or text feedback.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"stars\": 4,\n  \"review\": \"Still holding up great after several weeks of continuous use.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete My Review",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/reviews/{{reviewId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reviews",
+                    "{{reviewId}}"
+                  ]
+                },
+                "description": "Deletes the user own review.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "🏪 3. Seller Role (Vendor / Merchant)",
+      "description": "Operations permitted for seller accounts: managing variant types, variant values, creating & updating products, inventory & pricing adjustments, generating Cloudinary upload signatures, and processing store orders.",
+      "item": [
+        {
+          "name": "Seller Authentication",
+          "item": [
+            {
+              "name": "Sign In as Seller",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/signin",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "signin"
+                  ]
+                },
+                "description": "Authenticates a seller and sets both {{sellerAccessToken}} and {{accessToken}}.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"seller@example.com\",\n  \"password\": \"Password123!\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (pm.response.code === 200 || pm.response.code === 201) {",
+                      "    const res = pm.response.json();",
+                      "    const data = res.data || res;",
+                      "    const token = data.accessToken;",
+                      "    const refreshToken = data.refreshToken;",
+                      "    ",
+                      "    if (token) {",
+                      "        pm.collectionVariables.set('accessToken', token);",
+                      "        pm.collectionVariables.set('sellerAccessToken', token);",
+                      "        console.log('Access token saved for seller:', token);",
+                      "    }",
+                      "    if (refreshToken) {",
+                      "        pm.collectionVariables.set('refreshToken', refreshToken);",
+                      "        console.log('Refresh token saved');",
+                      "    }",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Variant Types (Seller Only)",
+          "item": [
+            {
+              "name": "List All Variant Types",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/variant-types",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "variant-types"
+                  ]
+                },
+                "description": "Public/seller list of variant types (e.g., Color, Size, Storage)."
+              },
+              "response": []
+            },
+            {
+              "name": "Create Variant Type",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/variant-types",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "variant-types"
+                  ]
+                },
+                "description": "Restricted to Seller. Creates a new variant type.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{sellerAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Color\",\n  \"sortOrder\": 1\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    const res = pm.response.json();",
+                      "    const data = res.data || res;",
+                      "    if (data.id) {",
+                      "        pm.collectionVariables.set('variantTypeId', String(data.id));",
+                      "        console.log('Saved variantTypeId:', data.id);",
+                      "    }",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Update Variant Type",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/variant-types/{{variantTypeId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "variant-types",
+                    "{{variantTypeId}}"
+                  ]
+                },
+                "description": "Restricted to Seller. Updates name or sorting order.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{sellerAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Primary Color\",\n  \"sortOrder\": 2\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Variant Type",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/variant-types/{{variantTypeId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "variant-types",
+                    "{{variantTypeId}}"
+                  ]
+                },
+                "description": "Restricted to Seller. Deletes variant type if not linked to active products.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{sellerAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Add Value to Variant Type",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/variant-types/{{variantTypeId}}/values",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "variant-types",
+                    "{{variantTypeId}}",
+                    "values"
+                  ]
+                },
+                "description": "Creates a new value under variant type. Code must match uppercase alphanumeric hyphenated pattern.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{sellerAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"value\": \"Midnight Black\",\n  \"code\": \"MIDNIGHT-BLACK\",\n  \"metadata\": {\n    \"hex\": \"#111111\"\n  },\n  \"sortOrder\": 1\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    const res = pm.response.json();",
+                      "    const data = res.data || res;",
+                      "    if (data.id) {",
+                      "        pm.collectionVariables.set('variantValueId', String(data.id));",
+                      "    }",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "List Values by Variant Type",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/variant-types/{{variantTypeId}}/values",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "variant-types",
+                    "{{variantTypeId}}",
+                    "values"
+                  ]
+                },
+                "description": "Returns all available values for a variant type."
+              },
+              "response": []
+            },
+            {
+              "name": "Delete All Values for Variant Type",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/variant-types/{{variantTypeId}}/values",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "variant-types",
+                    "{{variantTypeId}}",
+                    "values"
+                  ]
+                },
+                "description": "Removes all values under the variant type.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{sellerAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Variant Values (Seller Only)",
+          "item": [
+            {
+              "name": "List All Variant Values across Catalog",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/variant-values",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "variant-values"
+                  ]
+                },
+                "description": "Returns all registered variant values."
+              },
+              "response": []
+            },
+            {
+              "name": "Update Variant Value by ID",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/variant-values/{{variantValueId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "variant-values",
+                    "{{variantValueId}}"
+                  ]
+                },
+                "description": "Updates value name, code, metadata, or sortOrder.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{sellerAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"value\": \"Matte Jet Black\",\n  \"code\": \"MATTE-JET-BLACK\",\n  \"metadata\": {\n    \"hex\": \"#0a0a0a\"\n  },\n  \"sortOrder\": 1\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Single Variant Value",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/variant-values/{{variantValueId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "variant-values",
+                    "{{variantValueId}}"
+                  ]
+                },
+                "description": "Deletes an individual variant value.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{sellerAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Product Management (Seller)",
+          "item": [
+            {
+              "name": "Create Simple Product (No Variants)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/products",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "products"
+                  ]
+                },
+                "description": "Creates a simple standalone product with fixed base stock and base price.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{sellerAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Premium Leather Wallet\",\n  \"description\": \"Genuine full-grain leather bifold wallet with RFID protection.\",\n  \"basePrice\": 49.99,\n  \"hasVariants\": false,\n  \"stock\": 50,\n  \"categories\": [\n    {\n      \"categoryId\": 1,\n      \"isPrimary\": true\n    }\n  ],\n  \"media\": [\n    {\n      \"providerPublicId\": \"ecommerce/products/wallet-front\",\n      \"version\": 1700000001,\n      \"signature\": \"mock_signature_from_upload\",\n      \"format\": \"webp\",\n      \"bytes\": 185000,\n      \"width\": 1200,\n      \"height\": 1200,\n      \"isPrimary\": true,\n      \"position\": 0,\n      \"altText\": \"Front angle of premium leather wallet\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    const res = pm.response.json();",
+                      "    const data = res.data || res;",
+                      "    if (data.id) {",
+                      "        pm.collectionVariables.set('productId', String(data.id));",
+                      "        if (data.slug) pm.collectionVariables.set('productSlug', data.slug);",
+                      "    }",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Create Product with Variants & Matrix",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/products",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "products"
+                  ]
+                },
+                "description": "Creates product with multi-dimensional variant matrix (e.g. Color x Size) and initial stock allocation.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{sellerAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Pro Breathable Running Shoes\",\n  \"description\": \"Lightweight high-mileage road running sneakers with carbon rubber outsole.\",\n  \"basePrice\": 129.99,\n  \"hasVariants\": true,\n  \"categories\": [\n    {\n      \"categoryId\": 1,\n      \"isPrimary\": true\n    }\n  ],\n  \"variantSelections\": [\n    {\n      \"variantTypeId\": 1,\n      \"variantValueIds\": [\n        1,\n        2\n      ]\n    },\n    {\n      \"variantTypeId\": 2,\n      \"variantValueIds\": [\n        3,\n        4\n      ]\n    }\n  ],\n  \"variantQuantities\": [\n    {\n      \"variantValueIds\": [\n        1,\n        3\n      ],\n      \"quantity\": 20\n    },\n    {\n      \"variantValueIds\": [\n        1,\n        4\n      ],\n      \"quantity\": 25\n    },\n    {\n      \"variantValueIds\": [\n        2,\n        3\n      ],\n      \"quantity\": 15\n    },\n    {\n      \"variantValueIds\": [\n        2,\n        4\n      ],\n      \"quantity\": 30\n    }\n  ],\n  \"media\": [\n    {\n      \"providerPublicId\": \"ecommerce/products/shoe-black\",\n      \"version\": 1700000002,\n      \"signature\": \"mock_signature_from_upload\",\n      \"format\": \"webp\",\n      \"bytes\": 290000,\n      \"width\": 1400,\n      \"height\": 1400,\n      \"isPrimary\": true,\n      \"position\": 0,\n      \"altText\": \"Running Shoe in Black colorway\",\n      \"variantValueId\": 1\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    const res = pm.response.json();",
+                      "    const data = res.data || res;",
+                      "    if (data.id) {",
+                      "        pm.collectionVariables.set('productId', String(data.id));",
+                      "        if (data.slug) pm.collectionVariables.set('productSlug', data.slug);",
+                      "        if (data.variants && data.variants.length > 0) {",
+                      "            pm.collectionVariables.set('variantId', String(data.variants[0].id));",
+                      "        }",
+                      "    }",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Update Product Details",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/products/{{productId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "products",
+                    "{{productId}}"
+                  ]
+                },
+                "description": "Updates product level metadata, pricing, status, and category linkages.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{sellerAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Pro Breathable Running Shoes v2\",\n  \"description\": \"Upgraded version 2 with responsive nitrogen-infused foam midsole.\",\n  \"basePrice\": 139.99,\n  \"productStatus\": true,\n  \"categories\": [\n    {\n      \"categoryId\": 1,\n      \"isPrimary\": true\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Product Variant Matrix Options",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/products/{{productId}}/variant-options",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "products",
+                    "{{productId}}",
+                    "variant-options"
+                  ]
+                },
+                "description": "Rebuilds product variant matrix combinations with new option values.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{sellerAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"variantSelections\": [\n    {\n      \"variantTypeId\": 1,\n      \"variantValueIds\": [\n        1,\n        2,\n        5\n      ]\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Specific Variant (SKU, Price, Stock & Status)",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/products/{{productId}}/variants/{{variantId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "products",
+                    "{{productId}}",
+                    "variants",
+                    "{{variantId}}"
+                  ]
+                },
+                "description": "Updates price override, stock inventory, or SKU for a single product variant.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{sellerAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"sku\": \"PRO-RUN-BLK-US9\",\n  \"price\": 134.99,\n  \"stock\": 40,\n  \"isActive\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Media Upload & Signatures",
+          "item": [
+            {
+              "name": "Generate Cloudinary Upload Signature (Product Image)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/media/upload-signature",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "media",
+                    "upload-signature"
+                  ]
+                },
+                "description": "Generates secure Cloudinary pre-signed upload parameters for direct client-side asset uploads.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{sellerAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"purpose\": \"product\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Media by ID",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/media/{{mediaId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "media",
+                    "{{mediaId}}"
+                  ]
+                },
+                "description": "Deletes media record and removes remote asset from Cloudinary.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{sellerAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Order Fulfillment (Seller/Merchant)",
+          "item": [
+            {
+              "name": "List Orders for Store (with Filters)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/admin/all?page=1&limit=20&status=pending",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "admin",
+                    "all"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "status",
+                      "value": "pending",
+                      "description": "Filter: pending, confirmed, processing, shipped, delivered, cancelled, returned"
+                    }
+                  ]
+                },
+                "description": "Seller/Admin order dashboard listing all customer orders.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{sellerAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Order Status (Confirm / Ship / Deliver / Cancel)",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/admin/{{orderId}}/status",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "admin",
+                    "{{orderId}}",
+                    "status"
+                  ]
+                },
+                "description": "Fulfills order lifecycle: pending -> confirmed -> processing -> shipped -> delivered. Marks COD payment as success on delivery; automatically restocks on cancel/return.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{sellerAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"confirmed\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "🛡️ 4. Admin Role (Super Admin / Operations)",
+      "description": "Endpoints restricted to administrative staff: category creation and management, curated collection management, cross-store order oversight, review moderation, and full product catalogue control.",
+      "item": [
+        {
+          "name": "Admin Authentication",
+          "item": [
+            {
+              "name": "Sign In as Admin",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/signin",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "signin"
+                  ]
+                },
+                "description": "Authenticates administrator and populates {{adminAccessToken}} and {{accessToken}}.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"Password123!\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (pm.response.code === 200 || pm.response.code === 201) {",
+                      "    const res = pm.response.json();",
+                      "    const data = res.data || res;",
+                      "    const token = data.accessToken;",
+                      "    const refreshToken = data.refreshToken;",
+                      "    ",
+                      "    if (token) {",
+                      "        pm.collectionVariables.set('accessToken', token);",
+                      "        pm.collectionVariables.set('adminAccessToken', token);",
+                      "        console.log('Access token saved for admin:', token);",
+                      "    }",
+                      "    if (refreshToken) {",
+                      "        pm.collectionVariables.set('refreshToken', refreshToken);",
+                      "        console.log('Refresh token saved');",
+                      "    }",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Category Management (Admin)",
+          "item": [
+            {
+              "name": "Create Category",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/categories",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "categories"
+                  ]
+                },
+                "description": "Creates a top-level category or subcategory with optional cover image.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"categoryName\": \"Apparel & Fashion\",\n  \"parentId\": null,\n  \"image\": {\n    \"providerPublicId\": \"ecommerce/categories/apparel-cover\",\n    \"version\": 1700000005,\n    \"signature\": \"mock_signature_from_upload\",\n    \"format\": \"webp\",\n    \"bytes\": 140000,\n    \"width\": 800,\n    \"height\": 600,\n    \"altText\": \"Apparel & Fashion category banner\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    const res = pm.response.json();",
+                      "    const data = res.data || res;",
+                      "    if (data.id) {",
+                      "        pm.collectionVariables.set('categoryId', String(data.id));",
+                      "    }",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Create Subcategory",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/categories",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "categories"
+                  ]
+                },
+                "description": "Creates a nested subcategory under an existing parentId.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"categoryName\": \"Men Footwear\",\n  \"parentId\": 1,\n  \"image\": {\n    \"providerPublicId\": \"ecommerce/categories/men-footwear\",\n    \"version\": 1700000006,\n    \"signature\": \"mock_signature_from_upload\",\n    \"format\": \"webp\",\n    \"bytes\": 120000,\n    \"width\": 800,\n    \"height\": 600,\n    \"altText\": \"Men Footwear subcategory\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Category",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/categories/{{categoryId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "categories",
+                    "{{categoryId}}"
+                  ]
+                },
+                "description": "Updates category name or re-parents under another category.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"categoryName\": \"Footwear & Athletic Shoes\",\n  \"parentId\": null\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Category",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/categories/{{categoryId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "categories",
+                    "{{categoryId}}"
+                  ]
+                },
+                "description": "Deletes category. Throws error if category has associated products.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Collection Management (Admin)",
+          "item": [
+            {
+              "name": "Create Curated Collection (with Ranked Products & Banner)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/collections",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "collections"
+                  ]
+                },
+                "description": "Creates a homepage or promotional collection linked to ordered products.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Summer Fitness Essentials 2026\",\n  \"description\": \"Featured performance gear, athletic apparel, and footwear for warm weather training.\",\n  \"isActive\": true,\n  \"products\": [\n    {\n      \"productId\": 1,\n      \"position\": 0\n    },\n    {\n      \"productId\": 2,\n      \"position\": 1\n    }\n  ],\n  \"coverImage\": {\n    \"providerPublicId\": \"ecommerce/collections/summer-fitness-cover\",\n    \"version\": 1700000007,\n    \"signature\": \"mock_signature_from_upload\",\n    \"format\": \"webp\",\n    \"bytes\": 350000,\n    \"width\": 1920,\n    \"height\": 720,\n    \"altText\": \"Summer Fitness promotional hero banner\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    const res = pm.response.json();",
+                      "    const data = res.data || res;",
+                      "    if (data.slug) {",
+                      "        pm.collectionVariables.set('collectionSlug', data.slug);",
+                      "    }",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Media Signatures (Admin)",
+          "item": [
+            {
+              "name": "Generate Signature for Category Image",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/media/upload-signature",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "media",
+                    "upload-signature"
+                  ]
+                },
+                "description": "Generates Cloudinary upload signature for category media asset.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"purpose\": \"category\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Generate Signature for Collection Cover",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/media/upload-signature",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "media",
+                    "upload-signature"
+                  ]
+                },
+                "description": "Generates Cloudinary upload signature for collection promotional cover.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"purpose\": \"collection\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Any Media Record",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/media/{{mediaId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "media",
+                    "{{mediaId}}"
+                  ]
+                },
+                "description": "Admin deletion of any media asset.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Order Oversight (Admin)",
+          "item": [
+            {
+              "name": "List All Orders Across Store (with Customer & Status Filter)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/admin/all?page=1&limit=50&status=pending&userId=1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "admin",
+                    "all"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "status",
+                      "value": "pending"
+                    },
+                    {
+                      "key": "userId",
+                      "value": "1",
+                      "description": "Optional customer ID filter"
+                    }
+                  ]
+                },
+                "description": "Super-admin order query across all customers in the system.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Any Order Details by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}"
+                  ]
+                },
+                "description": "Admins can inspect full details of any customer order.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Order Status as Admin",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/admin/{{orderId}}/status",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "admin",
+                    "{{orderId}}",
+                    "status"
+                  ]
+                },
+                "description": "Updates order status. Transitions to \"delivered\" automatically marks Cash on Delivery payment as success.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"delivered\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Review Moderation (Admin)",
+          "item": [
+            {
+              "name": "Delete Inappropriate Review as Admin",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/reviews/{{reviewId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reviews",
+                    "{{reviewId}}"
+                  ]
+                },
+                "description": "Allows an administrator to delete any abusive, spam, or inappropriate review across any product.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }
