@@ -500,10 +500,6 @@ export type MediaScalarRelationFilter = {
   isNot?: Prisma.MediaWhereInput
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
 export type MediaCreateNestedOneWithoutProductsInput = {
   create?: Prisma.XOR<Prisma.MediaCreateWithoutProductsInput, Prisma.MediaUncheckedCreateWithoutProductsInput>
   connectOrCreate?: Prisma.MediaCreateOrConnectWithoutProductsInput

@@ -15,6 +15,7 @@ async function bootstrap() {
   );
 
   // to configure interceptors in all routes
+  app.enableCors()
   app.useGlobalInterceptors(new TransformInterceptor(new Reflector()));
   app.setGlobalPrefix('api/v1'); // to set prefix for all routes
   app.useGlobalFilters(new HttpExceptionFilter()); // to set global filters for all routes

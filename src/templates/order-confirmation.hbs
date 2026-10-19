@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Confirmation</title>
+  <style>
+    body { margin: 0; padding: 0; background: #f4f4f5; font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a2e; }
+    .wrapper { max-width: 620px; margin: 32px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+    .header { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); padding: 40px 32px; text-align: center; }
+    .header h1 { margin: 0; color: #ffffff; font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+    .header p { margin: 8px 0 0; color: rgba(255,255,255,0.85); font-size: 14px; }
+    .checkmark { width: 56px; height: 56px; background: rgba(255,255,255,0.2); border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
+    .checkmark span { font-size: 28px; }
+    .body { padding: 32px; }
+    .greeting { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+    .subtext { color: #6b7280; font-size: 14px; margin-bottom: 28px; line-height: 1.6; }
+    .summary-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 24px; }
+    .summary-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; }
+    .summary-row .label { color: #6b7280; }
+    .summary-row .value { font-weight: 600; color: #111827; }
+    .badge { display: inline-block; background: #fef3c7; color: #92400e; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .badge.cod { background: #dbeafe; color: #1e40af; }
+    .section-title { font-size: 14px; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.5px; margin: 24px 0 12px; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px; }
+    .item-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; }
+    .item-row:last-child { border-bottom: none; }
+    .item-name { color: #111827; font-weight: 500; }
+    .item-meta { color: #9ca3af; font-size: 12px; margin-top: 2px; }
+    .item-price { text-align: right; }
+    .item-price .qty { color: #9ca3af; font-size: 12px; }
+    .total-row { display: flex; justify-content: space-between; padding: 14px 0 0; border-top: 2px solid #e5e7eb; margin-top: 8px; }
+    .total-row .label { font-size: 16px; font-weight: 700; }
+    .total-row .amount { font-size: 18px; font-weight: 700; color: #6366f1; }
+    .shipping-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px 20px; margin-bottom: 24px; font-size: 14px; }
+    .shipping-box .addr-name { font-weight: 600; color: #065f46; margin-bottom: 4px; }
+    .shipping-box .addr-line { color: #166534; line-height: 1.6; }
+    .footer { background: #f9fafb; padding: 24px 32px; text-align: center; border-top: 1px solid #e5e7eb; }
+    .footer p { margin: 0; color: #9ca3af; font-size: 12px; line-height: 1.6; }
+    .footer strong { color: #6b7280; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="header">
+      <div class="checkmark"><span>✓</span></div>
+      <h1>Order Confirmed!</h1>
+      <p>Thank you for your purchase. We'll process it right away.</p>
+    </div>
+
+    <div class="body">
+      <p class="greeting">Hi {{customerName}},</p>
+      <p class="subtext">
+        Your order <strong>#{{orderId}}</strong> has been placed successfully and is now being prepared.
+        You will receive another update once it ships.
+      </p>
+
+      <!-- Order Summary -->
+      <div class="summary-box">
+        <div class="summary-row">
+          <span class="label">Order Number</span>
+          <span class="value">#{{orderId}}</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">Order Date</span>
+          <span class="value">{{orderDate}}</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">Status</span>
+          <span class="badge">{{status}}</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">Payment Method</span>
+          <span class="badge cod">Cash on Delivery (COD)</span>
+        </div>
+      </div>
+
+      <!-- Items -->
+      <div class="section-title">Order Items</div>
+      {{#each items}}
+      <div class="item-row">
+        <div>
+          <div class="item-name">{{this.productName}}</div>
+          <div class="item-meta">SKU: {{this.sku}} &nbsp;·&nbsp; {{this.combinationKey}}</div>
+        </div>
+        <div class="item-price">
+          <div>PKR {{this.lineTotal}}</div>
+          <div class="qty">{{this.quantity}} × PKR {{this.unitPrice}}</div>
+        </div>
+      </div>
+      {{/each}}
+
+      <div class="total-row">
+        <span class="label">Total Amount</span>
+        <span class="amount">PKR {{totalAmount}}</span>
+      </div>
+
+      <!-- Shipping Address -->
+      <div class="section-title">Shipping Address</div>
+      <div class="shipping-box">
+        <div class="addr-name">{{shipping.fullName}} &nbsp;·&nbsp; {{shipping.phone}}</div>
+        <div class="addr-line">
+          {{shipping.street}}<br />
+          {{shipping.city}}, {{shipping.province}} {{shipping.postalCode}}<br />
+          {{shipping.country}}
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>
+        <strong>Need help?</strong> Reply to this email or contact our support team.<br />
+        This is an automated message. Please do not reply directly.
+      </p>
+      <p style="margin-top: 12px;">© 2026 E-Commerce Store. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>

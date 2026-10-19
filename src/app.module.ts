@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
 import { VariantModule } from './variant/variant.module';
@@ -10,6 +10,15 @@ import { WishlistModule } from './wishlist/wishlist.module';
 import { MediaModule } from './media/media.module';
 import { CollectionModule } from './collection/collection.module';
 import { AiAgentModule } from './ai-agent/ai-agent.module';
+import { AddressModule } from './address/address.module';
+import { CartModule } from './cart/cart.module';
+import { ReviewModule } from './review/review.module';
+import { OrderModule } from './order/order.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/adapters/handlebars.adapter.js';
+import { existsSync } from 'fs';
+import { join } from 'path';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -24,8 +33,37 @@ import { AiAgentModule } from './ai-agent/ai-agent.module';
     MediaModule,
     CollectionModule,
     AiAgentModule,
+    AddressModule,
+    CartModule,
+    ReviewModule,
+    OrderModule,
+    MailModule,
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        transport: {
+          host: config.get('MAIL_HOST'),
+          port: Number(config.get('MAIL_PORT')) || 587,
+          auth: {
+            user: config.get('MAIL_USER'),
+            pass: config.get('MAIL_PASS'),
+          },
+        },
+        defaults: {
+          from: config.get('MAIL_FROM'),
+        },
+        template: {
+          dir: existsSync(join(__dirname, 'templates'))
+            ? join(__dirname, 'templates')
+            : join(process.cwd(), 'src', 'templates'),
+          adapter: new HandlebarsAdapter(),
+          options: { strict: true },
+        },
+      }),
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
