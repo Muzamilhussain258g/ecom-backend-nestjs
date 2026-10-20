@@ -19,6 +19,7 @@ import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import type { AuthenticatedUser } from '@/common/interfaces/authenticated-user.interface';
 import { UpdateProfileDto } from './dtos/updateProfile.dto';
 import { UpdatePasswordDto } from './dtos/updatePassword.dto';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -50,6 +51,16 @@ export class AuthController {
   }
 
   @Get('me')
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Get the current authenticated user (any role)' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Returns id, name, email, role, createdAt and updatedAt in data.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Missing, invalid or expired access token, or user no longer exists.',
+  })
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ResponseMessage('Profile fetched successfully')

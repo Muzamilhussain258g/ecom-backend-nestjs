@@ -19,6 +19,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/adapters/handlebars.ad
 import { existsSync } from 'fs';
 import { join } from 'path';
 import { MailModule } from './mail/mail.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -38,16 +39,17 @@ import { MailModule } from './mail/mail.module';
     ReviewModule,
     OrderModule,
     MailModule,
+    UserModule,
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         transport: {
-          host: config.get('MAIL_HOST'),
-          port: Number(config.get('MAIL_PORT')) || 587,
+          host: config.getOrThrow<string>('MAIL_HOST'),
+          port: Number(config.getOrThrow<string>('MAIL_PORT')) || 587,
           auth: {
-            user: config.get('MAIL_USER'),
-            pass: config.get('MAIL_PASS'),
+            user: config.getOrThrow<string>('MAIL_USER'),
+            pass: config.getOrThrow<string>('MAIL_PASS'),
           },
         },
         defaults: {

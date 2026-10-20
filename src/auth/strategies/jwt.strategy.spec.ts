@@ -13,6 +13,8 @@ import { RolesGuard } from '@/common/guards/roles.guard';
 import { Role } from '@/common/decorators/role.decorator';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import type { AuthenticatedUser } from '@/common/interfaces/authenticated-user.interface';
+import { AuthController } from '../auth.controller';
+import { AuthService } from '../auth.service';
 
 @Controller('passport-test')
 class ProtectedController {
@@ -62,12 +64,13 @@ describe('Passport JWT authentication (HTTP)', () => {
         }),
         PassportModule.register({ session: false }),
       ],
-      controllers: [ProtectedController],
+      controllers: [ProtectedController, AuthController],
       providers: [
         JwtStrategy,
         JwtAuthGuard,
         RolesGuard,
         { provide: PrismaService, useValue: prisma },
+        { provide: AuthService, useValue: {} },
       ],
     }).compile();
     app = module.createNestApplication();
@@ -105,6 +108,24 @@ describe('Passport JWT authentication (HTTP)', () => {
       },
     });
     expect(response.body).not.toHaveProperty('password');
+  });
+
+  it('serves the current user through GET /auth/me', async () => {
+    const response = await request(server)
+      .get('/auth/me')
+      .set('Authorization', `Bearer ${sign()}`)
+      .expect(200);
+    expect(response.body).toEqual({
+      ...user,
+      createdAt: user.createdAt.toISOString(),
+      updatedAt: user.updatedAt.toISOString(),
+    });
+    expect(response.body).not.toHaveProperty('password');
+  });
+
+  it('rejects GET /auth/me without an access token', async () => {
+    await request(server).get('/auth/me').expect(401);
+    expect(prisma.user.findUnique).not.toHaveBeenCalled();
   });
 
   it.each([undefined, 'Basic token', 'Bearer', 'Bearer token extra'])(

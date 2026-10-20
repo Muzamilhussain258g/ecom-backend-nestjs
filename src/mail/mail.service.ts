@@ -33,27 +33,29 @@ export interface SendOrderConfirmationDto {
 export class MailService {
   private readonly logger = new Logger(MailService.name);
 
-  constructor(private readonly mailerService: MailerService) {}
+  constructor(private readonly mailerService: MailerService) { }
 
   async sendOrderConfirmation(data: SendOrderConfirmationDto): Promise<boolean> {
     try {
       this.logger.log(
         `Attempting to send order confirmation email to ${data.to} for Order #${data.orderId}`,
       );
-      await this.mailerService.sendMail({
-        to: data.to,
-        subject: `Order Confirmed! #${data.orderId} - E-Commerce Store`,
-        template: 'order-confirmation',
-        context: {
-          customerName: data.customerName,
-          orderId: data.orderId,
-          orderDate: data.orderDate,
-          status: data.status,
-          totalAmount: data.totalAmount,
-          items: data.items,
-          shipping: data.shipping,
-        },
-      });
+      await this.mailerService.sendMail(
+        {
+          to: data.to,
+          subject: `Order Confirmed! #${data.orderId} - E-Commerce Store`,
+          template: 'order-confirmation',
+          context: {
+            customerName: data.customerName,
+            orderId: data.orderId,
+            orderDate: data.orderDate,
+            status: data.status,
+            totalAmount: data.totalAmount,
+            items: data.items,
+            shipping: data.shipping,
+          },
+        }
+      );
       this.logger.log(
         `Order confirmation email sent successfully to ${data.to} for Order #${data.orderId}`,
       );

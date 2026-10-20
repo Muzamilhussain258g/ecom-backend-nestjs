@@ -738,7 +738,7 @@
                     "me"
                   ]
                 },
-                "description": "Fetches currently authenticated user identity (id, name, email, role).",
+                "description": "Checks authentication and returns the current database user in response.data: id, name, email, role, createdAt and updatedAt. Available to customers, sellers and admins. Sign in first to populate accessToken, or supply any role's access token. Returns 401 for a missing, invalid or expired access token or a deleted user. Passwords and refresh tokens are excluded.",
                 "auth": {
                   "type": "bearer",
                   "bearer": [
