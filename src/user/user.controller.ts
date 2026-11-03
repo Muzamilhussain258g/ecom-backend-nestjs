@@ -1,4 +1,11 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserRole } from 'generated/prisma/enums';
 import { ResponseMessage } from '@/common/decorators/response-message.decorator';
@@ -21,5 +28,12 @@ export class UserController {
   @ResponseMessage('Users fetched successfully')
   findAll(@Query() query: UserQueryDto) {
     return this.userService.findAll(query);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Admin: Get a user by ID' })
+  @ResponseMessage('User fetched successfully')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.findOne(id);
   }
 }

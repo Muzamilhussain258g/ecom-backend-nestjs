@@ -18,9 +18,12 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { UserRole } from 'generated/prisma/enums';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { Role } from '@/common/decorators/role.decorator';
 import { ResponseMessage } from '@/common/decorators/response-message.decorator';
 import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
+import { RolesGuard } from '@/common/guards/roles.guard';
 import type { AuthenticatedUser } from '@/common/interfaces/authenticated-user.interface';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { ReviewQueryDto } from './dto/review-query.dto';
@@ -82,6 +85,22 @@ export class ReviewController {
     @Query() query: ReviewQueryDto,
   ) {
     return this.reviewService.getProductReviews(productId, query);
+  }
+
+  @Get('admin/reviews')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiBearerAuth('JWT-auth')
+  @HttpCode(HttpStatus.OK)
+  @Role(UserRole.admin)
+  @ResponseMessage('Admin reviews fetched successfully')
+  @ApiOperation({ summary: 'Admin: Get all product reviews with pagination' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'All product reviews fetched successfully',
+  })
+  @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden' })
+  getAllReviewsAdmin(@Query() query: ReviewQueryDto) {
+    return this.reviewService.getAllReviewsAdmin(query);
   }
 
   @Patch('reviews/:reviewId')

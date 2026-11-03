@@ -141,6 +141,88 @@ describe('ReviewService', () => {
     });
   });
 
+  describe('getAllReviewsAdmin', () => {
+    it('returns paginated reviews with user and product details', async () => {
+      const adminReview = {
+        ...sampleReview,
+        stars: '4.5',
+        product: {
+          id: 5,
+          name: 'Sample Product',
+          slug: 'sample-product',
+          images: [
+            {
+              id: 7,
+              isPrimary: true,
+              position: 0,
+              altText: 'Sample product',
+              media: {
+                id: 12,
+                url: 'https://example.com/product.webp',
+                format: 'webp',
+                width: 800,
+                height: 600,
+              },
+            },
+          ],
+        },
+      };
+      prisma.review.findMany.mockResolvedValue([adminReview]);
+      prisma.review.count.mockResolvedValue(21);
+
+      const result = await service.getAllReviewsAdmin({ page: 2, limit: 10 });
+
+      expect(prisma.review.findMany).toHaveBeenCalledWith({
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+        skip: 10,
+        take: 10,
+        select: expect.objectContaining({
+          user: { select: { id: true, name: true } },
+          product: {
+            select: expect.objectContaining({
+              id: true,
+              name: true,
+              slug: true,
+              images: {
+                where: { variantValueId: null },
+                orderBy: [
+                  { isPrimary: 'desc' },
+                  { position: 'asc' },
+                  { id: 'asc' },
+                ],
+                select: {
+                  id: true,
+                  isPrimary: true,
+                  position: true,
+                  altText: true,
+                  media: {
+                    select: {
+                      id: true,
+                      url: true,
+                      format: true,
+                      width: true,
+                      height: true,
+                    },
+                  },
+                },
+              },
+            }),
+          },
+        }),
+      });
+      expect(prisma.review.count).toHaveBeenCalledWith();
+      expect(result.reviews[0]).toEqual({ ...adminReview, stars: 4.5 });
+      expect(result.pagination).toEqual({
+        page: 2,
+        limit: 10,
+        total: 21,
+        totalPages: 3,
+        hasNextPage: true,
+        hasPreviousPage: true,
+      });
+    });
+  });
+
   describe('updateReview', () => {
     it('should throw NotFoundException if review does not exist', async () => {
       prisma.review.findFirst.mockResolvedValue(null);
