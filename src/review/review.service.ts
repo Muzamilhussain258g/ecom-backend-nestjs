@@ -34,6 +34,27 @@ const adminReviewSelect = {
       id: true,
       name: true,
       slug: true,
+      images: {
+        where: {
+          variantValueId: null,
+        },
+        orderBy: [{ isPrimary: 'desc' }, { position: 'asc' }, { id: 'asc' }],
+        select: {
+          id: true,
+          isPrimary: true,
+          position: true,
+          altText: true,
+          media: {
+            select: {
+              id: true,
+              url: true,
+              format: true,
+              width: true,
+              height: true,
+            },
+          },
+        },
+      },
     },
   },
 } satisfies Prisma.ReviewSelect;
@@ -41,6 +62,59 @@ const adminReviewSelect = {
 @Injectable()
 export class ReviewService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async getAllReviewsAdmin(query: AdminReviewQueryDto) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 10;
+    const skip = (page - 1) * limit;
+    const where: Prisma.ReviewWhereInput = {
+      ...(query.productId !== undefined && { productId: query.productId }),
+      ...(query.stars !== undefined && { stars: query.stars }),
+      ...(query.search && {
+        product: {
+          is: {
+            OR: [
+              { name: { contains: query.search, mode: 'insensitive' } },
+              { slug: { contains: query.search, mode: 'insensitive' } },
+            ],
+          },
+        },
+      }),
+    };
+
+    const [reviews, total] = await this.prisma.$transaction(
+      [
+        this.prisma.review.findMany({
+          where,
+          orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+          skip,
+          take: limit,
+          select: adminReviewSelect,
+        }),
+        this.prisma.review.count({ where }),
+      ],
+      {
+        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+      },
+    );
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      reviews: reviews.map((review) => ({
+        ...review,
+        stars: Number(review.stars),
+      })),
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1 && totalPages > 0,
+      },
+    };
+  }
 
   async createReview(
     userId: number,
@@ -134,53 +208,6 @@ export class ReviewService {
         totalPages,
         hasNextPage: page < totalPages,
         hasPreviousPage: page > 1,
-      },
-    };
-  }
-
-  async getAllReviewsAdmin(query: AdminReviewQueryDto) {
-    const page = query.page ?? 1;
-    const limit = query.limit ?? 10;
-    const skip = (page - 1) * limit;
-    const where: Prisma.ReviewWhereInput = {
-      ...(query.productId !== undefined && { productId: query.productId }),
-      ...(query.stars !== undefined && { stars: query.stars }),
-      ...(query.search && {
-        product: {
-          is: {
-            OR: [
-              { name: { contains: query.search, mode: 'insensitive' } },
-              { slug: { contains: query.search, mode: 'insensitive' } },
-            ],
-          },
-        },
-      }),
-    };
-
-    const [total, reviews] = await Promise.all([
-      this.prisma.review.count({ where }),
-      this.prisma.review.findMany({
-        where,
-        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
-        skip,
-        take: limit,
-        select: adminReviewSelect,
-      }),
-    ]);
-
-    const totalPages = Math.ceil(total / limit);
-    return {
-      reviews: reviews.map((review) => ({
-        ...review,
-        stars: Number(review.stars),
-      })),
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages,
-        hasNextPage: page < totalPages,
-        hasPreviousPage: page > 1 && totalPages > 0,
       },
     };
   }

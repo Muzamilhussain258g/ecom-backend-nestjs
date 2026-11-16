@@ -22,6 +22,7 @@ describe('ReviewService', () => {
       update: jest.Mock;
       delete: jest.Mock;
     };
+    $transaction: jest.Mock;
   };
 
   const sampleReview = {
@@ -51,6 +52,9 @@ describe('ReviewService', () => {
       update: jest.fn(),
       delete: jest.fn(),
     };
+    const mockTransaction = jest
+      .fn()
+      .mockImplementation((queries: Promise<unknown>[]) => Promise.all(queries));
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -60,6 +64,7 @@ describe('ReviewService', () => {
           useValue: {
             product: mockProduct,
             review: mockReview,
+            $transaction: mockTransaction,
           },
         },
       ],
@@ -69,6 +74,7 @@ describe('ReviewService', () => {
     prisma = {
       product: mockProduct,
       review: mockReview,
+      $transaction: mockTransaction,
     };
   });
 
@@ -144,7 +150,31 @@ describe('ReviewService', () => {
   describe('getAllReviewsAdmin', () => {
     it('returns paginated reviews filtered by product search, ID, and rating', async () => {
       prisma.review.count.mockResolvedValue(11);
-      prisma.review.findMany.mockResolvedValue([sampleReview]);
+      const adminReview = {
+        ...sampleReview,
+        stars: '4.5',
+        product: {
+          id: 5,
+          name: 'Sample Product',
+          slug: 'sample-product',
+          images: [
+            {
+              id: 7,
+              isPrimary: true,
+              position: 0,
+              altText: 'Sample product',
+              media: {
+                id: 12,
+                url: 'https://example.com/product.webp',
+                format: 'webp',
+                width: 800,
+                height: 600,
+              },
+            },
+          ],
+        },
+      };
+      prisma.review.findMany.mockResolvedValue([adminReview]);
 
       const result = await service.getAllReviewsAdmin({
         page: 2,
@@ -174,20 +204,52 @@ describe('ReviewService', () => {
           skip: 10,
           take: 10,
           select: expect.objectContaining({
-            product: { select: { id: true, name: true, slug: true } },
+            user: { select: { id: true, name: true } },
+            product: {
+              select: expect.objectContaining({
+                id: true,
+                name: true,
+                slug: true,
+                images: {
+                  where: { variantValueId: null },
+                  orderBy: [
+                    { isPrimary: 'desc' },
+                    { position: 'asc' },
+                    { id: 'asc' },
+                  ],
+                  select: {
+                    id: true,
+                    isPrimary: true,
+                    position: true,
+                    altText: true,
+                    media: {
+                      select: {
+                        id: true,
+                        url: true,
+                        format: true,
+                        width: true,
+                        height: true,
+                      },
+                    },
+                  },
+                },
+              }),
+            },
           }),
         }),
       );
-      expect(result).toEqual({
-        reviews: [{ ...sampleReview, stars: 4.5 }],
-        pagination: {
-          page: 2,
-          limit: 10,
-          total: 11,
-          totalPages: 2,
-          hasNextPage: false,
-          hasPreviousPage: true,
-        },
+      expect(prisma.$transaction).toHaveBeenCalledWith(
+        expect.any(Array),
+        { isolationLevel: 'Serializable' },
+      );
+      expect(result.reviews[0]).toEqual({ ...adminReview, stars: 4.5 });
+      expect(result.pagination).toEqual({
+        page: 2,
+        limit: 10,
+        total: 11,
+        totalPages: 2,
+        hasNextPage: false,
+        hasPreviousPage: true,
       });
     });
 

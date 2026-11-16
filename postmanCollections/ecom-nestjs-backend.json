@@ -2890,6 +2890,95 @@
           ]
         },
         {
+          "name": "User Management (Admin)",
+          "item": [
+            {
+              "name": "List Users",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/users?page=1&limit=10&search=",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "search",
+                      "value": "",
+                      "description": "Optional name or email search"
+                    }
+                  ]
+                },
+                "description": "Lists users with pagination. Search optionally by name or email.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get User by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/users/{{userId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    "{{userId}}"
+                  ]
+                },
+                "description": "Gets a single user by ID.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
           "name": "Category Management (Admin)",
           "item": [
             {
@@ -3463,6 +3552,66 @@
                   ]
                 },
                 "description": "Allows an administrator to delete any abusive, spam, or inappropriate review across any product.",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "List All Product Reviews",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "ngrok-skip-browser-warning",
+                    "value": "true",
+                    "description": "Bypasses ngrok free tier browser interstitial page"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/admin/reviews?page=1&limit=10&search=shirt&productId=1&stars=4.5",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "reviews"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "search",
+                      "value": "shirt",
+                      "description": "Search product name or slug"
+                    },
+                    {
+                      "key": "productId",
+                      "value": "1",
+                      "description": "Optional exact product ID filter"
+                    },
+                    {
+                      "key": "stars",
+                      "value": "4.5",
+                      "description": "Optional rating filter from 1 to 5"
+                    }
+                  ]
+                },
+                "description": "Lists all product reviews with reviewer and product details, sorted newest first.",
                 "auth": {
                   "type": "bearer",
                   "bearer": [

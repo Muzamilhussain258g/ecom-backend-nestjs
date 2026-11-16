@@ -1,7 +1,7 @@
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Reflector } from '@nestjs/core';
-import { ExecutionContext } from '@nestjs/common';
+import { ExecutionContext, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { UserQueryDto } from './dto/user-query.dto';
@@ -10,7 +10,7 @@ import { UserService } from './user.service';
 
 describe('Users listing', () => {
   const prisma = {
-    user: { findMany: jest.fn(), count: jest.fn() },
+    user: { findMany: jest.fn(), findUnique: jest.fn(), count: jest.fn() },
     $transaction: jest.fn((queries: unknown[]) => Promise.all(queries)),
   };
   const service = new UserService(prisma as unknown as PrismaService);
@@ -18,7 +18,39 @@ describe('Users listing', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     prisma.user.findMany.mockResolvedValue([]);
+    prisma.user.findUnique.mockResolvedValue(null);
     prisma.user.count.mockResolvedValue(0);
+  });
+
+  it('fetches a user by ID and only selects safe fields', async () => {
+    const user = {
+      id: 1,
+      name: 'Alice',
+      email: 'alice@example.com',
+      role: 'customer',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    prisma.user.findUnique.mockResolvedValue(user);
+
+    await expect(service.findOne(1)).resolves.toBe(user);
+    expect(prisma.user.findUnique).toHaveBeenCalledWith({
+      where: { id: 1 },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  });
+
+  it('returns not found when the user ID does not exist', async () => {
+    await expect(service.findOne(42)).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
   });
 
   it('applies search to both the page and count and only selects safe fields', async () => {

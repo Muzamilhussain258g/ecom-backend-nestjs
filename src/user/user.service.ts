@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from 'generated/prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
 import { UserQueryDto } from './dto/user-query.dto';
@@ -6,6 +6,26 @@ import { UserQueryDto } from './dto/user-query.dto';
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async findOne(id: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+
+    return user;
+  }
 
   async findAll({ page = 1, limit = 10, search }: UserQueryDto) {
     const where: Prisma.UserWhereInput = search

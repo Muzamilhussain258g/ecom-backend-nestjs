@@ -18,13 +18,13 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { UserRole } from 'generated/prisma/enums';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { Role } from '@/common/decorators/role.decorator';
 import { ResponseMessage } from '@/common/decorators/response-message.decorator';
 import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import type { AuthenticatedUser } from '@/common/interfaces/authenticated-user.interface';
-import { UserRole } from 'generated/prisma/enums';
 import { AdminReviewQueryDto } from './dto/admin-review-query.dto';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { ReviewQueryDto } from './dto/review-query.dto';
