@@ -17,11 +17,11 @@ const categorySummarySelect = {
   categoryName: true,
   slug: true,
   parentId: true,
-  // _count: {
-  //   select: {
-  //     productCategories: true,
-  //   },
-  // },
+  _count: {
+    select: {
+      productCategories: true,
+    },
+  },
   media: { include: { media: true } },
 } satisfies Prisma.CategorySelect;
 
@@ -246,7 +246,7 @@ export class CategoryService {
       categoryName: category.categoryName,
       slug: category.slug,
       parentId: category.parentId,
-      // productCount: category._count.productCategories,
+      productCount: category._count?.productCategories ?? 0,
     };
   }
 

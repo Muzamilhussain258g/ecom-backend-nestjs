@@ -2,7 +2,10 @@ import { HttpStatus } from '@nestjs/common';
 import { GUARDS_METADATA, HTTP_CODE_METADATA } from '@nestjs/common/constants';
 import { UserRole } from 'generated/prisma/enums';
 import { ROLES_KEY } from '@/common/decorators/role.decorator';
-import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
+import {
+  JwtAuthGuard,
+  OptionalJwtAuthGuard,
+} from '@/common/guards/jwt-auth.guard';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { ProductController } from './product.controller';
 import { ProductService } from './product.service';
@@ -11,6 +14,10 @@ describe('ProductController', () => {
   // Metadata is attached to the original method, so it must not be bound.
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const createHandler = ProductController.prototype.create;
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  const findAllHandler = ProductController.prototype.findAll;
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  const findOneHandler = ProductController.prototype.findOne;
 
   it('uses 201 Created for product creation', () => {
     const status = Reflect.getMetadata(
@@ -36,13 +43,14 @@ describe('ProductController', () => {
     expect(guards).toEqual([JwtAuthGuard, RolesGuard]);
   });
 
-  it('delegates creation to the product service', async () => {
+  it('delegates creation to the product service with authenticated user', async () => {
     const dto = {
       name: 'iPhone 16',
       description: 'Latest Apple smartphone',
       basePrice: 250000,
       categories: [{ categoryId: 3, isPrimary: true }],
     };
+    const seller = { id: 5, role: UserRole.seller } as any;
     const createdProduct = { id: 1, ...dto };
     const productService = {
       create: jest.fn().mockResolvedValue(createdProduct),
@@ -51,8 +59,8 @@ describe('ProductController', () => {
       productService as unknown as ProductService,
     );
 
-    await expect(controller.create(dto)).resolves.toBe(createdProduct);
-    expect(productService.create).toHaveBeenCalledWith(dto);
+    await expect(controller.create(dto, seller)).resolves.toBe(createdProduct);
+    expect(productService.create).toHaveBeenCalledWith(dto, seller);
   });
 
   it('delegates the product query to the product service', async () => {
@@ -78,7 +86,16 @@ describe('ProductController', () => {
     );
 
     await expect(controller.findAll(dto)).resolves.toBe(response);
-    expect(productService.findAll).toHaveBeenCalledWith(dto);
+    expect(productService.findAll).toHaveBeenCalledWith(dto, undefined);
+  });
+
+  it('allows optional authentication for product GET endpoints', () => {
+    expect(Reflect.getMetadata(GUARDS_METADATA, findAllHandler)).toEqual([
+      OptionalJwtAuthGuard,
+    ]);
+    expect(Reflect.getMetadata(GUARDS_METADATA, findOneHandler)).toEqual([
+      OptionalJwtAuthGuard,
+    ]);
   });
 
   it('delegates a single-product query to the product service', async () => {
@@ -98,7 +115,10 @@ describe('ProductController', () => {
     await expect(controller.findOne('infinix-note-40-pro')).resolves.toBe(
       product,
     );
-    expect(productService.findOne).toHaveBeenCalledWith('infinix-note-40-pro');
+    expect(productService.findOne).toHaveBeenCalledWith(
+      'infinix-note-40-pro',
+      undefined,
+    );
   });
 
   it('delegates product updates to the product service', async () => {

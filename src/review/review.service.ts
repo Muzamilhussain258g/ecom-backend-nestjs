@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Prisma } from 'generated/prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
+import { AdminReviewQueryDto } from './dto/admin-review-query.dto';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { ReviewQueryDto } from './dto/review-query.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
@@ -22,6 +23,17 @@ export const reviewSelect = {
     select: {
       id: true,
       name: true,
+    },
+  },
+} satisfies Prisma.ReviewSelect;
+
+const adminReviewSelect = {
+  ...reviewSelect,
+  product: {
+    select: {
+      id: true,
+      name: true,
+      slug: true,
     },
   },
 } satisfies Prisma.ReviewSelect;
@@ -122,6 +134,53 @@ export class ReviewService {
         totalPages,
         hasNextPage: page < totalPages,
         hasPreviousPage: page > 1,
+      },
+    };
+  }
+
+  async getAllReviewsAdmin(query: AdminReviewQueryDto) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 10;
+    const skip = (page - 1) * limit;
+    const where: Prisma.ReviewWhereInput = {
+      ...(query.productId !== undefined && { productId: query.productId }),
+      ...(query.stars !== undefined && { stars: query.stars }),
+      ...(query.search && {
+        product: {
+          is: {
+            OR: [
+              { name: { contains: query.search, mode: 'insensitive' } },
+              { slug: { contains: query.search, mode: 'insensitive' } },
+            ],
+          },
+        },
+      }),
+    };
+
+    const [total, reviews] = await Promise.all([
+      this.prisma.review.count({ where }),
+      this.prisma.review.findMany({
+        where,
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+        skip,
+        take: limit,
+        select: adminReviewSelect,
+      }),
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+    return {
+      reviews: reviews.map((review) => ({
+        ...review,
+        stars: Number(review.stars),
+      })),
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1 && totalPages > 0,
       },
     };
   }

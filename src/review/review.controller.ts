@@ -19,9 +19,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { Role } from '@/common/decorators/role.decorator';
 import { ResponseMessage } from '@/common/decorators/response-message.decorator';
 import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
+import { RolesGuard } from '@/common/guards/roles.guard';
 import type { AuthenticatedUser } from '@/common/interfaces/authenticated-user.interface';
+import { UserRole } from 'generated/prisma/enums';
+import { AdminReviewQueryDto } from './dto/admin-review-query.dto';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { ReviewQueryDto } from './dto/review-query.dto';
 import {
@@ -35,6 +39,24 @@ import { ReviewService } from './review.service';
 @Controller()
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
+
+  @Get('admin/reviews')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Role(UserRole.admin)
+  @ApiBearerAuth('JWT-auth')
+  @HttpCode(HttpStatus.OK)
+  @ResponseMessage('Reviews fetched successfully')
+  @ApiOperation({
+    summary: 'Admin: List and search reviews with pagination and filters',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Reviews fetched successfully',
+  })
+  @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden' })
+  getAllReviewsAdmin(@Query() query: AdminReviewQueryDto) {
+    return this.reviewService.getAllReviewsAdmin(query);
+  }
 
   @Post('products/:productId/reviews')
   @UseGuards(JwtAuthGuard)

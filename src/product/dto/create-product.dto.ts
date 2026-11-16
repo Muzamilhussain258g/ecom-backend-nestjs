@@ -14,9 +14,15 @@ import {
   ValidateNested,
   IsOptional,
 } from 'class-validator';
-import { UploadedMediaDto } from '@/media/dto/uploaded-media.dto';
+export class CreateProductMediaDto {
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(500)
+  providerPublicId!: string;
 
-export class CreateProductMediaDto extends UploadedMediaDto {
   @IsBoolean()
   isPrimary!: boolean;
 
@@ -35,6 +41,25 @@ export class CreateProductMediaDto extends UploadedMediaDto {
   @IsInt()
   @Min(1)
   variantValueId?: number;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  providerAssetId?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  version?: number;
+
+  @IsOptional()
+  @IsString()
+  signature?: string;
+
+  @IsOptional()
+  @IsString()
+  format?: string;
 }
 
 export class ProductCategoryAssignmentDto {

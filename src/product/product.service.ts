@@ -6,12 +6,17 @@ import {
 } from '@nestjs/common';
 import { Prisma } from 'generated/prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
+import { AuthenticatedUser } from '@/common/interfaces/authenticated-user.interface';
 import {
   CreateProductDto,
   ProductVariantQuantityDto,
   ProductVariantSelectionDto,
 } from './dto/create-product.dto';
-import { GetAllProductsDto } from './dto/get-all-products.dto';
+import {
+  GetAllProductsDto,
+  ProductSortBy,
+  ProductSortOrder,
+} from './dto/get-all-products.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { UpdateVariantDto } from './dto/update-variant.dto';
 import { UpdateVariantOptionsDto } from './dto/update-variant-options.dto';
@@ -147,7 +152,11 @@ type ValidatedSelection = {
 type Combination = { valueIds: number[]; codes: string[]; key: string };
 
 export interface ProductListResult {
-  products: Prisma.ProductGetPayload<{ include: typeof productInclude }>[];
+  products: Array<
+    Prisma.ProductGetPayload<{ include: typeof productInclude }> & {
+      isWishlisted?: boolean;
+    }
+  >;
   meta: {
     pagination: {
       page: number;
@@ -165,23 +174,56 @@ export class ProductService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly mediaService: MediaService,
-  ) { }
+  ) {}
 
-  async create(dto: CreateProductDto) {
+  async create(dto: CreateProductDto, user?: AuthenticatedUser) {
     const categoryIds = dto.categories.map(({ categoryId }) => categoryId);
     this.validateCategoryAssignments(dto.categories);
     await this.ensureCategoriesExist(categoryIds);
+
+    const slug = this.createSlug(dto.name);
+    const existingProduct = await this.prisma.product.findUnique({
+      where: { slug },
+      select: { id: true },
+    });
+    if (existingProduct) {
+      throw new ConflictException(`Product with slug '${slug}' already exists`);
+    }
+
+    if (dto.hasVariants && dto.stock !== undefined && dto.stock > 0) {
+      throw new BadRequestException(
+        'stock can only be specified when hasVariants is false; use variantQuantities for variants',
+      );
+    }
 
     const selections = await this.prepareSelections(
       dto.hasVariants,
       dto.variantSelections,
     );
     this.validateProductMedia(dto, selections);
-    // Verify every Cloudinary proof before opening the database transaction.
-    const verifiedMedia = (dto.media ?? []).map((item) => ({
-      association: item,
-      media: this.mediaService.toMediaCreateInput(item),
-    }));
+
+    const publicIds = (dto.media ?? []).map(
+      ({ providerPublicId }) => providerPublicId,
+    );
+    const verifiedMediaMap = await this.mediaService.verifyMediaBatch(
+      publicIds,
+      user,
+    );
+
+    let newlyUploadedPublicIds: string[] = [];
+    if (publicIds.length > 0) {
+      const existingMedia = await this.prisma.media.findMany({
+        where: { providerPublicId: { in: publicIds } },
+        select: { providerPublicId: true },
+      });
+      const existingPublicIds = new Set(
+        existingMedia.map((m) => m.providerPublicId),
+      );
+      newlyUploadedPublicIds = publicIds.filter(
+        (id) => !existingPublicIds.has(id),
+      );
+    }
+
     const combinations = this.buildCombinations(selections);
     const quantities = this.prepareVariantQuantities(
       dto.hasVariants,
@@ -194,7 +236,7 @@ export class ProductService {
         const product = await transaction.product.create({
           data: {
             name: dto.name,
-            slug: this.createSlug(dto.name),
+            slug,
             description: dto.description,
             basePrice: dto.basePrice,
             hasVariants: dto.hasVariants,
@@ -204,43 +246,64 @@ export class ProductService {
                 category: { connect: { id: categoryId } },
               })),
             },
-            variantTypes: {
-              create: selections.map(({ variantTypeId, values }) => ({
-                variantType: { connect: { id: variantTypeId } },
-                productVariantValues: {
-                  create: values.map(({ id }) => ({
-                    variantValue: { connect: { id } },
-                  })),
-                },
-              })),
-            },
-            images: verifiedMedia.length
+            variantTypes: selections.length
               ? {
-                  create: verifiedMedia.map(({ association, media }) => ({
-                    isPrimary: association.isPrimary,
-                    position: association.position,
-                    altText: association.altText,
-                    variantValue:
-                      association.variantValueId === undefined
-                        ? undefined
-                        : { connect: { id: association.variantValueId } },
-                    media: { create: media },
+                  create: selections.map(({ variantTypeId, values }) => ({
+                    variantType: { connect: { id: variantTypeId } },
+                    productVariantValues: {
+                      create: values.map(({ id }) => ({
+                        variantValue: { connect: { id } },
+                      })),
+                    },
                   })),
                 }
               : undefined,
           },
         });
 
+        for (const item of dto.media ?? []) {
+          const verified = verifiedMediaMap.get(item.providerPublicId)!;
+          const mediaRecord = await transaction.media.upsert({
+            where: { providerPublicId: verified.providerPublicId },
+            update: {
+              url: verified.url,
+              format: verified.format,
+              bytes: verified.bytes,
+              width: verified.width,
+              height: verified.height,
+              providerAssetId: verified.providerAssetId,
+            },
+            create: {
+              providerPublicId: verified.providerPublicId,
+              url: verified.url,
+              format: verified.format,
+              bytes: verified.bytes,
+              width: verified.width,
+              height: verified.height,
+              providerAssetId: verified.providerAssetId,
+            },
+          });
+
+          await transaction.productMedia.create({
+            data: {
+              productId: product.id,
+              mediaId: mediaRecord.id,
+              isPrimary: item.isPrimary,
+              position: item.position,
+              altText: item.altText,
+              variantValueId: item.variantValueId,
+            },
+          });
+        }
+
         if (dto.hasVariants) {
-          for (const combination of combinations) {
-            await this.createVariant(
-              transaction,
-              product.id,
-              product.basePrice,
-              combination,
-              quantities.get(combination.key)!,
-            );
-          }
+          await this.createVariantsInBulk(
+            transaction,
+            product.id,
+            product.basePrice,
+            combinations,
+            quantities,
+          );
         } else {
           await transaction.variant.create({
             data: {
@@ -248,30 +311,48 @@ export class ProductService {
               combinationKey: 'default',
               sku: `P-${product.id}-DEFAULT`,
               price: product.basePrice,
-              stock: dto.stock,
+              stock: dto.stock ?? 0,
             },
           });
         }
 
-        return transaction.product.findUniqueOrThrow({
-          where: { id: product.id },
-          include: productWriteInclude,
-        });
+        return {
+          id: product.id,
+          name: product.name,
+          slug: product.slug,
+          basePrice: product.basePrice,
+          hasVariants: product.hasVariants,
+          variantsCreated: dto.hasVariants ? combinations.length : 1,
+          createdAt: product.createdAt,
+        };
       });
     } catch (error) {
-      this.handleCreateError(error);
+      if (newlyUploadedPublicIds.length > 0) {
+        await this.mediaService
+          .deleteResources(newlyUploadedPublicIds)
+          .catch(() => {});
+      }
+      this.handleCreateError(error, slug);
     }
   }
 
-  async findAll({
-    search,
-    category,
-    sortOrder,
-    page,
-    limit,
-  }: GetAllProductsDto): Promise<ProductListResult> {
+  async findAll(
+    {
+      search,
+      category,
+      minPrice,
+      maxPrice,
+      inStock,
+      sortBy,
+      sortOrder,
+      page,
+      limit,
+    }: GetAllProductsDto,
+    userId?: number,
+  ): Promise<ProductListResult> {
     const skip = (page - 1) * limit;
     const where: Prisma.ProductWhereInput = {
+      productStatus: true,
       ...(search && {
         OR: [
           { name: { contains: search, mode: 'insensitive' } },
@@ -281,14 +362,38 @@ export class ProductService {
       ...(category && {
         productCategories: { some: { category: { slug: category } } },
       }),
+      ...((minPrice !== undefined || maxPrice !== undefined) && {
+        basePrice: {
+          ...(minPrice !== undefined && { gte: minPrice }),
+          ...(maxPrice !== undefined && { lte: maxPrice }),
+        },
+      }),
+      ...(inStock !== undefined &&
+        (inStock
+          ? {
+              variants: { some: { isActive: true, stock: { gt: 0 } } },
+            }
+          : {
+              NOT: {
+                variants: { some: { isActive: true, stock: { gt: 0 } } },
+              },
+            })),
     };
+
+    const effectiveSortBy =
+      sortBy ?? (sortOrder ? ProductSortBy.NAME : ProductSortBy.CREATED_AT);
+    const effectiveSortOrder = sortOrder ?? ProductSortOrder.DESC;
+    const sort: Prisma.ProductOrderByWithRelationInput =
+      effectiveSortBy === ProductSortBy.NAME
+        ? { name: effectiveSortOrder }
+        : effectiveSortBy === ProductSortBy.PRICE
+          ? { basePrice: effectiveSortOrder }
+          : { createdAt: effectiveSortOrder };
 
     const [products, total] = await this.prisma.$transaction([
       this.prisma.product.findMany({
         where,
-        orderBy: sortOrder
-          ? [{ name: sortOrder }, { id: 'desc' }]
-          : [{ createdAt: 'desc' }, { id: 'desc' }],
+        orderBy: [sort, { id: 'desc' }],
         skip,
         take: limit,
         include: productInclude,
@@ -296,9 +401,14 @@ export class ProductService {
       this.prisma.product.count({ where }),
     ]);
 
+    const productsWithWishlist =
+      userId === undefined
+        ? products
+        : await this.addWishlistState(products, userId);
+
     const totalPages = Math.ceil(total / limit);
     return {
-      products,
+      products: productsWithWishlist,
       meta: {
         pagination: {
           page,
@@ -312,7 +422,7 @@ export class ProductService {
     };
   }
 
-  async findOne(slug: string) {
+  async findOne(slug: string, userId?: number) {
     const [product, reviewStats] = await this.prisma.$transaction(
       [
         this.prisma.product.findFirst({
@@ -334,21 +444,32 @@ export class ProductService {
     if (!product)
       throw new NotFoundException(`Product with slug ${slug} not found`);
 
+    const wishlistEntry =
+      userId === undefined
+        ? undefined
+        : await this.prisma.wishList.findFirst({
+            where: { userId, productId: product.id },
+            select: { id: true },
+          });
+
     const { reviews, variantTypes, variants, ...details } = product;
     return {
       ...details,
-      variantOptions: variantTypes.map(
+      ...(userId !== undefined && { isWishlisted: Boolean(wishlistEntry) }),
+      variantOptions: (variantTypes ?? []).map(
         ({ variantType, productVariantValues }) => ({
           ...variantType,
-          values: productVariantValues.map(({ id, variantValue }) => ({
+          values: (productVariantValues ?? []).map(({ id, variantValue }) => ({
             ...variantValue,
             productVariantValueId: id,
           })),
         }),
       ),
-      variants: variants.map(({ combinationValues, ...variant }) => ({
+      variants: (variants ?? []).map(({ combinationValues, ...variant }) => ({
         ...variant,
-        values: combinationValues.map(({ variantValue }) => variantValue),
+        values: (combinationValues ?? []).map(
+          ({ variantValue }) => variantValue,
+        ),
       })),
       reviews: {
         averageRating: Number(reviewStats._avg.stars ?? 0),
@@ -356,6 +477,31 @@ export class ProductService {
         items: reviews,
       },
     };
+  }
+
+  private async addWishlistState<T extends { id: number }>(
+    products: T[],
+    userId: number,
+  ): Promise<Array<T & { isWishlisted: boolean }>> {
+    if (products.length === 0) {
+      return [];
+    }
+
+    const wishlistEntries = await this.prisma.wishList.findMany({
+      where: {
+        userId,
+        productId: { in: products.map(({ id }) => id) },
+      },
+      select: { productId: true },
+    });
+    const wishlistedProductIds = new Set(
+      wishlistEntries.map(({ productId }) => productId),
+    );
+
+    return products.map((product) => ({
+      ...product,
+      isWishlisted: wishlistedProductIds.has(product.id),
+    }));
   }
 
   async update(id: number, dto: UpdateProductDto) {
@@ -655,6 +801,50 @@ export class ProductService {
     return variant;
   }
 
+  /**
+   * Inserts all product variants and their value links in two database calls.
+   * `createManyAndReturn` is required here because the generated variant IDs
+   * are needed for the VariantCombinationValue rows.
+   */
+  private async createVariantsInBulk(
+    transaction: Prisma.TransactionClient,
+    productId: number,
+    price: Prisma.Decimal,
+    combinations: Combination[],
+    quantities: Map<string, number>,
+  ): Promise<void> {
+    const createdVariants = await transaction.variant.createManyAndReturn({
+      data: combinations.map((combination) => ({
+        productId,
+        combinationKey: combination.key,
+        sku: `P-${productId}-${combination.codes.join('-')}`,
+        price,
+        stock: quantities.get(combination.key)!,
+      })),
+      select: { id: true, combinationKey: true },
+    });
+
+    const variantIdByCombinationKey = new Map(
+      createdVariants.map(({ id, combinationKey }) => [combinationKey, id]),
+    );
+
+    await transaction.variantCombinationValue.createMany({
+      data: combinations.flatMap((combination) => {
+        const variantId = variantIdByCombinationKey.get(combination.key);
+        if (variantId === undefined) {
+          throw new ConflictException(
+            `Variant for combination ${combination.key} was not created`,
+          );
+        }
+
+        return combination.valueIds.map((variantValueId) => ({
+          variantId,
+          variantValueId,
+        }));
+      }),
+    });
+  }
+
   private prepareVariantQuantities(
     hasVariants: boolean,
     combinations: Combination[],
@@ -730,6 +920,10 @@ export class ProductService {
     // media is optional — skip all checks when not provided
     if (!dto.media?.length) return;
 
+    if (dto.media.length > 10) {
+      throw new BadRequestException('At most 10 media items are allowed');
+    }
+
     const publicIds = dto.media.map(({ providerPublicId }) => providerPublicId);
     if (new Set(publicIds).size !== publicIds.length) {
       throw new BadRequestException('Product media must be unique');
@@ -746,17 +940,28 @@ export class ProductService {
       );
     }
 
-    const selectedValueIds = new Set(
-      selections.flatMap(({ values }) => values.map(({ id }) => id)),
-    );
-    const invalidVariantValue = dto.media.find(
-      ({ variantValueId }) =>
-        variantValueId !== undefined && !selectedValueIds.has(variantValueId),
-    );
-    if (invalidVariantValue) {
-      throw new BadRequestException(
-        'A media variant value is not assigned to this product',
+    if (!dto.hasVariants) {
+      const hasVariantValue = dto.media.some(
+        ({ variantValueId }) => variantValueId !== undefined,
       );
+      if (hasVariantValue) {
+        throw new BadRequestException(
+          'Media cannot be linked to a variant value when hasVariants is false',
+        );
+      }
+    } else {
+      const selectedValueIds = new Set(
+        selections.flatMap(({ values }) => values.map(({ id }) => id)),
+      );
+      const invalidVariantValue = dto.media.find(
+        ({ variantValueId }) =>
+          variantValueId !== undefined && !selectedValueIds.has(variantValueId),
+      );
+      if (invalidVariantValue) {
+        throw new BadRequestException(
+          'A media variant value is not assigned to this product',
+        );
+      }
     }
   }
 
@@ -800,9 +1005,27 @@ export class ProductService {
     }
   }
 
-  private handleCreateError(error: unknown): never {
+  private handleCreateError(error: unknown, slug?: string): never {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === 'P2002') {
+        const target = Array.isArray(error.meta?.target)
+          ? error.meta.target.join(',')
+          : typeof error.meta?.target === 'string'
+            ? error.meta.target
+            : '';
+        if (target.includes('slug') || (slug && target.includes('slug'))) {
+          throw new ConflictException(
+            slug
+              ? `Product with slug '${slug}' already exists`
+              : 'Product with this slug already exists',
+          );
+        }
+        if (target.includes('sku')) {
+          throw new ConflictException('Generated SKU already exists');
+        }
+        if (target.includes('providerPublicId')) {
+          throw new ConflictException('Media public ID conflict');
+        }
         throw new ConflictException('Product or generated SKU already exists');
       }
       if (error.code === 'P2003' || error.code === 'P2025') {

@@ -141,6 +141,69 @@ describe('ReviewService', () => {
     });
   });
 
+  describe('getAllReviewsAdmin', () => {
+    it('returns paginated reviews filtered by product search, ID, and rating', async () => {
+      prisma.review.count.mockResolvedValue(11);
+      prisma.review.findMany.mockResolvedValue([sampleReview]);
+
+      const result = await service.getAllReviewsAdmin({
+        page: 2,
+        limit: 10,
+        search: 'shirt',
+        productId: 5,
+        stars: 4.5,
+      });
+
+      const where = {
+        productId: 5,
+        stars: 4.5,
+        product: {
+          is: {
+            OR: [
+              { name: { contains: 'shirt', mode: 'insensitive' } },
+              { slug: { contains: 'shirt', mode: 'insensitive' } },
+            ],
+          },
+        },
+      };
+      expect(prisma.review.count).toHaveBeenCalledWith({ where });
+      expect(prisma.review.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where,
+          orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+          skip: 10,
+          take: 10,
+          select: expect.objectContaining({
+            product: { select: { id: true, name: true, slug: true } },
+          }),
+        }),
+      );
+      expect(result).toEqual({
+        reviews: [{ ...sampleReview, stars: 4.5 }],
+        pagination: {
+          page: 2,
+          limit: 10,
+          total: 11,
+          totalPages: 2,
+          hasNextPage: false,
+          hasPreviousPage: true,
+        },
+      });
+    });
+
+    it('returns all reviews when no filters are provided', async () => {
+      prisma.review.count.mockResolvedValue(0);
+      prisma.review.findMany.mockResolvedValue([]);
+
+      await service.getAllReviewsAdmin({ page: 1, limit: 10 });
+
+      expect(prisma.review.count).toHaveBeenCalledWith({ where: {} });
+      expect(prisma.review.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: {}, skip: 0, take: 10 }),
+      );
+    });
+  });
+
   describe('updateReview', () => {
     it('should throw NotFoundException if review does not exist', async () => {
       prisma.review.findFirst.mockResolvedValue(null);

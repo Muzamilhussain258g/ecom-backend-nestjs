@@ -8,6 +8,7 @@ import {
   UserRole,
 } from 'generated/prisma/enums';
 import { PrismaService } from 'prisma/prisma.service';
+import { MailService } from '../mail/mail.service';
 import { OrderService } from './order.service';
 
 describe('OrderService', () => {
@@ -26,6 +27,7 @@ describe('OrderService', () => {
     };
     variant: { findMany: jest.Mock; update: jest.Mock };
     payment: { updateMany: jest.Mock };
+    user: { findUnique: jest.Mock };
   };
 
   const sampleAddress = {
@@ -110,12 +112,24 @@ describe('OrderService', () => {
       },
       variant: { findMany: jest.fn(), update: jest.fn() },
       payment: { updateMany: jest.fn() },
+      user: {
+        findUnique: jest
+          .fn()
+          .mockResolvedValue({ id: 10, email: 'test@example.com', name: 'User' }),
+      },
     };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         OrderService,
         { provide: PrismaService, useValue: prisma },
+        {
+          provide: MailService,
+          useValue: {
+            sendOrderStatusEmail: jest.fn().mockResolvedValue(undefined),
+            sendOrderConfirmation: jest.fn().mockResolvedValue(undefined),
+          },
+        },
       ],
     }).compile();
 

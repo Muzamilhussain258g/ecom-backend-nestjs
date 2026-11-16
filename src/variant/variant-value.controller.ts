@@ -28,7 +28,7 @@ export class VariantValueController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Role(UserRole.seller)
+  @Role(UserRole.admin, UserRole.seller)
   @ResponseMessage('Variant value updated successfully')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -39,7 +39,7 @@ export class VariantValueController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Role(UserRole.seller)
+  @Role(UserRole.admin, UserRole.seller)
   @ResponseMessage('Variant value deleted successfully')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.variantService.removeValue(id);

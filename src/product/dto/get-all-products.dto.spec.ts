@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import {
   GetAllProductsDto,
-  ProductNameSortOrder,
+  ProductSortOrder,
 } from './get-all-products.dto';
 
 describe('GetAllProductsDto', () => {
@@ -12,6 +12,9 @@ describe('GetAllProductsDto', () => {
       search: '  infinix note  ',
       category: '  Clothing  ',
       sortOrder: 'asc',
+      minPrice: '500.25',
+      maxPrice: '1200',
+      inStock: 'false',
       page: '2',
       limit: '5',
     });
@@ -20,7 +23,10 @@ describe('GetAllProductsDto', () => {
     expect(dto).toEqual({
       search: 'infinix note',
       category: 'clothing',
-      sortOrder: ProductNameSortOrder.ASC,
+      sortOrder: ProductSortOrder.ASC,
+      minPrice: 500.25,
+      maxPrice: 1200,
+      inStock: false,
       page: 2,
       limit: 5,
     });
@@ -40,6 +46,21 @@ describe('GetAllProductsDto', () => {
 
   it('rejects an unsupported sort order', async () => {
     const dto = plainToInstance(GetAllProductsDto, { sortOrder: 'newest' });
+
+    expect(await validate(dto)).not.toHaveLength(0);
+  });
+
+  it('rejects a maximum price below the minimum price', async () => {
+    const dto = plainToInstance(GetAllProductsDto, {
+      minPrice: '100',
+      maxPrice: '99.99',
+    });
+
+    expect(await validate(dto)).not.toHaveLength(0);
+  });
+
+  it('rejects an unsupported sort field', async () => {
+    const dto = plainToInstance(GetAllProductsDto, { sortBy: 'rating' });
 
     expect(await validate(dto)).not.toHaveLength(0);
   });

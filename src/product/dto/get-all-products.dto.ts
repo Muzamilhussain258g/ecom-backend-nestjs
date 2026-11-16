@@ -1,18 +1,46 @@
 import { Transform, Type } from 'class-transformer';
 import {
-  IsInt,
   IsEnum,
+  IsBoolean,
+  IsInt,
+  IsNumber,
   IsNotEmpty,
   IsOptional,
   IsString,
   Max,
   MaxLength,
   Min,
+  Validate,
+  ValidationArguments,
+  ValidatorConstraint,
+  ValidatorConstraintInterface,
 } from 'class-validator';
 
-export enum ProductNameSortOrder {
+export enum ProductSortOrder {
   ASC = 'asc',
   DESC = 'desc',
+}
+
+export enum ProductSortBy {
+  NAME = 'name',
+  PRICE = 'price',
+  CREATED_AT = 'createdAt',
+}
+
+@ValidatorConstraint({ name: 'maxPriceNotBelowMinPrice' })
+class MaxPriceNotBelowMinPriceConstraint
+  implements ValidatorConstraintInterface
+{
+  validate(maxPrice: number | undefined, args: ValidationArguments): boolean {
+    const { minPrice } = args.object as { minPrice?: number };
+    return (
+      maxPrice === undefined || minPrice === undefined || maxPrice >= minPrice
+    );
+  }
+
+  defaultMessage(): string {
+    return 'maxPrice must be greater than or equal to minPrice';
+  }
 }
 
 export class GetAllProductsDto {
@@ -35,8 +63,34 @@ export class GetAllProductsDto {
   category?: string;
 
   @IsOptional()
-  @IsEnum(ProductNameSortOrder)
-  sortOrder?: ProductNameSortOrder;
+  @Type(() => Number)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Min(0)
+  minPrice?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Min(0)
+  @Validate(MaxPriceNotBelowMinPriceConstraint)
+  maxPrice?: number;
+
+  @IsOptional()
+  @Transform(({ value }: { value: unknown }) => {
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    return value;
+  })
+  @IsBoolean()
+  inStock?: boolean;
+
+  @IsOptional()
+  @IsEnum(ProductSortBy)
+  sortBy?: ProductSortBy;
+
+  @IsOptional()
+  @IsEnum(ProductSortOrder)
+  sortOrder?: ProductSortOrder;
 
   @IsOptional()
   @Type(() => Number)

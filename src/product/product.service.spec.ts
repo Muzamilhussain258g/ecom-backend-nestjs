@@ -1,14 +1,24 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
+import { UserRole } from 'generated/prisma/enums';
 import { PrismaService } from 'prisma/prisma.service';
+import { AuthenticatedUser } from '@/common/interfaces/authenticated-user.interface';
 import { ProductService } from './product.service';
-import { MediaService } from '@/media/media.service';
+import { MediaService, VerifiedMediaResource } from '@/media/media.service';
 
 type ModelMock<T extends string> = Record<T, jest.Mock>;
 type PrismaMock = {
   category: ModelMock<'findMany'>;
   review: ModelMock<'aggregate'>;
+  wishList: ModelMock<'findMany' | 'findFirst'>;
   variantType: ModelMock<'findMany'>;
   variantValue: ModelMock<'findMany'>;
+  media: ModelMock<'findMany' | 'upsert'>;
+  productMedia: ModelMock<'create'>;
   product: ModelMock<
     | 'create'
     | 'findMany'
@@ -18,28 +28,34 @@ type PrismaMock = {
     | 'findUniqueOrThrow'
     | 'update'
   >;
-  variant: ModelMock<'create' | 'findMany' | 'findFirst' | 'update'>;
+  variant: ModelMock<
+    'create' | 'createManyAndReturn' | 'findMany' | 'findFirst' | 'update'
+  >;
   variantCombinationValue: ModelMock<'createMany'>;
-  productVariantType: ModelMock<'deleteMany' | 'createMany'>;
+  productVariantType: ModelMock<'deleteMany' | 'create' | 'createMany'>;
   productVariantValue: ModelMock<'deleteMany' | 'createMany'>;
   $transaction: jest.Mock;
 };
 
 describe('ProductService', () => {
+  const sellerUser: AuthenticatedUser = {
+    id: 10,
+    email: 'seller@example.com',
+    name: 'Test Seller',
+    role: UserRole.seller,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
   const baseDto = {
     name: 'Shirt',
     description: 'Cotton shirt',
     basePrice: 1500,
     hasVariants: false,
-    stock: 12,
     categories: [{ categoryId: 3, isPrimary: true }],
     media: [
       {
-        providerPublicId: 'ecommerce/product/test-image',
-        providerAssetId: 'asset-1',
-        version: 1,
-        signature: 'verified',
-        format: 'webp',
+        providerPublicId: 'products/seller_10/test-image',
         isPrimary: true,
         position: 0,
       },
@@ -48,19 +64,36 @@ describe('ProductService', () => {
 
   let service: ProductService;
   let prisma: PrismaMock;
+  let mediaService: {
+    verifyMediaBatch: jest.Mock;
+    deleteResources: jest.Mock;
+    toMediaCreateInput: jest.Mock;
+  };
 
   beforeEach(() => {
     prisma = {
       category: { findMany: jest.fn() },
       review: { aggregate: jest.fn() },
+      wishList: { findMany: jest.fn(), findFirst: jest.fn() },
       variantType: { findMany: jest.fn() },
       variantValue: { findMany: jest.fn() },
+      media: {
+        findMany: jest.fn().mockResolvedValue([]),
+        upsert: jest.fn().mockImplementation(({ create }) =>
+          Promise.resolve({ id: 1, ...create }),
+        ),
+      },
+      productMedia: {
+        create: jest.fn().mockImplementation(({ data }) =>
+          Promise.resolve({ id: 1, ...data }),
+        ),
+      },
       product: {
         create: jest.fn(),
         findMany: jest.fn(),
         count: jest.fn(),
         findFirst: jest.fn(),
-        findUnique: jest.fn(),
+        findUnique: jest.fn().mockResolvedValue(null),
         findUniqueOrThrow: jest.fn(),
         update: jest.fn(),
       },
@@ -73,10 +106,21 @@ describe('ProductService', () => {
         findMany: jest.fn(),
         findFirst: jest.fn(),
         update: jest.fn(),
+        createManyAndReturn: jest.fn(({ data }) =>
+          Promise.resolve(
+            data.map(
+              (
+                variant: { combinationKey: string },
+                index: number,
+              ) => ({ id: index + 1, combinationKey: variant.combinationKey }),
+            ),
+          ),
+        ),
       },
       variantCombinationValue: { createMany: jest.fn() },
       productVariantType: {
         deleteMany: jest.fn(),
+        create: jest.fn(),
         createMany: jest.fn(),
       },
       productVariantValue: {
@@ -91,35 +135,88 @@ describe('ProductService', () => {
       }
       return Promise.resolve(input);
     });
-    const mediaService = {
+
+    mediaService = {
+      verifyMediaBatch: jest.fn().mockImplementation((publicIds: string[]) => {
+        const map = new Map<string, VerifiedMediaResource>();
+        for (const id of publicIds) {
+          map.set(id, {
+            providerAssetId: `asset-${id}`,
+            providerPublicId: id,
+            url: `https://res.cloudinary.com/demo/image/upload/${id}.webp`,
+            format: 'webp',
+            bytes: 1024,
+            width: 400,
+            height: 400,
+          });
+        }
+        return Promise.resolve(map);
+      }),
+      deleteResources: jest.fn().mockResolvedValue(undefined),
       toMediaCreateInput: jest.fn(() => ({
-        providerPublicId: 'ecommerce/product/test-image',
+        providerPublicId: 'products/seller_10/test-image',
         url: 'https://res.cloudinary.com/demo/image/upload/test-image.webp',
         format: 'webp',
       })),
-    } as unknown as MediaService;
+    };
+
     service = new ProductService(
       prisma as unknown as PrismaService,
-      mediaService,
+      mediaService as unknown as MediaService,
     );
   });
 
   it('creates a default sellable variant for a simple product', async () => {
-    const created = { id: 100, basePrice: 1500 };
-    const response = { ...created, variants: [{ sku: 'P-100-DEFAULT' }] };
+    const created = {
+      id: 100,
+      name: 'Shirt',
+      slug: 'shirt',
+      basePrice: 1500,
+      hasVariants: false,
+      createdAt: new Date('2026-10-23T00:00:00.000Z'),
+    };
     prisma.category.findMany.mockResolvedValue([{ id: 3 }]);
     prisma.product.create.mockResolvedValue(created);
-    prisma.product.findUniqueOrThrow.mockResolvedValue(response);
 
-    await expect(service.create(baseDto)).resolves.toBe(response);
-    const expectedProductData: unknown = expect.objectContaining({
+    await expect(
+      service.create({ ...baseDto, stock: 12 }, sellerUser),
+    ).resolves.toEqual({
+      id: 100,
+      name: 'Shirt',
       slug: 'shirt',
+      basePrice: 1500,
+      hasVariants: false,
+      variantsCreated: 1,
+      createdAt: created.createdAt,
     });
-    expect(prisma.product.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expectedProductData,
-      }),
+
+    expect(prisma.product.findUnique).toHaveBeenCalledWith({
+      where: { slug: 'shirt' },
+      select: { id: true },
+    });
+    expect(mediaService.verifyMediaBatch).toHaveBeenCalledWith(
+      ['products/seller_10/test-image'],
+      sellerUser,
     );
+    expect(prisma.media.upsert).toHaveBeenCalledWith({
+      where: { providerPublicId: 'products/seller_10/test-image' },
+      update: expect.objectContaining({
+        format: 'webp',
+      }),
+      create: expect.objectContaining({
+        providerPublicId: 'products/seller_10/test-image',
+      }),
+    });
+    expect(prisma.productMedia.create).toHaveBeenCalledWith({
+      data: {
+        productId: 100,
+        mediaId: 1,
+        isPrimary: true,
+        position: 0,
+        altText: undefined,
+        variantValueId: undefined,
+      },
+    });
     expect(prisma.variant.create).toHaveBeenCalledWith({
       data: {
         productId: 100,
@@ -129,6 +226,190 @@ describe('ProductService', () => {
         stock: 12,
       },
     });
+  });
+
+  it('reuses existing media when same public id already exists in database', async () => {
+    prisma.category.findMany.mockResolvedValue([{ id: 3 }]);
+    prisma.product.create.mockResolvedValue({
+      id: 100,
+      name: 'Shirt',
+      slug: 'shirt',
+      basePrice: 1500,
+      hasVariants: false,
+      createdAt: new Date(),
+    });
+    // Simulate that the media is already in the Media table
+    prisma.media.findMany.mockResolvedValue([
+      { providerPublicId: 'products/seller_10/test-image' },
+    ]);
+    prisma.media.upsert.mockResolvedValue({
+      id: 99,
+      providerPublicId: 'products/seller_10/test-image',
+    });
+
+    await service.create(baseDto, sellerUser);
+
+    expect(prisma.media.upsert).toHaveBeenCalledTimes(1);
+    expect(prisma.productMedia.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          mediaId: 99,
+          productId: 100,
+        }),
+      }),
+    );
+  });
+
+  it('rejects duplicate public ids in the same request', async () => {
+    prisma.category.findMany.mockResolvedValue([{ id: 3 }]);
+
+    await expect(
+      service.create(
+        {
+          ...baseDto,
+          media: [
+            {
+              providerPublicId: 'products/seller_10/img1',
+              isPrimary: true,
+              position: 0,
+            },
+            {
+              providerPublicId: 'products/seller_10/img1',
+              isPrimary: false,
+              position: 1,
+            },
+          ],
+        },
+        sellerUser,
+      ),
+    ).rejects.toThrow('Product media must be unique');
+  });
+
+  it('rejects payload with two primary images', async () => {
+    prisma.category.findMany.mockResolvedValue([{ id: 3 }]);
+
+    await expect(
+      service.create(
+        {
+          ...baseDto,
+          media: [
+            {
+              providerPublicId: 'products/seller_10/img1',
+              isPrimary: true,
+              position: 0,
+            },
+            {
+              providerPublicId: 'products/seller_10/img2',
+              isPrimary: true,
+              position: 1,
+            },
+          ],
+        },
+        sellerUser,
+      ),
+    ).rejects.toThrow('Exactly one product image must be marked as primary');
+  });
+
+  it('rejects payload with zero primary images when media is provided', async () => {
+    prisma.category.findMany.mockResolvedValue([{ id: 3 }]);
+
+    await expect(
+      service.create(
+        {
+          ...baseDto,
+          media: [
+            {
+              providerPublicId: 'products/seller_10/img1',
+              isPrimary: false,
+              position: 0,
+            },
+          ],
+        },
+        sellerUser,
+      ),
+    ).rejects.toThrow('Exactly one product image must be marked as primary');
+  });
+
+  it('rejects more than 10 media items', async () => {
+    prisma.category.findMany.mockResolvedValue([{ id: 3 }]);
+    const elevenImages = Array.from({ length: 11 }, (_, i) => ({
+      providerPublicId: `products/seller_10/img${i}`,
+      isPrimary: i === 0,
+      position: i,
+    }));
+
+    await expect(
+      service.create({ ...baseDto, media: elevenImages }, sellerUser),
+    ).rejects.toThrow('At most 10 media items are allowed');
+  });
+
+  it('rejects media linking to variant value when hasVariants is false', async () => {
+    prisma.category.findMany.mockResolvedValue([{ id: 3 }]);
+
+    await expect(
+      service.create(
+        {
+          ...baseDto,
+          media: [
+            {
+              providerPublicId: 'products/seller_10/test-image',
+              isPrimary: true,
+              position: 0,
+              variantValueId: 5,
+            },
+          ],
+        },
+        sellerUser,
+      ),
+    ).rejects.toThrow(
+      'Media cannot be linked to a variant value when hasVariants is false',
+    );
+  });
+
+  it('rejects product creation if slug already exists', async () => {
+    prisma.category.findMany.mockResolvedValue([{ id: 3 }]);
+    prisma.product.findUnique.mockResolvedValue({ id: 5 });
+
+    await expect(service.create(baseDto, sellerUser)).rejects.toBeInstanceOf(
+      ConflictException,
+    );
+  });
+
+  it('propagates ForbiddenException if seller attempts to use another seller media', async () => {
+    prisma.category.findMany.mockResolvedValue([{ id: 3 }]);
+    mediaService.verifyMediaBatch.mockRejectedValue(
+      new ForbiddenException("You do not own media asset 'products/seller_999/img'"),
+    );
+
+    await expect(
+      service.create(
+        {
+          ...baseDto,
+          media: [
+            {
+              providerPublicId: 'products/seller_999/img',
+              isPrimary: true,
+              position: 0,
+            },
+          ],
+        },
+        sellerUser,
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('cleans up orphan newly uploaded media if transaction fails', async () => {
+    prisma.category.findMany.mockResolvedValue([{ id: 3 }]);
+    prisma.media.findMany.mockResolvedValue([]); // newly uploaded
+    prisma.product.create.mockRejectedValue(new Error('DB transaction crash'));
+
+    await expect(service.create(baseDto, sellerUser)).rejects.toThrow(
+      'DB transaction crash',
+    );
+
+    expect(mediaService.deleteResources).toHaveBeenCalledWith([
+      'products/seller_10/test-image',
+    ]);
   });
 
   it('generates the Cartesian product for flexible variant selections', async () => {
@@ -143,95 +424,87 @@ describe('ProductService', () => {
     prisma.product.create.mockResolvedValue({ id: 100, basePrice: 1500 });
     prisma.product.findUniqueOrThrow.mockResolvedValue({ id: 100 });
 
-    await service.create({
-      ...baseDto,
-      hasVariants: true,
-      variantSelections: [
-        { variantTypeId: 1, variantValueIds: [10, 11] },
-        { variantTypeId: 2, variantValueIds: [20, 21] },
-      ],
-      variantQuantities: [
-        { variantValueIds: [10, 20], quantity: 7 },
-        { variantValueIds: [10, 21], quantity: 8 },
-        { variantValueIds: [11, 20], quantity: 9 },
-        { variantValueIds: [11, 21], quantity: 10 },
-      ],
-    });
+    await service.create(
+      {
+        ...baseDto,
+        hasVariants: true,
+        variantSelections: [
+          { variantTypeId: 1, variantValueIds: [10, 11] },
+          { variantTypeId: 2, variantValueIds: [20, 21] },
+        ],
+        variantQuantities: [
+          { variantValueIds: [10, 20], quantity: 7 },
+          { variantValueIds: [10, 21], quantity: 8 },
+          { variantValueIds: [11, 20], quantity: 9 },
+          { variantValueIds: [11, 21], quantity: 10 },
+        ],
+      },
+      sellerUser,
+    );
 
-    expect(prisma.variant.create).toHaveBeenCalledTimes(4);
-    const smallRedVariant: unknown = expect.objectContaining({
-      combinationKey: '10-20',
-      sku: 'P-100-S-RED',
-      stock: 7,
+    expect(prisma.variant.create).not.toHaveBeenCalled();
+    expect(prisma.variant.createManyAndReturn).toHaveBeenCalledWith({
+      data: [
+        {
+          productId: 100,
+          combinationKey: '10-20',
+          sku: 'P-100-S-RED',
+          price: 1500,
+          stock: 7,
+        },
+        {
+          productId: 100,
+          combinationKey: '10-21',
+          sku: 'P-100-S-BLUE',
+          price: 1500,
+          stock: 8,
+        },
+        {
+          productId: 100,
+          combinationKey: '11-20',
+          sku: 'P-100-M-RED',
+          price: 1500,
+          stock: 9,
+        },
+        {
+          productId: 100,
+          combinationKey: '11-21',
+          sku: 'P-100-M-BLUE',
+          price: 1500,
+          stock: 10,
+        },
+      ],
+      select: { id: true, combinationKey: true },
     });
-    expect(prisma.variant.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: smallRedVariant,
-      }),
-    );
-    const mediumBlueVariant: unknown = expect.objectContaining({
-      combinationKey: '11-21',
-      sku: 'P-100-M-BLUE',
-      stock: 10,
+    expect(prisma.variantCombinationValue.createMany).toHaveBeenCalledWith({
+      data: [
+        { variantId: 1, variantValueId: 10 },
+        { variantId: 1, variantValueId: 20 },
+        { variantId: 2, variantValueId: 10 },
+        { variantId: 2, variantValueId: 21 },
+        { variantId: 3, variantValueId: 11 },
+        { variantId: 3, variantValueId: 20 },
+        { variantId: 4, variantValueId: 11 },
+        { variantId: 4, variantValueId: 21 },
+      ],
     });
-    expect(prisma.variant.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: mediumBlueVariant,
-      }),
-    );
   });
 
-  it('creates the requested round-neck T-shirt variant combinations', async () => {
-    prisma.category.findMany.mockResolvedValue([{ id: 2 }]);
-    prisma.variantType.findMany.mockResolvedValue([{ id: 1 }, { id: 2 }]);
-    prisma.variantValue.findMany.mockResolvedValue([
-      { id: 1, code: 'RED', variantTypeId: 1 },
-      { id: 2, code: 'BLUE', variantTypeId: 1 },
-      { id: 3, code: 'BLACK', variantTypeId: 1 },
-      { id: 5, code: 'S', variantTypeId: 2 },
-      { id: 6, code: 'M', variantTypeId: 2 },
-    ]);
-    prisma.product.create.mockResolvedValue({ id: 101, basePrice: 700 });
-    prisma.product.findUniqueOrThrow.mockResolvedValue({ id: 101 });
+  it('rejects positive stock when hasVariants is true', async () => {
+    prisma.category.findMany.mockResolvedValue([{ id: 3 }]);
 
-    await service.create({
-      name: 'Round Neck T-Shirt 2026',
-      description:
-        'Comfortable round neck t-shirt available in multiple colors and sizes.',
-      basePrice: 700,
-      hasVariants: true,
-      categories: [{ categoryId: 2, isPrimary: true }],
-      media: baseDto.media,
-      variantSelections: [
-        { variantTypeId: 1, variantValueIds: [1, 2, 3] },
-        { variantTypeId: 2, variantValueIds: [5, 6] },
-      ],
-      variantQuantities: [
-        { variantValueIds: [1, 5], quantity: 5 },
-        { variantValueIds: [1, 6], quantity: 6 },
-        { variantValueIds: [2, 5], quantity: 7 },
-        { variantValueIds: [2, 6], quantity: 8 },
-        { variantValueIds: [3, 5], quantity: 9 },
-        { variantValueIds: [3, 6], quantity: 10 },
-      ],
-    });
-
-    expect(prisma.variant.create).toHaveBeenCalledTimes(6);
-    expect(
-      prisma.variant.create.mock.calls.map(
-        ([call]: [{ data: { combinationKey: string; stock: number } }]) => [
-          call.data.combinationKey,
-          call.data.stock,
-        ],
+    await expect(
+      service.create(
+        {
+          ...baseDto,
+          hasVariants: true,
+          stock: 10,
+          variantSelections: [{ variantTypeId: 1, variantValueIds: [10] }],
+          variantQuantities: [{ variantValueIds: [10], quantity: 5 }],
+        },
+        sellerUser,
       ),
-    ).toEqual([
-      ['1-5', 5],
-      ['1-6', 6],
-      ['2-5', 7],
-      ['2-6', 8],
-      ['3-5', 9],
-      ['3-6', 10],
-    ]);
+    ).rejects.toThrow('stock can only be specified when hasVariants is false');
   });
 
   it('requires a quantity for every generated variant combination', async () => {
@@ -243,12 +516,15 @@ describe('ProductService', () => {
     ]);
 
     await expect(
-      service.create({
-        ...baseDto,
-        hasVariants: true,
-        variantSelections: [{ variantTypeId: 1, variantValueIds: [10, 11] }],
-        variantQuantities: [{ variantValueIds: [10], quantity: 4 }],
-      }),
+      service.create(
+        {
+          ...baseDto,
+          hasVariants: true,
+          variantSelections: [{ variantTypeId: 1, variantValueIds: [10, 11] }],
+          variantQuantities: [{ variantValueIds: [10], quantity: 4 }],
+        },
+        sellerUser,
+      ),
     ).rejects.toThrow('Quantities are required for variant combinations: 11');
   });
 
@@ -260,11 +536,14 @@ describe('ProductService', () => {
     ]);
 
     await expect(
-      service.create({
-        ...baseDto,
-        hasVariants: true,
-        variantSelections: [{ variantTypeId: 1, variantValueIds: [20] }],
-      }),
+      service.create(
+        {
+          ...baseDto,
+          hasVariants: true,
+          variantSelections: [{ variantTypeId: 1, variantValueIds: [20] }],
+        },
+        sellerUser,
+      ),
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
@@ -272,10 +551,13 @@ describe('ProductService', () => {
     prisma.category.findMany.mockResolvedValue([{ id: 3 }]);
 
     await expect(
-      service.create({
-        ...baseDto,
-        variantSelections: [{ variantTypeId: 1, variantValueIds: [10] }],
-      }),
+      service.create(
+        {
+          ...baseDto,
+          variantSelections: [{ variantTypeId: 1, variantValueIds: [10] }],
+        },
+        sellerUser,
+      ),
     ).rejects.toThrow(
       'variantSelections are only allowed when hasVariants is true',
     );
@@ -292,50 +574,105 @@ describe('ProductService', () => {
     });
 
     const where = {
+      productStatus: true,
       OR: [
         { name: { contains: 'infinix', mode: 'insensitive' } },
         { description: { contains: 'infinix', mode: 'insensitive' } },
       ],
     };
     expect(prisma.product.findMany).toHaveBeenCalledWith(
-      expect.objectContaining({ where, skip: 10, take: 10 }),
+      expect.objectContaining({
+        where,
+        skip: 10,
+        take: 10,
+      }),
     );
-    expect(prisma.product.count).toHaveBeenCalledWith({ where });
-    expect(result.meta.pagination).toEqual({
-      page: 2,
-      limit: 10,
-      total: 11,
-      totalPages: 2,
-      hasNextPage: false,
-      hasPreviousPage: true,
+    expect(result).toEqual({
+      products,
+      meta: {
+        pagination: {
+          page: 2,
+          limit: 10,
+          total: 11,
+          totalPages: 2,
+          hasNextPage: false,
+          hasPreviousPage: true,
+        },
+      },
+    });
+    expect(prisma.wishList.findMany).not.toHaveBeenCalled();
+  });
+
+  it('adds wishlist state to products for an authenticated user', async () => {
+    prisma.$transaction.mockResolvedValue([
+      [
+        { id: 2, name: 'Infinix Note 40 Pro' },
+        { id: 3, name: 'Phone case' },
+      ],
+      2,
+    ]);
+    prisma.wishList.findMany.mockResolvedValue([{ productId: 3 }]);
+
+    const result = await service.findAll({ page: 1, limit: 10 }, 42);
+
+    expect(result.products).toEqual([
+      { id: 2, name: 'Infinix Note 40 Pro', isWishlisted: false },
+      { id: 3, name: 'Phone case', isWishlisted: true },
+    ]);
+    expect(prisma.wishList.findMany).toHaveBeenCalledWith({
+      where: { userId: 42, productId: { in: [2, 3] } },
+      select: { productId: true },
     });
   });
 
-  it('filters products by category together with search', async () => {
-    prisma.$transaction.mockResolvedValue([[], 0]);
+  it('filters by base price and stock and sorts by price', async () => {
+    const products = [{ id: 2, name: 'Infinix Note 40 Pro' }];
+    prisma.$transaction.mockResolvedValue([products, 1]);
 
     await service.findAll({
-      search: 'shirt',
-      category: 'clothing',
+      minPrice: 100,
+      maxPrice: 500,
+      inStock: true,
+      sortBy: 'price',
       sortOrder: 'asc',
       page: 1,
       limit: 10,
     });
 
     const where = {
-      OR: [
-        { name: { contains: 'shirt', mode: 'insensitive' } },
-        { description: { contains: 'shirt', mode: 'insensitive' } },
-      ],
-      productCategories: { some: { category: { slug: 'clothing' } } },
+      productStatus: true,
+      basePrice: { gte: 100, lte: 500 },
+      variants: { some: { isActive: true, stock: { gt: 0 } } },
     };
     expect(prisma.product.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where,
-        orderBy: [{ name: 'asc' }, { id: 'desc' }],
+        orderBy: [{ basePrice: 'asc' }, { id: 'desc' }],
       }),
     );
     expect(prisma.product.count).toHaveBeenCalledWith({ where });
+  });
+
+  it('filters out in-stock products when inStock is false', async () => {
+    prisma.$transaction.mockResolvedValue([[], 0]);
+
+    await service.findAll({
+      inStock: false,
+      page: 1,
+      limit: 10,
+    });
+
+    expect(prisma.product.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          productStatus: true,
+          NOT: {
+            variants: { some: { isActive: true, stock: { gt: 0 } } },
+          },
+        },
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+      }),
+    );
   });
 
   it('returns a product safely when optional variant relations are empty', async () => {
@@ -344,7 +681,6 @@ describe('ProductService', () => {
       hasVariants: false,
       productCategories: [],
       variantTypes: [],
-      variantValues: [],
       variants: [],
       images: [],
       reviews: [],
@@ -371,6 +707,31 @@ describe('ProductService', () => {
     expect(prisma.review.aggregate).toHaveBeenCalledWith(
       expect.objectContaining({ where: { product: { slug: 'shirt' } } }),
     );
+  });
+
+  it('adds wishlist state to product details for an authenticated user', async () => {
+    const product = {
+      id: 7,
+      hasVariants: false,
+      productCategories: [],
+      variantTypes: [],
+      variants: [],
+      images: [],
+      reviews: [],
+    };
+    prisma.$transaction.mockResolvedValue([
+      product,
+      { _avg: { stars: null }, _count: { _all: 0 } },
+    ]);
+    prisma.wishList.findFirst.mockResolvedValue({ id: 1 });
+
+    const result = await service.findOne('shirt', 42);
+
+    expect(result.isWishlisted).toBe(true);
+    expect(prisma.wishList.findFirst).toHaveBeenCalledWith({
+      where: { userId: 42, productId: 7 },
+      select: { id: true },
+    });
   });
 
   it('regenerates the product slug when its name changes', async () => {
@@ -407,8 +768,12 @@ describe('ProductService', () => {
       {
         id: 100,
         productCategories: [],
-        variantTypes: [{ variantType: colorType }],
-        variantValues: [{ id: 70, variantValue: blue }],
+        variantTypes: [
+          {
+            variantType: colorType,
+            productVariantValues: [{ id: 70, variantValue: blue }],
+          },
+        ],
         variants: [
           {
             id: 1000,

@@ -10,3 +10,12 @@ export const CurrentUser = createParamDecorator(
   (_data: unknown, context: ExecutionContext): AuthenticatedUser =>
     context.switchToHttp().getRequest<AuthenticatedRequest>().user,
 );
+
+interface OptionalAuthenticatedRequest extends Request {
+  user?: AuthenticatedUser;
+}
+
+export const OptionalCurrentUser = createParamDecorator(
+  (_data: unknown, context: ExecutionContext): AuthenticatedUser | undefined =>
+    context.switchToHttp().getRequest<OptionalAuthenticatedRequest>().user,
+);

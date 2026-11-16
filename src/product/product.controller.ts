@@ -13,9 +13,17 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UserRole } from 'generated/prisma/enums';
+import {
+  CurrentUser,
+  OptionalCurrentUser,
+} from '@/common/decorators/current-user.decorator';
+import type { AuthenticatedUser } from '@/common/interfaces/authenticated-user.interface';
 import { ResponseMessage } from '@/common/decorators/response-message.decorator';
 import { Role } from '@/common/decorators/role.decorator';
-import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
+import {
+  JwtAuthGuard,
+  OptionalJwtAuthGuard,
+} from '@/common/guards/jwt-auth.guard';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { CreateProductDto } from './dto/create-product.dto';
 import { GetAllProductsDto } from './dto/get-all-products.dto';
@@ -33,21 +41,32 @@ export class ProductController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Role(UserRole.admin, UserRole.seller)
   @ResponseMessage('Product created successfully')
-  create(@Body() dto: CreateProductDto) {
-    return this.productService.create(dto);
+  create(
+    @Body() dto: CreateProductDto,
+    @CurrentUser() user?: AuthenticatedUser,
+  ) {
+    return this.productService.create(dto, user);
   }
 
   @Get()
+  @UseGuards(OptionalJwtAuthGuard)
   @ResponseMessage('Products fetched successfully')
-  findAll(@Query() dto: GetAllProductsDto) {
-    return this.productService.findAll(dto);
+  findAll(
+    @Query() dto: GetAllProductsDto,
+    @OptionalCurrentUser() user?: AuthenticatedUser,
+  ) {
+    return this.productService.findAll(dto, user?.id);
   }
 
   @Get(':slug')
+  @UseGuards(OptionalJwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ResponseMessage('Product fetched successfully')
-  findOne(@Param('slug') slug: string) {
-    return this.productService.findOne(slug);
+  findOne(
+    @Param('slug') slug: string,
+    @OptionalCurrentUser() user?: AuthenticatedUser,
+  ) {
+    return this.productService.findOne(slug, user?.id);
   }
 
   // Product writes are restricted to authenticated admins and sellers.

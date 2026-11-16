@@ -76,4 +76,48 @@ describe('CreateProductDto', () => {
 
     expect(await validate(dto)).not.toHaveLength(0);
   });
+
+  it('accepts media containing only providerPublicId, isPrimary, and position', async () => {
+    const dto = plainToInstance(CreateProductDto, {
+      ...validPayload,
+      media: [
+        {
+          providerPublicId: 'products/seller_1/minimal-image',
+          isPrimary: true,
+          position: 0,
+        },
+      ],
+    });
+
+    await expect(validate(dto)).resolves.toHaveLength(0);
+  });
+
+  it('rejects media when providerPublicId is empty', async () => {
+    const dto = plainToInstance(CreateProductDto, {
+      ...validPayload,
+      media: [
+        {
+          providerPublicId: '   ',
+          isPrimary: true,
+          position: 0,
+        },
+      ],
+    });
+
+    expect(await validate(dto)).not.toHaveLength(0);
+  });
+
+  it('rejects media array exceeding 10 items', async () => {
+    const elevenImages = Array.from({ length: 11 }, (_, i) => ({
+      providerPublicId: `products/seller_1/img${i}`,
+      isPrimary: i === 0,
+      position: i,
+    }));
+    const dto = plainToInstance(CreateProductDto, {
+      ...validPayload,
+      media: elevenImages,
+    });
+
+    expect(await validate(dto)).not.toHaveLength(0);
+  });
 });

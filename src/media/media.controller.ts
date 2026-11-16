@@ -12,6 +12,8 @@ import {
 import { UserRole } from 'generated/prisma/enums';
 import { ResponseMessage } from '@/common/decorators/response-message.decorator';
 import { Role } from '@/common/decorators/role.decorator';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import type { AuthenticatedUser } from '@/common/interfaces/authenticated-user.interface';
 import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { MediaService } from './media.service';
@@ -26,8 +28,11 @@ export class MediaController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Role(UserRole.admin, UserRole.seller)
   @ResponseMessage('Cloudinary upload signature generated successfully')
-  createUploadSignature(@Body() dto: CreateUploadSignatureDto) {
-    return this.mediaService.createUploadSignature(dto.purpose);
+  createUploadSignature(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: CreateUploadSignatureDto,
+  ) {
+    return this.mediaService.createUploadSignature(dto.purpose, user);
   }
 
   @Delete(':id')

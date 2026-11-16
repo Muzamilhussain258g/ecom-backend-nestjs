@@ -42,11 +42,14 @@ describe('VariantTypeController', () => {
     expect(variantService.removeValuesByType).toHaveBeenCalledWith(1);
   });
 
-  it('restricts master-data creation to sellers', () => {
+  it('restricts master-data creation to admins and sellers', () => {
     // Metadata belongs to the original handler and must not be bound.
     // eslint-disable-next-line @typescript-eslint/unbound-method
     const handler = VariantTypeController.prototype.create;
 
-    expect(Reflect.getMetadata(ROLES_KEY, handler)).toEqual([UserRole.seller]);
+    expect(Reflect.getMetadata(ROLES_KEY, handler)).toEqual([
+      UserRole.admin,
+      UserRole.seller,
+    ]);
   });
 });

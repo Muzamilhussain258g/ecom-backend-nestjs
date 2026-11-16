@@ -38,3 +38,17 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return user;
   }
 }
+
+@Injectable()
+export class OptionalJwtAuthGuard extends JwtAuthGuard {
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
+    const request = context.switchToHttp().getRequest<Request>();
+    if (!request.headers.authorization) {
+      return true;
+    }
+
+    return super.canActivate(context);
+  }
+}

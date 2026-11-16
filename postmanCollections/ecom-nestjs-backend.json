@@ -344,7 +344,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/products?page=1&limit=10&search=shoes&category=footwear&sortOrder=asc",
+                  "raw": "{{baseUrl}}/products?page=1&limit=10&search=shoes&category=footwear&minPrice=50&maxPrice=200&inStock=true&sortBy=price&sortOrder=asc",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -373,9 +373,29 @@
                       "description": "Optional category slug filter"
                     },
                     {
+                      "key": "minPrice",
+                      "value": "50",
+                      "description": "Optional minimum product base price"
+                    },
+                    {
+                      "key": "maxPrice",
+                      "value": "200",
+                      "description": "Optional maximum product base price; must be >= minPrice"
+                    },
+                    {
+                      "key": "inStock",
+                      "value": "true",
+                      "description": "Optional availability filter: true or false"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "price",
+                      "description": "Sort field: name, price (basePrice), or createdAt"
+                    },
+                    {
                       "key": "sortOrder",
                       "value": "asc",
-                      "description": "Product name sort: asc or desc"
+                      "description": "Sort direction: asc or desc; defaults to desc"
                     }
                   ]
                 },
