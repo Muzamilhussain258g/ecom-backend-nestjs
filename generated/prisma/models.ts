@@ -9,10 +9,15 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/User.js'
+export type * from './models/ChatConversation.js'
+export type * from './models/ChatMessage.js'
+export type * from './models/ChatReadPosition.js'
+export type * from './models/ChatAttachment.js'
 export type * from './models/RefreshToken.js'
 export type * from './models/Category.js'
 export type * from './models/ProductCategory.js'
 export type * from './models/Product.js'
+export type * from './models/Faq.js'
 export type * from './models/Review.js'
 export type * from './models/VariantType.js'
 export type * from './models/VariantValue.js'

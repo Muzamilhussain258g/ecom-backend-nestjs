@@ -95,6 +95,36 @@
       "key": "mediaId",
       "value": "1",
       "type": "string"
+    },
+    {
+      "key": "chatBaseUrl",
+      "value": "http://localhost:3000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "chatAccessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "chatConversationId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "chatClientMessageId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "chatUploadId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "chatAttachmentId",
+      "value": "",
+      "type": "string"
     }
   ],
   "item": [
@@ -3626,6 +3656,327 @@
               "response": []
             }
           ]
+        }
+      ]
+    },
+    {
+      "name": "Support Chat",
+      "description": "JWT-protected support chat. chatBaseUrl includes /api/v1. See docs/CHAT_API.md for Socket.IO and direct Cloudinary upload instructions. Use a fresh UUID for each new message and keep it unchanged on retries.",
+      "item": [
+        {
+          "name": "Create or get my thread",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{chatAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [],
+            "url": {
+              "raw": "{{chatBaseUrl}}/chat/conversations",
+              "host": [
+                "{{chatBaseUrl}}"
+              ],
+              "path": [
+                "chat",
+                "conversations"
+              ]
+            }
+          }
+        },
+        {
+          "name": "My thread / admin inbox",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{chatAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [],
+            "url": {
+              "raw": "{{chatBaseUrl}}/chat/conversations",
+              "host": [
+                "{{chatBaseUrl}}"
+              ],
+              "path": [
+                "chat",
+                "conversations"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Message history",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{chatAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [],
+            "url": {
+              "raw": "{{chatBaseUrl}}/chat/conversations/{{chatConversationId}}/messages",
+              "host": [
+                "{{chatBaseUrl}}"
+              ],
+              "path": [
+                "chat",
+                "conversations",
+                "{{chatConversationId}}",
+                "messages"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Send message",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{chatAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{chatBaseUrl}}/chat/conversations/{{chatConversationId}}/messages",
+              "host": [
+                "{{chatBaseUrl}}"
+              ],
+              "path": [
+                "chat",
+                "conversations",
+                "{{chatConversationId}}",
+                "messages"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientMessageId\": \"{{chatClientMessageId}}\",\n  \"text\": \"I need help with my order\",\n  \"attachmentIds\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Mark read",
+          "request": {
+            "method": "PUT",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{chatAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{chatBaseUrl}}/chat/conversations/{{chatConversationId}}/read",
+              "host": [
+                "{{chatBaseUrl}}"
+              ],
+              "path": [
+                "chat",
+                "conversations",
+                "{{chatConversationId}}",
+                "read"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sequence\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Reserve image upload",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{chatAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{chatBaseUrl}}/chat/conversations/{{chatConversationId}}/uploads",
+              "host": [
+                "{{chatBaseUrl}}"
+              ],
+              "path": [
+                "chat",
+                "conversations",
+                "{{chatConversationId}}",
+                "uploads"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resourceType\": \"image\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Reserve video upload",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{chatAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{chatBaseUrl}}/chat/conversations/{{chatConversationId}}/uploads",
+              "host": [
+                "{{chatBaseUrl}}"
+              ],
+              "path": [
+                "chat",
+                "conversations",
+                "{{chatConversationId}}",
+                "uploads"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resourceType\": \"video\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Complete upload",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{chatAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [],
+            "url": {
+              "raw": "{{chatBaseUrl}}/chat/conversations/{{chatConversationId}}/uploads/{{chatUploadId}}/complete",
+              "host": [
+                "{{chatBaseUrl}}"
+              ],
+              "path": [
+                "chat",
+                "conversations",
+                "{{chatConversationId}}",
+                "uploads",
+                "{{chatUploadId}}",
+                "complete"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get attachment access",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{chatAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [],
+            "url": {
+              "raw": "{{chatBaseUrl}}/chat/attachments/{{chatAttachmentId}}/access",
+              "host": [
+                "{{chatBaseUrl}}"
+              ],
+              "path": [
+                "chat",
+                "attachments",
+                "{{chatAttachmentId}}",
+                "access"
+              ]
+            }
+          }
         }
       ]
     }

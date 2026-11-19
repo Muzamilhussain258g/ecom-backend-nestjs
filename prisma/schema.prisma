@@ -23,6 +23,69 @@ model User {
   refreshTokens  RefreshToken[]
   reviews        Review[]
   wishlist       WishList[]
+  supportConversation ChatConversation?
+  chatMessages ChatMessage[]
+  chatReads ChatReadPosition[]
+  chatAttachments ChatAttachment[]
+}
+
+model ChatConversation {
+  id Int @id @default(autoincrement())
+  userId Int @unique
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+  lastSequence Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  messages ChatMessage[]
+  reads ChatReadPosition[]
+  attachments ChatAttachment[]
+  @@index([updatedAt, id])
+}
+
+model ChatMessage {
+  id Int @id @default(autoincrement())
+  conversationId Int
+  conversation ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Restrict)
+  senderId Int
+  sender User @relation(fields: [senderId], references: [id], onDelete: Restrict)
+  clientMessageId String
+  requestHash String
+  sequence Int
+  text String?
+  createdAt DateTime @default(now())
+  attachments ChatAttachment[]
+  @@unique([conversationId, sequence])
+  @@unique([senderId, clientMessageId])
+}
+
+model ChatReadPosition {
+  conversationId Int
+  conversation ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  userId Int
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sequence Int @default(0)
+  @@id([conversationId, userId])
+}
+
+model ChatAttachment {
+  id String @id @default(uuid())
+  conversationId Int
+  conversation ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Restrict)
+  uploaderId Int
+  uploader User @relation(fields: [uploaderId], references: [id], onDelete: Restrict)
+  messageId Int?
+  message ChatMessage? @relation(fields: [messageId], references: [id], onDelete: Restrict)
+  publicId String @unique
+  resourceType String
+  status String @default("pending")
+  format String?
+  bytes Int?
+  width Int?
+  height Int?
+  duration Float?
+  createdAt DateTime @default(now())
+  @@index([status, createdAt])
+  @@index([messageId])
 }
 
 model RefreshToken {
@@ -63,6 +126,7 @@ model ProductCategory {
 }
 
 model Product {
+  faqs              Faq[]
   id                Int                  @id @default(autoincrement())
   name              String
   slug              String               @unique
@@ -79,6 +143,20 @@ model Product {
   reviews           Review[]
   variants          Variant[]
   wishlistedBy      WishList[]
+}
+
+model Faq {
+  id        Int      @id @default(autoincrement())
+  question  String   @db.VarChar(300)
+  answer    String   @db.VarChar(5000)
+  productId Int?
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId, isActive, sortOrder])
 }
 
 model Review {

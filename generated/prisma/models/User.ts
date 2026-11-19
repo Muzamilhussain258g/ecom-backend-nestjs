@@ -239,6 +239,10 @@ export type UserWhereInput = {
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
   wishlist?: Prisma.WishListListRelationFilter
+  supportConversation?: Prisma.XOR<Prisma.ChatConversationNullableScalarRelationFilter, Prisma.ChatConversationWhereInput> | null
+  chatMessages?: Prisma.ChatMessageListRelationFilter
+  chatReads?: Prisma.ChatReadPositionListRelationFilter
+  chatAttachments?: Prisma.ChatAttachmentListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -256,6 +260,10 @@ export type UserOrderByWithRelationInput = {
   refreshTokens?: Prisma.RefreshTokenOrderByRelationAggregateInput
   reviews?: Prisma.ReviewOrderByRelationAggregateInput
   wishlist?: Prisma.WishListOrderByRelationAggregateInput
+  supportConversation?: Prisma.ChatConversationOrderByWithRelationInput
+  chatMessages?: Prisma.ChatMessageOrderByRelationAggregateInput
+  chatReads?: Prisma.ChatReadPositionOrderByRelationAggregateInput
+  chatAttachments?: Prisma.ChatAttachmentOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -276,6 +284,10 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
   wishlist?: Prisma.WishListListRelationFilter
+  supportConversation?: Prisma.XOR<Prisma.ChatConversationNullableScalarRelationFilter, Prisma.ChatConversationWhereInput> | null
+  chatMessages?: Prisma.ChatMessageListRelationFilter
+  chatReads?: Prisma.ChatReadPositionListRelationFilter
+  chatAttachments?: Prisma.ChatAttachmentListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -320,6 +332,10 @@ export type UserCreateInput = {
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   wishlist?: Prisma.WishListCreateNestedManyWithoutUserInput
+  supportConversation?: Prisma.ChatConversationCreateNestedOneWithoutUserInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  chatReads?: Prisma.ChatReadPositionCreateNestedManyWithoutUserInput
+  chatAttachments?: Prisma.ChatAttachmentCreateNestedManyWithoutUploaderInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -337,6 +353,10 @@ export type UserUncheckedCreateInput = {
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   wishlist?: Prisma.WishListUncheckedCreateNestedManyWithoutUserInput
+  supportConversation?: Prisma.ChatConversationUncheckedCreateNestedOneWithoutUserInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  chatReads?: Prisma.ChatReadPositionUncheckedCreateNestedManyWithoutUserInput
+  chatAttachments?: Prisma.ChatAttachmentUncheckedCreateNestedManyWithoutUploaderInput
 }
 
 export type UserUpdateInput = {
@@ -353,6 +373,10 @@ export type UserUpdateInput = {
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   wishlist?: Prisma.WishListUpdateManyWithoutUserNestedInput
+  supportConversation?: Prisma.ChatConversationUpdateOneWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  chatReads?: Prisma.ChatReadPositionUpdateManyWithoutUserNestedInput
+  chatAttachments?: Prisma.ChatAttachmentUpdateManyWithoutUploaderNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -370,6 +394,10 @@ export type UserUncheckedUpdateInput = {
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   wishlist?: Prisma.WishListUncheckedUpdateManyWithoutUserNestedInput
+  supportConversation?: Prisma.ChatConversationUncheckedUpdateOneWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  chatReads?: Prisma.ChatReadPositionUncheckedUpdateManyWithoutUserNestedInput
+  chatAttachments?: Prisma.ChatAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -462,6 +490,62 @@ export type IntFieldUpdateOperationsInput = {
   decrement?: number
   multiply?: number
   divide?: number
+}
+
+export type UserCreateNestedOneWithoutSupportConversationInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSupportConversationInput, Prisma.UserUncheckedCreateWithoutSupportConversationInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSupportConversationInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutSupportConversationNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSupportConversationInput, Prisma.UserUncheckedCreateWithoutSupportConversationInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSupportConversationInput
+  upsert?: Prisma.UserUpsertWithoutSupportConversationInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSupportConversationInput, Prisma.UserUpdateWithoutSupportConversationInput>, Prisma.UserUncheckedUpdateWithoutSupportConversationInput>
+}
+
+export type UserCreateNestedOneWithoutChatMessagesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutChatMessagesInput, Prisma.UserUncheckedCreateWithoutChatMessagesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChatMessagesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutChatMessagesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutChatMessagesInput, Prisma.UserUncheckedCreateWithoutChatMessagesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChatMessagesInput
+  upsert?: Prisma.UserUpsertWithoutChatMessagesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutChatMessagesInput, Prisma.UserUpdateWithoutChatMessagesInput>, Prisma.UserUncheckedUpdateWithoutChatMessagesInput>
+}
+
+export type UserCreateNestedOneWithoutChatReadsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutChatReadsInput, Prisma.UserUncheckedCreateWithoutChatReadsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChatReadsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutChatReadsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutChatReadsInput, Prisma.UserUncheckedCreateWithoutChatReadsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChatReadsInput
+  upsert?: Prisma.UserUpsertWithoutChatReadsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutChatReadsInput, Prisma.UserUpdateWithoutChatReadsInput>, Prisma.UserUncheckedUpdateWithoutChatReadsInput>
+}
+
+export type UserCreateNestedOneWithoutChatAttachmentsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutChatAttachmentsInput, Prisma.UserUncheckedCreateWithoutChatAttachmentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChatAttachmentsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutChatAttachmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutChatAttachmentsInput, Prisma.UserUncheckedCreateWithoutChatAttachmentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChatAttachmentsInput
+  upsert?: Prisma.UserUpsertWithoutChatAttachmentsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutChatAttachmentsInput, Prisma.UserUpdateWithoutChatAttachmentsInput>, Prisma.UserUncheckedUpdateWithoutChatAttachmentsInput>
 }
 
 export type UserCreateNestedOneWithoutRefreshTokensInput = {
@@ -562,6 +646,382 @@ export type UserUpdateOneRequiredWithoutAddressesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAddressesInput, Prisma.UserUpdateWithoutAddressesInput>, Prisma.UserUncheckedUpdateWithoutAddressesInput>
 }
 
+export type UserCreateWithoutSupportConversationInput = {
+  email: string
+  password: string
+  role?: $Enums.UserRole
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  name: string
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  cart?: Prisma.CartCreateNestedOneWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  paymentMethods?: Prisma.PaymentMethodCreateNestedManyWithoutUserInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  wishlist?: Prisma.WishListCreateNestedManyWithoutUserInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  chatReads?: Prisma.ChatReadPositionCreateNestedManyWithoutUserInput
+  chatAttachments?: Prisma.ChatAttachmentCreateNestedManyWithoutUploaderInput
+}
+
+export type UserUncheckedCreateWithoutSupportConversationInput = {
+  id?: number
+  email: string
+  password: string
+  role?: $Enums.UserRole
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  name: string
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  cart?: Prisma.CartUncheckedCreateNestedOneWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  paymentMethods?: Prisma.PaymentMethodUncheckedCreateNestedManyWithoutUserInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  wishlist?: Prisma.WishListUncheckedCreateNestedManyWithoutUserInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  chatReads?: Prisma.ChatReadPositionUncheckedCreateNestedManyWithoutUserInput
+  chatAttachments?: Prisma.ChatAttachmentUncheckedCreateNestedManyWithoutUploaderInput
+}
+
+export type UserCreateOrConnectWithoutSupportConversationInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSupportConversationInput, Prisma.UserUncheckedCreateWithoutSupportConversationInput>
+}
+
+export type UserUpsertWithoutSupportConversationInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSupportConversationInput, Prisma.UserUncheckedUpdateWithoutSupportConversationInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSupportConversationInput, Prisma.UserUncheckedCreateWithoutSupportConversationInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSupportConversationInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSupportConversationInput, Prisma.UserUncheckedUpdateWithoutSupportConversationInput>
+}
+
+export type UserUpdateWithoutSupportConversationInput = {
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  cart?: Prisma.CartUpdateOneWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  paymentMethods?: Prisma.PaymentMethodUpdateManyWithoutUserNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  wishlist?: Prisma.WishListUpdateManyWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  chatReads?: Prisma.ChatReadPositionUpdateManyWithoutUserNestedInput
+  chatAttachments?: Prisma.ChatAttachmentUpdateManyWithoutUploaderNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSupportConversationInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  cart?: Prisma.CartUncheckedUpdateOneWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  paymentMethods?: Prisma.PaymentMethodUncheckedUpdateManyWithoutUserNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  wishlist?: Prisma.WishListUncheckedUpdateManyWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  chatReads?: Prisma.ChatReadPositionUncheckedUpdateManyWithoutUserNestedInput
+  chatAttachments?: Prisma.ChatAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
+}
+
+export type UserCreateWithoutChatMessagesInput = {
+  email: string
+  password: string
+  role?: $Enums.UserRole
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  name: string
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  cart?: Prisma.CartCreateNestedOneWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  paymentMethods?: Prisma.PaymentMethodCreateNestedManyWithoutUserInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  wishlist?: Prisma.WishListCreateNestedManyWithoutUserInput
+  supportConversation?: Prisma.ChatConversationCreateNestedOneWithoutUserInput
+  chatReads?: Prisma.ChatReadPositionCreateNestedManyWithoutUserInput
+  chatAttachments?: Prisma.ChatAttachmentCreateNestedManyWithoutUploaderInput
+}
+
+export type UserUncheckedCreateWithoutChatMessagesInput = {
+  id?: number
+  email: string
+  password: string
+  role?: $Enums.UserRole
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  name: string
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  cart?: Prisma.CartUncheckedCreateNestedOneWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  paymentMethods?: Prisma.PaymentMethodUncheckedCreateNestedManyWithoutUserInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  wishlist?: Prisma.WishListUncheckedCreateNestedManyWithoutUserInput
+  supportConversation?: Prisma.ChatConversationUncheckedCreateNestedOneWithoutUserInput
+  chatReads?: Prisma.ChatReadPositionUncheckedCreateNestedManyWithoutUserInput
+  chatAttachments?: Prisma.ChatAttachmentUncheckedCreateNestedManyWithoutUploaderInput
+}
+
+export type UserCreateOrConnectWithoutChatMessagesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutChatMessagesInput, Prisma.UserUncheckedCreateWithoutChatMessagesInput>
+}
+
+export type UserUpsertWithoutChatMessagesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutChatMessagesInput, Prisma.UserUncheckedUpdateWithoutChatMessagesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutChatMessagesInput, Prisma.UserUncheckedCreateWithoutChatMessagesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutChatMessagesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutChatMessagesInput, Prisma.UserUncheckedUpdateWithoutChatMessagesInput>
+}
+
+export type UserUpdateWithoutChatMessagesInput = {
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  cart?: Prisma.CartUpdateOneWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  paymentMethods?: Prisma.PaymentMethodUpdateManyWithoutUserNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  wishlist?: Prisma.WishListUpdateManyWithoutUserNestedInput
+  supportConversation?: Prisma.ChatConversationUpdateOneWithoutUserNestedInput
+  chatReads?: Prisma.ChatReadPositionUpdateManyWithoutUserNestedInput
+  chatAttachments?: Prisma.ChatAttachmentUpdateManyWithoutUploaderNestedInput
+}
+
+export type UserUncheckedUpdateWithoutChatMessagesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  cart?: Prisma.CartUncheckedUpdateOneWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  paymentMethods?: Prisma.PaymentMethodUncheckedUpdateManyWithoutUserNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  wishlist?: Prisma.WishListUncheckedUpdateManyWithoutUserNestedInput
+  supportConversation?: Prisma.ChatConversationUncheckedUpdateOneWithoutUserNestedInput
+  chatReads?: Prisma.ChatReadPositionUncheckedUpdateManyWithoutUserNestedInput
+  chatAttachments?: Prisma.ChatAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
+}
+
+export type UserCreateWithoutChatReadsInput = {
+  email: string
+  password: string
+  role?: $Enums.UserRole
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  name: string
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  cart?: Prisma.CartCreateNestedOneWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  paymentMethods?: Prisma.PaymentMethodCreateNestedManyWithoutUserInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  wishlist?: Prisma.WishListCreateNestedManyWithoutUserInput
+  supportConversation?: Prisma.ChatConversationCreateNestedOneWithoutUserInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  chatAttachments?: Prisma.ChatAttachmentCreateNestedManyWithoutUploaderInput
+}
+
+export type UserUncheckedCreateWithoutChatReadsInput = {
+  id?: number
+  email: string
+  password: string
+  role?: $Enums.UserRole
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  name: string
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  cart?: Prisma.CartUncheckedCreateNestedOneWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  paymentMethods?: Prisma.PaymentMethodUncheckedCreateNestedManyWithoutUserInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  wishlist?: Prisma.WishListUncheckedCreateNestedManyWithoutUserInput
+  supportConversation?: Prisma.ChatConversationUncheckedCreateNestedOneWithoutUserInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  chatAttachments?: Prisma.ChatAttachmentUncheckedCreateNestedManyWithoutUploaderInput
+}
+
+export type UserCreateOrConnectWithoutChatReadsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutChatReadsInput, Prisma.UserUncheckedCreateWithoutChatReadsInput>
+}
+
+export type UserUpsertWithoutChatReadsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutChatReadsInput, Prisma.UserUncheckedUpdateWithoutChatReadsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutChatReadsInput, Prisma.UserUncheckedCreateWithoutChatReadsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutChatReadsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutChatReadsInput, Prisma.UserUncheckedUpdateWithoutChatReadsInput>
+}
+
+export type UserUpdateWithoutChatReadsInput = {
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  cart?: Prisma.CartUpdateOneWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  paymentMethods?: Prisma.PaymentMethodUpdateManyWithoutUserNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  wishlist?: Prisma.WishListUpdateManyWithoutUserNestedInput
+  supportConversation?: Prisma.ChatConversationUpdateOneWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  chatAttachments?: Prisma.ChatAttachmentUpdateManyWithoutUploaderNestedInput
+}
+
+export type UserUncheckedUpdateWithoutChatReadsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  cart?: Prisma.CartUncheckedUpdateOneWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  paymentMethods?: Prisma.PaymentMethodUncheckedUpdateManyWithoutUserNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  wishlist?: Prisma.WishListUncheckedUpdateManyWithoutUserNestedInput
+  supportConversation?: Prisma.ChatConversationUncheckedUpdateOneWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  chatAttachments?: Prisma.ChatAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
+}
+
+export type UserCreateWithoutChatAttachmentsInput = {
+  email: string
+  password: string
+  role?: $Enums.UserRole
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  name: string
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  cart?: Prisma.CartCreateNestedOneWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  paymentMethods?: Prisma.PaymentMethodCreateNestedManyWithoutUserInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  wishlist?: Prisma.WishListCreateNestedManyWithoutUserInput
+  supportConversation?: Prisma.ChatConversationCreateNestedOneWithoutUserInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  chatReads?: Prisma.ChatReadPositionCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutChatAttachmentsInput = {
+  id?: number
+  email: string
+  password: string
+  role?: $Enums.UserRole
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  name: string
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  cart?: Prisma.CartUncheckedCreateNestedOneWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  paymentMethods?: Prisma.PaymentMethodUncheckedCreateNestedManyWithoutUserInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  wishlist?: Prisma.WishListUncheckedCreateNestedManyWithoutUserInput
+  supportConversation?: Prisma.ChatConversationUncheckedCreateNestedOneWithoutUserInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  chatReads?: Prisma.ChatReadPositionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutChatAttachmentsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutChatAttachmentsInput, Prisma.UserUncheckedCreateWithoutChatAttachmentsInput>
+}
+
+export type UserUpsertWithoutChatAttachmentsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutChatAttachmentsInput, Prisma.UserUncheckedUpdateWithoutChatAttachmentsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutChatAttachmentsInput, Prisma.UserUncheckedCreateWithoutChatAttachmentsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutChatAttachmentsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutChatAttachmentsInput, Prisma.UserUncheckedUpdateWithoutChatAttachmentsInput>
+}
+
+export type UserUpdateWithoutChatAttachmentsInput = {
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  cart?: Prisma.CartUpdateOneWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  paymentMethods?: Prisma.PaymentMethodUpdateManyWithoutUserNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  wishlist?: Prisma.WishListUpdateManyWithoutUserNestedInput
+  supportConversation?: Prisma.ChatConversationUpdateOneWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  chatReads?: Prisma.ChatReadPositionUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutChatAttachmentsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  cart?: Prisma.CartUncheckedUpdateOneWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  paymentMethods?: Prisma.PaymentMethodUncheckedUpdateManyWithoutUserNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  wishlist?: Prisma.WishListUncheckedUpdateManyWithoutUserNestedInput
+  supportConversation?: Prisma.ChatConversationUncheckedUpdateOneWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  chatReads?: Prisma.ChatReadPositionUncheckedUpdateManyWithoutUserNestedInput
+}
+
 export type UserCreateWithoutRefreshTokensInput = {
   email: string
   password: string
@@ -575,6 +1035,10 @@ export type UserCreateWithoutRefreshTokensInput = {
   paymentMethods?: Prisma.PaymentMethodCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   wishlist?: Prisma.WishListCreateNestedManyWithoutUserInput
+  supportConversation?: Prisma.ChatConversationCreateNestedOneWithoutUserInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  chatReads?: Prisma.ChatReadPositionCreateNestedManyWithoutUserInput
+  chatAttachments?: Prisma.ChatAttachmentCreateNestedManyWithoutUploaderInput
 }
 
 export type UserUncheckedCreateWithoutRefreshTokensInput = {
@@ -591,6 +1055,10 @@ export type UserUncheckedCreateWithoutRefreshTokensInput = {
   paymentMethods?: Prisma.PaymentMethodUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   wishlist?: Prisma.WishListUncheckedCreateNestedManyWithoutUserInput
+  supportConversation?: Prisma.ChatConversationUncheckedCreateNestedOneWithoutUserInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  chatReads?: Prisma.ChatReadPositionUncheckedCreateNestedManyWithoutUserInput
+  chatAttachments?: Prisma.ChatAttachmentUncheckedCreateNestedManyWithoutUploaderInput
 }
 
 export type UserCreateOrConnectWithoutRefreshTokensInput = {
@@ -622,6 +1090,10 @@ export type UserUpdateWithoutRefreshTokensInput = {
   paymentMethods?: Prisma.PaymentMethodUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   wishlist?: Prisma.WishListUpdateManyWithoutUserNestedInput
+  supportConversation?: Prisma.ChatConversationUpdateOneWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  chatReads?: Prisma.ChatReadPositionUpdateManyWithoutUserNestedInput
+  chatAttachments?: Prisma.ChatAttachmentUpdateManyWithoutUploaderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRefreshTokensInput = {
@@ -638,6 +1110,10 @@ export type UserUncheckedUpdateWithoutRefreshTokensInput = {
   paymentMethods?: Prisma.PaymentMethodUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   wishlist?: Prisma.WishListUncheckedUpdateManyWithoutUserNestedInput
+  supportConversation?: Prisma.ChatConversationUncheckedUpdateOneWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  chatReads?: Prisma.ChatReadPositionUncheckedUpdateManyWithoutUserNestedInput
+  chatAttachments?: Prisma.ChatAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
 }
 
 export type UserCreateWithoutReviewsInput = {
@@ -653,6 +1129,10 @@ export type UserCreateWithoutReviewsInput = {
   paymentMethods?: Prisma.PaymentMethodCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   wishlist?: Prisma.WishListCreateNestedManyWithoutUserInput
+  supportConversation?: Prisma.ChatConversationCreateNestedOneWithoutUserInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  chatReads?: Prisma.ChatReadPositionCreateNestedManyWithoutUserInput
+  chatAttachments?: Prisma.ChatAttachmentCreateNestedManyWithoutUploaderInput
 }
 
 export type UserUncheckedCreateWithoutReviewsInput = {
@@ -669,6 +1149,10 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   paymentMethods?: Prisma.PaymentMethodUncheckedCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   wishlist?: Prisma.WishListUncheckedCreateNestedManyWithoutUserInput
+  supportConversation?: Prisma.ChatConversationUncheckedCreateNestedOneWithoutUserInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  chatReads?: Prisma.ChatReadPositionUncheckedCreateNestedManyWithoutUserInput
+  chatAttachments?: Prisma.ChatAttachmentUncheckedCreateNestedManyWithoutUploaderInput
 }
 
 export type UserCreateOrConnectWithoutReviewsInput = {
@@ -700,6 +1184,10 @@ export type UserUpdateWithoutReviewsInput = {
   paymentMethods?: Prisma.PaymentMethodUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   wishlist?: Prisma.WishListUpdateManyWithoutUserNestedInput
+  supportConversation?: Prisma.ChatConversationUpdateOneWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  chatReads?: Prisma.ChatReadPositionUpdateManyWithoutUserNestedInput
+  chatAttachments?: Prisma.ChatAttachmentUpdateManyWithoutUploaderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -716,6 +1204,10 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   paymentMethods?: Prisma.PaymentMethodUncheckedUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   wishlist?: Prisma.WishListUncheckedUpdateManyWithoutUserNestedInput
+  supportConversation?: Prisma.ChatConversationUncheckedUpdateOneWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  chatReads?: Prisma.ChatReadPositionUncheckedUpdateManyWithoutUserNestedInput
+  chatAttachments?: Prisma.ChatAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
 }
 
 export type UserCreateWithoutWishlistInput = {
@@ -731,6 +1223,10 @@ export type UserCreateWithoutWishlistInput = {
   paymentMethods?: Prisma.PaymentMethodCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  supportConversation?: Prisma.ChatConversationCreateNestedOneWithoutUserInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  chatReads?: Prisma.ChatReadPositionCreateNestedManyWithoutUserInput
+  chatAttachments?: Prisma.ChatAttachmentCreateNestedManyWithoutUploaderInput
 }
 
 export type UserUncheckedCreateWithoutWishlistInput = {
@@ -747,6 +1243,10 @@ export type UserUncheckedCreateWithoutWishlistInput = {
   paymentMethods?: Prisma.PaymentMethodUncheckedCreateNestedManyWithoutUserInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  supportConversation?: Prisma.ChatConversationUncheckedCreateNestedOneWithoutUserInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  chatReads?: Prisma.ChatReadPositionUncheckedCreateNestedManyWithoutUserInput
+  chatAttachments?: Prisma.ChatAttachmentUncheckedCreateNestedManyWithoutUploaderInput
 }
 
 export type UserCreateOrConnectWithoutWishlistInput = {
@@ -778,6 +1278,10 @@ export type UserUpdateWithoutWishlistInput = {
   paymentMethods?: Prisma.PaymentMethodUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  supportConversation?: Prisma.ChatConversationUpdateOneWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  chatReads?: Prisma.ChatReadPositionUpdateManyWithoutUserNestedInput
+  chatAttachments?: Prisma.ChatAttachmentUpdateManyWithoutUploaderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWishlistInput = {
@@ -794,6 +1298,10 @@ export type UserUncheckedUpdateWithoutWishlistInput = {
   paymentMethods?: Prisma.PaymentMethodUncheckedUpdateManyWithoutUserNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  supportConversation?: Prisma.ChatConversationUncheckedUpdateOneWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  chatReads?: Prisma.ChatReadPositionUncheckedUpdateManyWithoutUserNestedInput
+  chatAttachments?: Prisma.ChatAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
 }
 
 export type UserCreateWithoutCartInput = {
@@ -809,6 +1317,10 @@ export type UserCreateWithoutCartInput = {
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   wishlist?: Prisma.WishListCreateNestedManyWithoutUserInput
+  supportConversation?: Prisma.ChatConversationCreateNestedOneWithoutUserInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  chatReads?: Prisma.ChatReadPositionCreateNestedManyWithoutUserInput
+  chatAttachments?: Prisma.ChatAttachmentCreateNestedManyWithoutUploaderInput
 }
 
 export type UserUncheckedCreateWithoutCartInput = {
@@ -825,6 +1337,10 @@ export type UserUncheckedCreateWithoutCartInput = {
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   wishlist?: Prisma.WishListUncheckedCreateNestedManyWithoutUserInput
+  supportConversation?: Prisma.ChatConversationUncheckedCreateNestedOneWithoutUserInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  chatReads?: Prisma.ChatReadPositionUncheckedCreateNestedManyWithoutUserInput
+  chatAttachments?: Prisma.ChatAttachmentUncheckedCreateNestedManyWithoutUploaderInput
 }
 
 export type UserCreateOrConnectWithoutCartInput = {
@@ -856,6 +1372,10 @@ export type UserUpdateWithoutCartInput = {
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   wishlist?: Prisma.WishListUpdateManyWithoutUserNestedInput
+  supportConversation?: Prisma.ChatConversationUpdateOneWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  chatReads?: Prisma.ChatReadPositionUpdateManyWithoutUserNestedInput
+  chatAttachments?: Prisma.ChatAttachmentUpdateManyWithoutUploaderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCartInput = {
@@ -872,6 +1392,10 @@ export type UserUncheckedUpdateWithoutCartInput = {
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   wishlist?: Prisma.WishListUncheckedUpdateManyWithoutUserNestedInput
+  supportConversation?: Prisma.ChatConversationUncheckedUpdateOneWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  chatReads?: Prisma.ChatReadPositionUncheckedUpdateManyWithoutUserNestedInput
+  chatAttachments?: Prisma.ChatAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
 }
 
 export type UserCreateWithoutOrdersInput = {
@@ -887,6 +1411,10 @@ export type UserCreateWithoutOrdersInput = {
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   wishlist?: Prisma.WishListCreateNestedManyWithoutUserInput
+  supportConversation?: Prisma.ChatConversationCreateNestedOneWithoutUserInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  chatReads?: Prisma.ChatReadPositionCreateNestedManyWithoutUserInput
+  chatAttachments?: Prisma.ChatAttachmentCreateNestedManyWithoutUploaderInput
 }
 
 export type UserUncheckedCreateWithoutOrdersInput = {
@@ -903,6 +1431,10 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   wishlist?: Prisma.WishListUncheckedCreateNestedManyWithoutUserInput
+  supportConversation?: Prisma.ChatConversationUncheckedCreateNestedOneWithoutUserInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  chatReads?: Prisma.ChatReadPositionUncheckedCreateNestedManyWithoutUserInput
+  chatAttachments?: Prisma.ChatAttachmentUncheckedCreateNestedManyWithoutUploaderInput
 }
 
 export type UserCreateOrConnectWithoutOrdersInput = {
@@ -934,6 +1466,10 @@ export type UserUpdateWithoutOrdersInput = {
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   wishlist?: Prisma.WishListUpdateManyWithoutUserNestedInput
+  supportConversation?: Prisma.ChatConversationUpdateOneWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  chatReads?: Prisma.ChatReadPositionUpdateManyWithoutUserNestedInput
+  chatAttachments?: Prisma.ChatAttachmentUpdateManyWithoutUploaderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrdersInput = {
@@ -950,6 +1486,10 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   wishlist?: Prisma.WishListUncheckedUpdateManyWithoutUserNestedInput
+  supportConversation?: Prisma.ChatConversationUncheckedUpdateOneWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  chatReads?: Prisma.ChatReadPositionUncheckedUpdateManyWithoutUserNestedInput
+  chatAttachments?: Prisma.ChatAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
 }
 
 export type UserCreateWithoutPaymentMethodsInput = {
@@ -965,6 +1505,10 @@ export type UserCreateWithoutPaymentMethodsInput = {
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   wishlist?: Prisma.WishListCreateNestedManyWithoutUserInput
+  supportConversation?: Prisma.ChatConversationCreateNestedOneWithoutUserInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  chatReads?: Prisma.ChatReadPositionCreateNestedManyWithoutUserInput
+  chatAttachments?: Prisma.ChatAttachmentCreateNestedManyWithoutUploaderInput
 }
 
 export type UserUncheckedCreateWithoutPaymentMethodsInput = {
@@ -981,6 +1525,10 @@ export type UserUncheckedCreateWithoutPaymentMethodsInput = {
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   wishlist?: Prisma.WishListUncheckedCreateNestedManyWithoutUserInput
+  supportConversation?: Prisma.ChatConversationUncheckedCreateNestedOneWithoutUserInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  chatReads?: Prisma.ChatReadPositionUncheckedCreateNestedManyWithoutUserInput
+  chatAttachments?: Prisma.ChatAttachmentUncheckedCreateNestedManyWithoutUploaderInput
 }
 
 export type UserCreateOrConnectWithoutPaymentMethodsInput = {
@@ -1012,6 +1560,10 @@ export type UserUpdateWithoutPaymentMethodsInput = {
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   wishlist?: Prisma.WishListUpdateManyWithoutUserNestedInput
+  supportConversation?: Prisma.ChatConversationUpdateOneWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  chatReads?: Prisma.ChatReadPositionUpdateManyWithoutUserNestedInput
+  chatAttachments?: Prisma.ChatAttachmentUpdateManyWithoutUploaderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPaymentMethodsInput = {
@@ -1028,6 +1580,10 @@ export type UserUncheckedUpdateWithoutPaymentMethodsInput = {
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   wishlist?: Prisma.WishListUncheckedUpdateManyWithoutUserNestedInput
+  supportConversation?: Prisma.ChatConversationUncheckedUpdateOneWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  chatReads?: Prisma.ChatReadPositionUncheckedUpdateManyWithoutUserNestedInput
+  chatAttachments?: Prisma.ChatAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
 }
 
 export type UserCreateWithoutAddressesInput = {
@@ -1043,6 +1599,10 @@ export type UserCreateWithoutAddressesInput = {
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   wishlist?: Prisma.WishListCreateNestedManyWithoutUserInput
+  supportConversation?: Prisma.ChatConversationCreateNestedOneWithoutUserInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  chatReads?: Prisma.ChatReadPositionCreateNestedManyWithoutUserInput
+  chatAttachments?: Prisma.ChatAttachmentCreateNestedManyWithoutUploaderInput
 }
 
 export type UserUncheckedCreateWithoutAddressesInput = {
@@ -1059,6 +1619,10 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   wishlist?: Prisma.WishListUncheckedCreateNestedManyWithoutUserInput
+  supportConversation?: Prisma.ChatConversationUncheckedCreateNestedOneWithoutUserInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  chatReads?: Prisma.ChatReadPositionUncheckedCreateNestedManyWithoutUserInput
+  chatAttachments?: Prisma.ChatAttachmentUncheckedCreateNestedManyWithoutUploaderInput
 }
 
 export type UserCreateOrConnectWithoutAddressesInput = {
@@ -1090,6 +1654,10 @@ export type UserUpdateWithoutAddressesInput = {
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   wishlist?: Prisma.WishListUpdateManyWithoutUserNestedInput
+  supportConversation?: Prisma.ChatConversationUpdateOneWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  chatReads?: Prisma.ChatReadPositionUpdateManyWithoutUserNestedInput
+  chatAttachments?: Prisma.ChatAttachmentUpdateManyWithoutUploaderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAddressesInput = {
@@ -1106,6 +1674,10 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   wishlist?: Prisma.WishListUncheckedUpdateManyWithoutUserNestedInput
+  supportConversation?: Prisma.ChatConversationUncheckedUpdateOneWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  chatReads?: Prisma.ChatReadPositionUncheckedUpdateManyWithoutUserNestedInput
+  chatAttachments?: Prisma.ChatAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
 }
 
 
@@ -1120,6 +1692,9 @@ export type UserCountOutputType = {
   refreshTokens: number
   reviews: number
   wishlist: number
+  chatMessages: number
+  chatReads: number
+  chatAttachments: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1129,6 +1704,9 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   refreshTokens?: boolean | UserCountOutputTypeCountRefreshTokensArgs
   reviews?: boolean | UserCountOutputTypeCountReviewsArgs
   wishlist?: boolean | UserCountOutputTypeCountWishlistArgs
+  chatMessages?: boolean | UserCountOutputTypeCountChatMessagesArgs
+  chatReads?: boolean | UserCountOutputTypeCountChatReadsArgs
+  chatAttachments?: boolean | UserCountOutputTypeCountChatAttachmentsArgs
 }
 
 /**
@@ -1183,6 +1761,27 @@ export type UserCountOutputTypeCountWishlistArgs<ExtArgs extends runtime.Types.E
   where?: Prisma.WishListWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountChatMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ChatMessageWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountChatReadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ChatReadPositionWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountChatAttachmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ChatAttachmentWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1199,6 +1798,10 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
   reviews?: boolean | Prisma.User$reviewsArgs<ExtArgs>
   wishlist?: boolean | Prisma.User$wishlistArgs<ExtArgs>
+  supportConversation?: boolean | Prisma.User$supportConversationArgs<ExtArgs>
+  chatMessages?: boolean | Prisma.User$chatMessagesArgs<ExtArgs>
+  chatReads?: boolean | Prisma.User$chatReadsArgs<ExtArgs>
+  chatAttachments?: boolean | Prisma.User$chatAttachmentsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1241,6 +1844,10 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
   reviews?: boolean | Prisma.User$reviewsArgs<ExtArgs>
   wishlist?: boolean | Prisma.User$wishlistArgs<ExtArgs>
+  supportConversation?: boolean | Prisma.User$supportConversationArgs<ExtArgs>
+  chatMessages?: boolean | Prisma.User$chatMessagesArgs<ExtArgs>
+  chatReads?: boolean | Prisma.User$chatReadsArgs<ExtArgs>
+  chatAttachments?: boolean | Prisma.User$chatAttachmentsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1256,6 +1863,10 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     refreshTokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
     reviews: Prisma.$ReviewPayload<ExtArgs>[]
     wishlist: Prisma.$WishListPayload<ExtArgs>[]
+    supportConversation: Prisma.$ChatConversationPayload<ExtArgs> | null
+    chatMessages: Prisma.$ChatMessagePayload<ExtArgs>[]
+    chatReads: Prisma.$ChatReadPositionPayload<ExtArgs>[]
+    chatAttachments: Prisma.$ChatAttachmentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1666,6 +2277,10 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   refreshTokens<T extends Prisma.User$refreshTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$refreshTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviews<T extends Prisma.User$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   wishlist<T extends Prisma.User$wishlistArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$wishlistArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WishListPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  supportConversation<T extends Prisma.User$supportConversationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$supportConversationArgs<ExtArgs>>): Prisma.Prisma__ChatConversationClient<runtime.Types.Result.GetResult<Prisma.$ChatConversationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  chatMessages<T extends Prisma.User$chatMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$chatMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  chatReads<T extends Prisma.User$chatReadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$chatReadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatReadPositionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  chatAttachments<T extends Prisma.User$chatAttachmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$chatAttachmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatAttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2255,6 +2870,97 @@ export type User$wishlistArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.WishListScalarFieldEnum | Prisma.WishListScalarFieldEnum[]
+}
+
+/**
+ * User.supportConversation
+ */
+export type User$supportConversationArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ChatConversation
+   */
+  select?: Prisma.ChatConversationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ChatConversation
+   */
+  omit?: Prisma.ChatConversationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatConversationInclude<ExtArgs> | null
+  where?: Prisma.ChatConversationWhereInput
+}
+
+/**
+ * User.chatMessages
+ */
+export type User$chatMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ChatMessage
+   */
+  select?: Prisma.ChatMessageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ChatMessage
+   */
+  omit?: Prisma.ChatMessageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatMessageInclude<ExtArgs> | null
+  where?: Prisma.ChatMessageWhereInput
+  orderBy?: Prisma.ChatMessageOrderByWithRelationInput | Prisma.ChatMessageOrderByWithRelationInput[]
+  cursor?: Prisma.ChatMessageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ChatMessageScalarFieldEnum | Prisma.ChatMessageScalarFieldEnum[]
+}
+
+/**
+ * User.chatReads
+ */
+export type User$chatReadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ChatReadPosition
+   */
+  select?: Prisma.ChatReadPositionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ChatReadPosition
+   */
+  omit?: Prisma.ChatReadPositionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatReadPositionInclude<ExtArgs> | null
+  where?: Prisma.ChatReadPositionWhereInput
+  orderBy?: Prisma.ChatReadPositionOrderByWithRelationInput | Prisma.ChatReadPositionOrderByWithRelationInput[]
+  cursor?: Prisma.ChatReadPositionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ChatReadPositionScalarFieldEnum | Prisma.ChatReadPositionScalarFieldEnum[]
+}
+
+/**
+ * User.chatAttachments
+ */
+export type User$chatAttachmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ChatAttachment
+   */
+  select?: Prisma.ChatAttachmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ChatAttachment
+   */
+  omit?: Prisma.ChatAttachmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatAttachmentInclude<ExtArgs> | null
+  where?: Prisma.ChatAttachmentWhereInput
+  orderBy?: Prisma.ChatAttachmentOrderByWithRelationInput | Prisma.ChatAttachmentOrderByWithRelationInput[]
+  cursor?: Prisma.ChatAttachmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ChatAttachmentScalarFieldEnum | Prisma.ChatAttachmentScalarFieldEnum[]
 }
 
 /**

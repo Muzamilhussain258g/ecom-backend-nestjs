@@ -7,7 +7,6 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Prisma, PrismaClient } from "generated/prisma/client";
-import { Pool } from "pg";
 
 @Injectable()
 export class PrismaService extends PrismaClient<{
@@ -21,7 +20,6 @@ export class PrismaService extends PrismaClient<{
 }>
   implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(PrismaService.name);
-  private readonly pool: Pool;
 
   constructor(configService: ConfigService) {
     const databaseUrl =
@@ -29,7 +27,7 @@ export class PrismaService extends PrismaClient<{
     // const queryLoggingEnabled =
     //   configService.getOrThrow<string>("PRISMA_QUERY_LOGGING") === "true";
 
-    const pool = new Pool({
+    const adapter = new PrismaPg({
       connectionString: databaseUrl,
       max: 10,
       connectionTimeoutMillis: 10_000,
@@ -37,15 +35,13 @@ export class PrismaService extends PrismaClient<{
     });
 
     super({
-      adapter: new PrismaPg(pool),
+      adapter,
       // log: queryLoggingEnabled ? [{ emit: "event", level: "query" }] : [],
       transactionOptions: {
         maxWait: 10_000,
         timeout: 20_000,
       },
     });
-
-    this.pool = pool;
 
     // if (queryLoggingEnabled) {
     //   this.$on("query", (event) => {
@@ -62,6 +58,5 @@ export class PrismaService extends PrismaClient<{
 
   async onModuleDestroy() {
     await this.$disconnect();
-    await this.pool.end();
   }
 }

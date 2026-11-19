@@ -506,10 +506,6 @@ export type ReviewUncheckedUpdateManyWithoutProductNestedInput = {
   deleteMany?: Prisma.ReviewScalarWhereInput | Prisma.ReviewScalarWhereInput[]
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
 export type ReviewCreateWithoutUserInput = {
   review?: string | null
   stars: runtime.Decimal | runtime.DecimalJsLike | number | string

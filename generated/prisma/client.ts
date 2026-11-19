@@ -45,6 +45,26 @@ export { Prisma }
  */
 export type User = Prisma.UserModel
 /**
+ * Model ChatConversation
+ * 
+ */
+export type ChatConversation = Prisma.ChatConversationModel
+/**
+ * Model ChatMessage
+ * 
+ */
+export type ChatMessage = Prisma.ChatMessageModel
+/**
+ * Model ChatReadPosition
+ * 
+ */
+export type ChatReadPosition = Prisma.ChatReadPositionModel
+/**
+ * Model ChatAttachment
+ * 
+ */
+export type ChatAttachment = Prisma.ChatAttachmentModel
+/**
  * Model RefreshToken
  * 
  */
@@ -64,6 +84,11 @@ export type ProductCategory = Prisma.ProductCategoryModel
  * 
  */
 export type Product = Prisma.ProductModel
+/**
+ * Model Faq
+ * 
+ */
+export type Faq = Prisma.FaqModel
 /**
  * Model Review
  * 

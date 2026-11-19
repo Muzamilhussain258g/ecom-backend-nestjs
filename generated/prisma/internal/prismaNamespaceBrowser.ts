@@ -52,10 +52,15 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  ChatConversation: 'ChatConversation',
+  ChatMessage: 'ChatMessage',
+  ChatReadPosition: 'ChatReadPosition',
+  ChatAttachment: 'ChatAttachment',
   RefreshToken: 'RefreshToken',
   Category: 'Category',
   ProductCategory: 'ProductCategory',
   Product: 'Product',
+  Faq: 'Faq',
   Review: 'Review',
   VariantType: 'VariantType',
   VariantValue: 'VariantValue',
@@ -108,6 +113,59 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const ChatConversationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  lastSequence: 'lastSequence',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChatConversationScalarFieldEnum = (typeof ChatConversationScalarFieldEnum)[keyof typeof ChatConversationScalarFieldEnum]
+
+
+export const ChatMessageScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  senderId: 'senderId',
+  clientMessageId: 'clientMessageId',
+  requestHash: 'requestHash',
+  sequence: 'sequence',
+  text: 'text',
+  createdAt: 'createdAt'
+} as const
+
+export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[keyof typeof ChatMessageScalarFieldEnum]
+
+
+export const ChatReadPositionScalarFieldEnum = {
+  conversationId: 'conversationId',
+  userId: 'userId',
+  sequence: 'sequence'
+} as const
+
+export type ChatReadPositionScalarFieldEnum = (typeof ChatReadPositionScalarFieldEnum)[keyof typeof ChatReadPositionScalarFieldEnum]
+
+
+export const ChatAttachmentScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  uploaderId: 'uploaderId',
+  messageId: 'messageId',
+  publicId: 'publicId',
+  resourceType: 'resourceType',
+  status: 'status',
+  format: 'format',
+  bytes: 'bytes',
+  width: 'width',
+  height: 'height',
+  duration: 'duration',
+  createdAt: 'createdAt'
+} as const
+
+export type ChatAttachmentScalarFieldEnum = (typeof ChatAttachmentScalarFieldEnum)[keyof typeof ChatAttachmentScalarFieldEnum]
+
+
 export const RefreshTokenScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -154,6 +212,20 @@ export const ProductScalarFieldEnum = {
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
+
+
+export const FaqScalarFieldEnum = {
+  id: 'id',
+  question: 'question',
+  answer: 'answer',
+  productId: 'productId',
+  sortOrder: 'sortOrder',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FaqScalarFieldEnum = (typeof FaqScalarFieldEnum)[keyof typeof FaqScalarFieldEnum]
 
 
 export const ReviewScalarFieldEnum = {

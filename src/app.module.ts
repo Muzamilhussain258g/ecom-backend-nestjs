@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { FaqModule } from './faq/faq.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -20,9 +21,11 @@ import { existsSync } from 'fs';
 import { join } from 'path';
 import { MailModule } from './mail/mail.module';
 import { UserModule } from './user/user.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
+    FaqModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -40,6 +43,7 @@ import { UserModule } from './user/user.module';
     OrderModule,
     MailModule,
     UserModule,
+    ChatModule,
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

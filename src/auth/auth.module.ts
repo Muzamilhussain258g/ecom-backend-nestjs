@@ -25,6 +25,6 @@ import {
     OptionalJwtAuthGuard,
     JwtStrategy,
   ],
-  exports: [JwtAuthGuard, OptionalJwtAuthGuard, PassportModule],
+  exports: [JwtAuthGuard, OptionalJwtAuthGuard, PassportModule, JwtStrategy],
 })
 export class AuthModule {}
