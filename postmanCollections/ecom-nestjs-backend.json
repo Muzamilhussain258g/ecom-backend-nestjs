@@ -98,8 +98,14 @@
     },
     {
       "key": "chatBaseUrl",
-      "value": "http://localhost:3000/api/v1",
+      "value": "http://localhost:8000/api/v1",
       "type": "string"
+    },
+    {
+      "key": "chatSocketUrl",
+      "value": "ws://localhost:8000/chat",
+      "type": "string",
+      "description": "Postman Socket.IO URL; set Handshake path to /socket.io"
     },
     {
       "key": "chatAccessToken",
@@ -108,6 +114,11 @@
     },
     {
       "key": "chatConversationId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "chatLastSequence",
       "value": "",
       "type": "string"
     },
@@ -3661,7 +3672,7 @@
     },
     {
       "name": "Support Chat",
-      "description": "JWT-protected support chat. chatBaseUrl includes /api/v1. See docs/CHAT_API.md for Socket.IO and direct Cloudinary upload instructions. Use a fresh UUID for each new message and keep it unchanged on retries.",
+      "description": "JWT-protected support chat. Set chatAccessToken to a valid access token. Create or get my thread saves chatConversationId automatically. Send message generates a clientMessageId and preserves it when a request times out; after a successful send it is cleared for the next new message. For Postman Socket.IO, create New > Socket.IO at {{chatSocketUrl}} and set Settings > Handshake path to /socket.io. Listen for message:created, conversation:updated, conversation:read, and typing:changed. The server requires a Socket.IO handshake auth token; if your Postman version can't set auth.token, run `node postmanCollections/chat-realtime-check.cjs` from the repository root with CHAT_ACCESS_TOKEN and CHAT_CONVERSATION_ID set. Add --send to send a live test message. See docs/CHAT_API.md for the full protocol and media upload instructions.",
       "item": [
         {
           "name": "Create or get my thread",
@@ -3688,7 +3699,26 @@
                 "conversations"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "pm.test('Conversation was created or retrieved', function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "  pm.expect(body.success).to.eql(true);",
+                  "  pm.expect(body.data.id).to.exist;",
+                  "});",
+                  "if (body && body.success && body.data && body.data.id != null) {",
+                  "  pm.collectionVariables.set('chatConversationId', String(body.data.id));",
+                  "}"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "My thread / admin inbox",
@@ -3744,7 +3774,27 @@
                 "messages"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "pm.test('Message history was loaded', function () {",
+                  "  pm.expect(pm.response.code).to.eql(200);",
+                  "  pm.expect(body.success).to.eql(true);",
+                  "  pm.expect(body.data.items).to.be.an('array');",
+                  "});",
+                  "if (body && body.success && body.data && Array.isArray(body.data.items) && body.data.items.length) {",
+                  "  const latest = body.data.items[body.data.items.length - 1];",
+                  "  if (latest.sequence != null) pm.collectionVariables.set('chatLastSequence', String(latest.sequence));",
+                  "}"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Send message",
@@ -3787,7 +3837,38 @@
                 }
               }
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('chatClientMessageId')) {",
+                  "  pm.collectionVariables.set('chatClientMessageId', pm.variables.replaceIn('{{$guid}}'));",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "pm.test('Message was persisted', function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "  pm.expect(body.success).to.eql(true);",
+                  "  pm.expect(body.data.id).to.exist;",
+                  "});",
+                  "if (body && body.success && body.data) {",
+                  "  if (body.data.sequence != null) pm.collectionVariables.set('chatLastSequence', String(body.data.sequence));",
+                  "  pm.collectionVariables.unset('chatClientMessageId');",
+                  "}"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Mark read",
@@ -3823,7 +3904,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"sequence\": 1\n}",
+              "raw": "{\n  \"sequence\": {{chatLastSequence}}\n}",
               "options": {
                 "raw": {
                   "language": "json"

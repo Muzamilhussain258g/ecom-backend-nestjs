@@ -88,7 +88,7 @@ export class ChatGateway implements OnGatewayInit, OnModuleDestroy {
         const origin = socket.handshake.headers.origin;
         const allowed = (
           this.config.get<string>('CHAT_ALLOWED_ORIGINS') ??
-          'http://localhost:3000,http://localhost:5173'
+          'http://localhost:3000,http://localhost:3001,http://localhost:5173'
         )
           .split(',')
           .map((s) => s.trim());
