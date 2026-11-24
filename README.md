@@ -114,6 +114,14 @@ npm run seed
 
 **Run the seed only against a disposable development database.** `prisma/seed.ts` clears existing catalog data and related records, including cart items, order items, wishlist entries, and reviews, before building sample variant types and category/product data. It is not a production bootstrap command and does not provision an admin account.
 
+To add repeatable sample orders, paid payments, customers, and low-stock products for the admin dashboard without clearing the existing catalog, run:
+
+```sh
+npm run seed:dashboard
+```
+
+This creates or updates records with `dashboard-demo-*` identifiers and dates relative to the current day, so the dashboard's default last-30-days view has data. Run it only against a development database.
+
 ## Authentication and roles
 
 New signups receive the database default role, `customer`. Other roles are `seller` and `admin`; provision these through a controlled database/admin workflow. There is no role-assignment endpoint documented by the current controllers.
@@ -219,6 +227,7 @@ Typical statuses: `400` invalid input, `401` authentication failure, `403` insuf
 | `npx prisma generate` | Regenerate Prisma client |
 | `npx prisma migrate deploy` | Apply committed migrations |
 | `npm run seed` | Destructive development catalog seed described above |
+| `npm run seed:dashboard` | Non-destructive dashboard demo-data seed |
 
 Tests live alongside source files as `*.spec.ts`. Run `npm run test:e2e -- --runInBand` with `CHAT_TEST_DATABASE_URL` pointing to a test PostgreSQL database for the chat integration suite. It creates and removes an isolated schema; without that variable, the suite is skipped. See [Support chat API and frontend integration](docs/CHAT_API.md) for chat setup, media uploads, and Socket.IO events.
 

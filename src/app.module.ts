@@ -22,6 +22,7 @@ import { join } from 'path';
 import { MailModule } from './mail/mail.module';
 import { UserModule } from './user/user.module';
 import { ChatModule } from './chat/chat.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { ChatModule } from './chat/chat.module';
     MailModule,
     UserModule,
     ChatModule,
+    DashboardModule,
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
